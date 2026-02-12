@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { Button } from '../ui/button'
 import { ImageIcon, BookIcon, ArrowRightIcon, GithubIcon } from 'lucide-react'
 
@@ -21,8 +22,10 @@ export const Header = () => {
           <Button variant={'secondary'}>
             Github <GithubIcon />
           </Button>
-          <Button>
-            Get Started <ArrowRightIcon />
+          <Button asChild>
+            <Link href="/dashboard">
+              Get Started <ArrowRightIcon />
+            </Link>
           </Button>
         </div>
       </div>

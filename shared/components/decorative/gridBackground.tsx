@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/lib/utils'
 
 interface GridBackgroundProps {
   className?: string
@@ -31,7 +31,7 @@ export function GridBackground({ className, squares = 40, intensity = 20 }: Grid
   return (
     <div className={cn('fixed inset-0 -z-50', 'overflow-hidden', 'bg-background', className)}>
       <div
-        className="absolute -top-12.5 -left-12.5 h-[calc(100%+100px)] w-[calc(100%+100px)]"
+        className="absolute h-screen w-full"
         style={{
           transform: `translate(${transform.x}px, ${transform.y}px)`,
           transition: 'transform 0.3s ease-out',

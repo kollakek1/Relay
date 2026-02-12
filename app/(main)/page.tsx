@@ -17,16 +17,16 @@ export default function Home() {
           <span className="text-primary font-medium">enterprise-grade</span> workflow automation.
         </h2>
         <div className="flex gap-4">
-          <Link href={'/learn'}>
-            <Button size={'xl'} variant={'secondary'}>
+          <Button size={'xl'} variant={'secondary'} asChild>
+            <Link href={'/learn'}>
               Learn <BookIcon />
-            </Button>
-          </Link>
-          <Link href={'/dashboard'}>
-            <Button size={'xl'}>
+            </Link>
+          </Button>
+          <Button size={'xl'} asChild>
+            <Link href="/dashboard">
               Get Started <ArrowRightIcon />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </main>
