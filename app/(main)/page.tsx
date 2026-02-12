@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { Button } from '@/shared/components/ui/button'
-import { Grid } from '@/shared/components/props/background/Grid'
+import { GridBackground } from '@/shared/components/decorative/gridBackground'
 import { ArrowRightIcon, BookIcon } from 'lucide-react'
 
 export default function Home() {
   return (
-    <main className="container mx-auto flex h-screen items-center justify-center">
-      <Grid />
+    <main className="container mx-auto flex h-screen items-center justify-center px-4">
+      <GridBackground />
       <div className="flex flex-col items-center gap-6 text-center lg:gap-12">
         <h1 className="text-3xl font-bold lg:text-6xl">
           Orchestrate <span className="dark:text-shadow-primary text-shadow-lg">Your Business</span>{' '}
