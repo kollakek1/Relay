@@ -11,7 +11,9 @@ import {
 } from '@/shared/components/ui/card'
 import { Input } from '@/shared/components/ui/input'
 import { Label } from '@/shared/components/ui/label'
+import { Checkbox } from '@/shared/components/ui/checkbox'
 import { EyeClosedIcon, EyeIcon, Loader2Icon, LogInIcon } from 'lucide-react'
+
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoginFormData, loginSchema } from '@/features/auth/schemas/authSchema'
@@ -25,12 +27,14 @@ export function AuthCard() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
+      rememberMe: true,
     },
   })
 
@@ -38,11 +42,11 @@ export function AuthCard() {
     const response = await login(data)
 
     if (!response.success) {
-      toast.error(response.error || 'Ошибка входа', { position: 'bottom-right' })
+      toast.error(response.error || 'Ошибка входа', { position: 'top-right' })
       return
     }
 
-    toast.success('Добро пожаловать!', { position: 'bottom-right' })
+    toast.success('Добро пожаловать!', { position: 'top-right' })
   }
 
   return (
@@ -93,6 +97,16 @@ export function AuthCard() {
               {errors.password && (
                 <p className="text-destructive text-sm">{errors.password.message}</p>
               )}
+            </div>
+
+            <div className="flex w-full items-center justify-end gap-2">
+              <p>Запомнить меня</p>
+              <Checkbox
+                onCheckedChange={(checked) => {
+                  setValue('rememberMe', checked as boolean)
+                }}
+                className="mt-1"
+              />
             </div>
           </div>
         </CardContent>
