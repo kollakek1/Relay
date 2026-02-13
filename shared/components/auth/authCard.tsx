@@ -100,7 +100,7 @@ export function AuthCard() {
             </div>
 
             <div className="flex w-full items-center justify-end gap-2">
-              <p>Запомнить меня</p>
+              <p>Remember Me</p>
               <Checkbox
                 onCheckedChange={(checked) => {
                   setValue('rememberMe', checked as boolean)

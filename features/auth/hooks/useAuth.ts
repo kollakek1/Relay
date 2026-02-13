@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 export const useAuth = () => {
   const router = useRouter()
   const [authState, setAuthState] = useState<AuthState>({
-    user: null,
+    user: null, //Нужно будет перенести в useUser
     session: null,
     isLoading: true,
     isAuthenticated: false,
