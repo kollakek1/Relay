@@ -1,0 +1,18 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "prisma.showPrismaDataPlatformNotification": false,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "sqltools.connections": [
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "driver": "PostgreSQL",
+      "name": "Local DB",
+      "database": "postgres",
+      "username": "postgres",
+      "connectString": "postgres://postgres:postgres@localhost:51214/template1?sslmode=disable"
+    }
+  ]
+}

@@ -6,6 +6,7 @@
 .pnp.*
 .yarn/*
 .husky
+.vscode
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
