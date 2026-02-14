@@ -6,9 +6,30 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  role          Role      @default(USER)
+  permissions   Permission[]
   sessions      Session[]
   accounts      Account[]
 
   @@unique([email])
   @@map("user")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  category    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  users       User[]
+  
+  @@map("permission")
 }
