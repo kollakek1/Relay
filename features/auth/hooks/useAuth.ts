@@ -4,122 +4,97 @@ import { AuthState } from '../types/authTypes'
 import { LoginFormData } from '../schemas/authSchema'
 import { authClient } from '@/shared/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { useAuthStore } from '../stores/useAuthStore'
+import { useUserStore } from '../../user/stores/useUserStore'
+import { useSessionStore } from '../stores/useSessionsStore'
 
 export const useAuth = () => {
   const router = useRouter()
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null, //Нужно будет перенести в useUser
-    session: null,
-    isLoading: true,
-    isAuthenticated: false,
-    error: null,
-  })
+
+  const { isAuthenticated, isLoading, isInitialized, error } = useAuthStore()
+  const { setAuthenticated, setLoading, setInitialized, setError } = useAuthStore()
+  const { user, setUser, clearUser } = useUserStore()
+  const { session, setSession, clearSession } = useSessionStore()
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        setAuthState((prev) => ({ ...prev, isLoading: true, error: null }))
+    const initialize = async () => {
+      if (isInitialized) return
 
+      setLoading(true)
+
+      try {
         const { data } = await authClient.getSession()
 
         if (data?.session && data?.user) {
-          setAuthState({
-            user: data.user,
-            session: data.session,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          })
+          setUser(data.user)
+          setSession(data.session)
+          setAuthenticated(true)
         } else {
-          setAuthState({
-            user: null,
-            session: null,
-            isAuthenticated: false,
-            isLoading: false,
-            error: null,
-          })
+          clearUser()
+          clearSession()
+          setAuthenticated(false)
         }
       } catch (error) {
         console.error('Auth check error:', error)
-        setAuthState({
-          user: null,
-          session: null,
-          isAuthenticated: false,
-          isLoading: false,
-          error: 'Ошибка проверки авторизации',
-        })
+        clearUser()
+        clearSession()
+        setAuthenticated(false)
+        setError('Auth check failed')
+      } finally {
+        setLoading(false)
+        setInitialized(true)
       }
     }
 
-    checkAuth()
-  }, [])
+    initialize()
+  }, [isInitialized])
 
-  const login = useCallback(
-    async (credentials: LoginFormData) => {
-      try {
-        setAuthState((prev) => ({ ...prev, isLoading: true, error: null }))
+  const login = async (credentials: LoginFormData) => {
+    setLoading(true)
+    setError(null)
 
-        const { data, error } = await authClient.signIn.email({
-          email: credentials.email,
-          password: credentials.password,
-          rememberMe: credentials.rememberMe ?? false,
-        })
+    try {
+      const { data, error } = await authClient.signIn.email({
+        email: credentials.email,
+        password: credentials.password,
+        rememberMe: credentials.rememberMe ?? false,
+      })
 
-        if (error) {
-          throw new Error(error.message || 'Ошибка входа')
-        }
+      if (error) {
+        throw new Error(error.message || 'Login failed')
+      }
 
-        if (data) {
-          const sessionResponse = await authClient.getSession()
+      if (data) {
+        const sessionResponse = await authClient.getSession()
 
-          if (sessionResponse.data?.session) {
-            setAuthState({
-              user: sessionResponse.data.user,
-              session: sessionResponse.data.session,
-              isAuthenticated: true,
-              isLoading: false,
-              error: null,
-            })
-
-            router.push('/dashboard')
-            return { success: true, data: { user: data, session: sessionResponse.data.session } }
-          }
-
-          setAuthState({
-            user: data.user,
-            session: null,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          })
+        if (sessionResponse.data?.session && sessionResponse.data?.user) {
+          setUser(sessionResponse.data.user)
+          setSession(sessionResponse.data.session)
+          setAuthenticated(true)
+          setLoading(false)
 
           router.push('/dashboard')
-          return { success: true, data: { user: data } }
+          return { success: true }
         }
-
-        throw new Error('Не удалось войти')
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Ошибка входа'
-        setAuthState((prev) => ({
-          ...prev,
-          isLoading: false,
-          error: errorMessage,
-        }))
-        return { success: false, error: errorMessage }
       }
-    },
-    [router]
-  )
+
+      throw new Error('Login failed')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Login failed'
+      setError(errorMessage)
+      setLoading(false)
+      return { success: false, error: errorMessage }
+    }
+  }
 
   return {
-    // Стейты
-    user: authState.user,
-    session: authState.session,
-    isLoading: authState.isLoading,
-    isAuthenticated: authState.isAuthenticated,
-    error: authState.error,
+    user,
+    session,
+    isAuthenticated,
+    isLoading,
+    isInitialized,
+    error,
 
-    //Акшены
     login,
   }
 }
