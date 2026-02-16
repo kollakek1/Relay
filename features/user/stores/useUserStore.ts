@@ -5,14 +5,6 @@ import { authClient } from '@/shared/lib/auth-client'
 import { Role } from '@/features/permission/types/permissionTypes'
 import { User } from '../../../prisma/generated/prisma/client'
 
-export interface UserWithPermissions extends Omit<User, 'role'> {
-  role: Role
-  permissions: {
-    id: string
-    name: string
-  }[]
-}
-
 export interface UpdateProfileData {
   name?: string
   image?: string
