@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { devtools } from 'zustand/middleware'
-import type { User } from 'better-auth/client'
 import { authClient } from '@/shared/lib/auth-client'
 import { Role } from '@/features/permission/types/permissionTypes'
+import { User } from '../../../prisma/generated/prisma/client'
 
 export interface UserWithPermissions extends Omit<User, 'role'> {
   role: Role
@@ -20,11 +20,11 @@ export interface UpdateProfileData {
 }
 
 export interface UserState {
-  user: User | null //UserWithPermissions
+  user: User | null
   isLoading: boolean
   error: string | null
 
-  setUser: (user: User | null) => void //UserWithPermissions
+  setUser: (user: User | null) => void
   updateProfile: (data: UpdateProfileData) => Promise<void>
   clearUser: () => void
   clearError: () => void
@@ -90,6 +90,6 @@ export const useUserStore = create<UserState>()(
 )
 
 export const selectUser = (state: UserState) => state.user
-// export const selectUserRole = (state: UserState) => state.user?.role
+export const selectUserRole = (state: UserState) => state.user?.role
 export const selectIsLoading = (state: UserState) => state.isLoading
 export const selectError = (state: UserState) => state.error

@@ -11,4 +11,17 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: false,
   },
+  user: {
+    additionalFields: {
+      role: {
+        type: 'string',
+        required: false,
+        defaultValue: 'USER',
+        input: false,
+      },
+    },
+  },
+  advanced: {
+    cookiePrefix: 'relay',
+  },
 })

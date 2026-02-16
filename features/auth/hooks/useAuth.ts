@@ -1,12 +1,12 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
-import { AuthState } from '../types/authTypes'
-import { LoginFormData } from '../schemas/authSchema'
+import { useEffect } from 'react'
+import { LoginFormData } from '@/features/auth/schemas/authSchema'
 import { authClient } from '@/shared/lib/auth-client'
 import { useRouter } from 'next/navigation'
-import { useAuthStore } from '../stores/useAuthStore'
-import { useUserStore } from '../../user/stores/useUserStore'
-import { useSessionStore } from '../stores/useSessionsStore'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
+import { useUserStore } from '@/features/user/stores/useUserStore'
+import { useSessionStore } from '@/features/auth/stores/useSessionsStore'
+import { User } from '@/prisma/generated/prisma/client'
 
 export const useAuth = () => {
   const router = useRouter()
@@ -26,7 +26,7 @@ export const useAuth = () => {
         const { data } = await authClient.getSession()
 
         if (data?.session && data?.user) {
-          setUser(data.user)
+          setUser(data.user as User)
           setSession(data.session)
           setAuthenticated(true)
         } else {
@@ -47,7 +47,17 @@ export const useAuth = () => {
     }
 
     initialize()
-  }, [isInitialized])
+  }, [
+    isInitialized,
+    setLoading,
+    setUser,
+    setSession,
+    setAuthenticated,
+    clearUser,
+    clearSession,
+    setError,
+    setInitialized,
+  ])
 
   const login = async (credentials: LoginFormData) => {
     setLoading(true)
@@ -68,7 +78,7 @@ export const useAuth = () => {
         const sessionResponse = await authClient.getSession()
 
         if (sessionResponse.data?.session && sessionResponse.data?.user) {
-          setUser(sessionResponse.data.user)
+          setUser(sessionResponse.data.user as User)
           setSession(sessionResponse.data.session)
           setAuthenticated(true)
           setLoading(false)

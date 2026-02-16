@@ -26,13 +26,13 @@ interface UsePermissionsReturn {
 export function usePermissions(): UsePermissionsReturn {
   const { user } = useUserStore()
 
-  const role = user?.role || null
+  const role = user?.role as Role
 
   const permissions = useMemo(() => {
     if (!user) return []
 
     const rolePermissions = role ? rolesConfig[role as Role]?.defaultPermissions || [] : []
-    const customPermissions = user.permissions?.map((p: { name: string }) => p.name) || []
+    const customPermissions = user.permissions || []
 
     return [...new Set([...rolePermissions, ...customPermissions])]
   }, [user, role])
