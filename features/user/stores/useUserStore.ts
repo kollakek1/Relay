@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { devtools } from 'zustand/middleware'
 import { authClient } from '@/shared/lib/auth-client'
-import { Role } from '@/features/permission/types/permissionTypes'
 import { User } from '../../../prisma/generated/prisma/client'
 
 export interface UpdateProfileData {
