@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+    <img src="https://raw.githubusercontent.com/kollakek1/Relay/refs/heads/main/public/banner.png">
+<br />
 
-## Getting Started
+<h1>⚡ RELAY</h1>
 
-First, run the development server:
+<p>
+    <b>The Enterprise-Grade Workflow Engine for Modern Teams.</b>
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<p>
+    <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
+</p>
+</div>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Overview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Relay** is a high-performance, open-source workflow engine designed to handle complex business logic with ease. Unlike standard task trackers, Relay focuses on the **flow**—moving tasks through strictly defined pipelines, ensuring that the right people do the right work at the right time.
 
-## Learn More
+## ✨ Key Features
 
-To learn more about Next.js, take a look at the following resources:
+- 🏗 **Dynamic Workflow Builder:** Create custom pipelines with as many stages as your business needs.
+- 🔐 **Role-Based Access (RBAC):** Bind specific stages to specific roles (Designers, Developers, Managers).
+- 📦 **The Task Pool:** "Claim" system where eligible team members pick up tasks from a shared queue.
+- ⚡ **Electric Glass UI:** A stunning, high-performance dark-mode interface built with `shadcn/ui`.
+- 🤖 **Telegram Integration:** Get real-time notifications when a task lands in your department's pool.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠 Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript (Strict)
+- **Database:** PostgreSQL + Prisma ORM
+- **Auth:** Better-Auth (SSO & Credentials)
+- **UI:** Tailwind CSS + Radix UI + Lucide Icons
 
-## Deploy on Vercel
+## 🏁 Quick Start
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/kollakek1/relay.git
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm i
+   ```
+3. **Setup Environment:**
+   Create a `.env` file and add your `DATABASE_URL` and `BASE_URL`.
+4. **Initialize Database & Seed Root:**
+   ```bash
+   npx prisma db push
+   npx prisma db seed
+   ```
+5. **Run the engine:**
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<div align="center"> Developed with ❤️ by <b>kollakek</b> </div>
