@@ -27,6 +27,7 @@ async function main() {
   })
 
   console.log('Админ аккаунт создан')
+
   console.log('Логин: ' + rootMail)
   console.log('Пароль: ' + rootPassword)
 }
