@@ -15,9 +15,9 @@ const SettingsPage = () => {
   }
 
   return (
-    <main className="mx-auto w-full max-w-4xl space-y-10 px-6 py-10 lg:p-10">
+    <main className="mx-auto w-full max-w-4xl space-y-10 px-6 py-10 lg:p-8">
       <header className="space-y-1">
-        <h1 className="text-foreground text-4xl font-bold tracking-tight lg:text-5xl">Settings</h1>
+        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">Settings</h1>
         <p className="text-muted-foreground text-lg">
           Manage your account settings and preferences.
         </p>
