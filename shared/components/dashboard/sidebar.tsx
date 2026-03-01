@@ -36,32 +36,32 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 
 const navItems = [
   {
-    title: 'Главная',
+    title: 'Home',
     href: '/dashboard',
     icon: Home,
   },
   {
-    title: 'Процессы',
+    title: 'Processes',
     href: '/dashboard/processes',
     icon: Workflow,
   },
   {
-    title: 'Задачи',
+    title: 'Tasks',
     href: '/dashboard/tasks',
     icon: CheckSquare,
   },
   {
-    title: 'Документы',
+    title: 'Documents',
     href: '/dashboard/documents',
     icon: FileText,
   },
   {
-    title: 'Команда',
+    title: 'Team',
     href: '/dashboard/team',
     icon: Users,
   },
   {
-    title: 'Настройки',
+    title: 'Settings',
     href: '/dashboard/settings',
     icon: Settings,
   },
@@ -78,7 +78,7 @@ export function DashboardSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Меню</SidebarGroupLabel>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
@@ -110,14 +110,9 @@ export function DashboardSidebar() {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-[--radix-dropdown-menu-trigger-width]">
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Настройки
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Выйти
+                  <LogOut />
+                  Log Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

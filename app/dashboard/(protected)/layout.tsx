@@ -18,7 +18,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     <>
       <SidebarProvider>
         <DashboardSidebar></DashboardSidebar>
-        <SidebarTrigger className="mt-2 ml-2"></SidebarTrigger>
+        <SidebarTrigger className="fixed mt-2 ml-2 lg:hidden"></SidebarTrigger>
         {children}
       </SidebarProvider>
     </>
