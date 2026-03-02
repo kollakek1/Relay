@@ -1,5 +1,3 @@
-import React from 'react'
-
 const page = () => {
   return (
     <main className="mx-auto w-full space-y-10 px-6 py-10 lg:p-8">
