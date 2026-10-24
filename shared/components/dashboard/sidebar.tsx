@@ -37,6 +37,8 @@ import {
   HomeIcon,
   InboxIcon,
   LogOutIcon,
+  SearchIcon,
+  BarChart3Icon,
   SettingsIcon,
   UsersIcon,
   WorkflowIcon,
@@ -55,10 +57,12 @@ import { Loader2Icon } from 'lucide-react'
 
 const navItems = [
   { title: 'Home', href: '/dashboard', icon: HomeIcon },
+  { title: 'Search', href: '/dashboard/search', icon: SearchIcon },
   { title: 'Workflows', href: '/dashboard/workflows', icon: WorkflowIcon },
   { title: 'Tasks', href: '/dashboard/tasks', icon: CheckSquareIcon },
   { title: 'Task Pool', href: '/dashboard/pool', icon: InboxIcon },
   { title: 'Instances', href: '/dashboard/instances', icon: BoxesIcon },
+  { title: 'Analytics', href: '/dashboard/analytics', icon: BarChart3Icon },
   { title: 'Team', href: '/dashboard/team', icon: UsersIcon },
   { title: 'Notifications', href: '/dashboard/notifications', icon: BellIcon },
   { title: 'Settings', href: '/dashboard/settings', icon: SettingsIcon },

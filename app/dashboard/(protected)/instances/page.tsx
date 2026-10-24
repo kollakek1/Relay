@@ -3,10 +3,11 @@ import { listInstances } from '@/features/workflow/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { EmptyState } from '@/shared/components/empty-state'
 import { Badge } from '@/shared/components/ui/badge'
+import { Button } from '@/shared/components/ui/button'
 import { Progress } from '@/shared/components/ui/progress'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table'
 import { formatDateTime } from '@/shared/lib/format'
-import { BoxesIcon } from 'lucide-react'
+import { BoxesIcon, DownloadIcon } from 'lucide-react'
 
 const STATUS_VARIANT = {
   RUNNING: 'default',
@@ -20,7 +21,18 @@ export default async function InstancesPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
-      <PageHeader title="Process instances" description="Every run of a published workflow." />
+      <PageHeader
+        title="Process instances"
+        description="Every run of a published workflow."
+        actions={
+          <Button variant="outline" size="sm" asChild>
+            <a href="/api/export?kind=instances" download>
+              <DownloadIcon />
+              Export CSV
+            </a>
+          </Button>
+        }
+      />
 
       {instances.length === 0 ? (
         <EmptyState
