@@ -89,10 +89,10 @@ blocked by a missing external service is documented with the reason.
 | A — Audit & roadmap | ✅ done |
 | B — Security & foundation | ✅ done |
 | C — Organizations & teams | ✅ done |
+| H — Analytics, search, export | ✅ done |
+| I — DX & operations | 🟡 partial (CI added; E2E pending) |
 | D — Workflow Engine V2 | planned |
 | E — Tasks & approvals | planned |
 | F — Serverless automation | planned |
 | G — API & webhooks | planned |
-| H — Analytics, search, export | planned |
-| I — DX & operations | planned |
 | J — Stabilization | planned |
