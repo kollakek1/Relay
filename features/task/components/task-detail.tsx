@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog'
 import { useAction } from '@/shared/hooks/useAction'
+import { useT } from '@/shared/i18n/provider'
 import { formatDateTime, formatRelativeTime } from '@/shared/lib/format'
 import {
   addCommentAction,
@@ -40,7 +41,7 @@ import {
   transitionTaskAction,
   updateTaskAction,
 } from '@/features/task/actions'
-import { PRIORITY_LABEL, TaskPriorityBadge, TaskStatusBadge } from './task-badges'
+import { PRIORITY_KEY, TaskPriorityBadge, TaskStatusBadge } from './task-badges'
 import type { WorkflowFormField } from '@/features/workflow/server/engine'
 import { Checkbox } from '@/shared/components/ui/checkbox'
 import {
@@ -148,6 +149,7 @@ export function TaskDetail({
   canDecide: boolean
 }) {
   const router = useRouter()
+  const t = useT()
   const { isPending, run } = useAction()
   const [comment, setComment] = useState('')
   const [priority, setPriority] = useState<TaskPriority>(task.priority)
@@ -524,9 +526,9 @@ export function TaskDetail({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {(Object.keys(PRIORITY_LABEL) as TaskPriority[]).map((value) => (
+                  {(Object.keys(PRIORITY_KEY) as TaskPriority[]).map((value) => (
                     <SelectItem key={value} value={value}>
-                      {PRIORITY_LABEL[value]}
+                      {t(PRIORITY_KEY[value])}
                     </SelectItem>
                   ))}
                 </SelectContent>

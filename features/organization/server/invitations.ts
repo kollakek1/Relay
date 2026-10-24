@@ -255,16 +255,35 @@ export async function acceptInvitation(userId: string, userEmail: string, token:
   }
 
   return prisma.$transaction(async (tx) => {
+    // Atomically flip PENDING → ACCEPTED. Two concurrent accepts: exactly one
+    // wins the update; the loser either re-reads the winner's result
+    // (idempotent, same user) or is rejected. The onboarding membership upsert
+    // therefore happens at most once per invitation lifecycle.
+    const claimed = await tx.invitation.updateMany({
+      where: { id: invitation.id, status: 'PENDING', expiresAt: { gt: new Date() } },
+      data: { status: 'ACCEPTED', acceptedAt: new Date(), acceptedById: userId },
+    })
+
+    if (claimed.count === 0) {
+      const current = await tx.invitation.findUniqueOrThrow({
+        where: { id: invitation.id },
+        select: { status: true, acceptedById: true, organizationId: true },
+      })
+      if (current.status === 'ACCEPTED' && current.acceptedById === userId) {
+        return {
+          organizationId: current.organizationId,
+          organizationName: invitation.organization.name,
+        }
+      }
+      throw invalid('This invitation has already been used')
+    }
+
     await tx.membership.upsert({
       where: {
         organizationId_userId: { organizationId: invitation.organizationId, userId },
       },
       create: { organizationId: invitation.organizationId, userId, role: invitation.role },
       update: {},
-    })
-    await tx.invitation.update({
-      where: { id: invitation.id },
-      data: { status: 'ACCEPTED', acceptedAt: new Date(), acceptedById: userId },
     })
     await recordAudit(tx, {
       organizationId: invitation.organizationId,

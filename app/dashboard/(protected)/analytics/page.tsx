@@ -117,9 +117,12 @@ export default async function AnalyticsPage() {
                   </TableHeader>
                   <TableBody>
                     {bottlenecks.map((step) => (
-                      <TableRow key={step.stepOrder}>
+                      <TableRow key={`${step.workflowId}:${step.stepOrder}`}>
                         <TableCell className="font-medium">
                           #{step.stepOrder} {step.stepName}
+                          <span className="text-muted-foreground ml-2 text-xs">
+                            {step.workflowName}
+                          </span>
                         </TableCell>
                         <TableCell>{step.samples}</TableCell>
                         <TableCell>{formatDuration(step.avgDurationMs)}</TableCell>

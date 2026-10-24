@@ -6,13 +6,13 @@ on:
   pull_request:
 
 # CI never uses production secrets. It runs against a throwaway Postgres
-# service container provisioned for the job.
+# service container provisioned for the job. No seed credentials are set: the
+# suite creates its own users, and the seed job is exercised by unit tests that
+# assert it refuses unsafe configuration.
 env:
   DATABASE_URL: postgres://relay:relay@localhost:5432/relay_test
   BASE_URL: http://localhost:3000
   BETTER_AUTH_SECRET: ci-only-secret-ci-only-secret-0123456789
-  ROOT_EMAIL: admin@relay.com
-  ROOT_PASSWORD: rootroot
   HUSKY: '0'
   NEXT_TELEMETRY_DISABLED: '1'
 
@@ -43,13 +43,18 @@ jobs:
           node-version: 24
           cache: npm
 
+      # `postinstall` regenerates the Prisma client from prisma/schema, which is
+      # why the generated client is not committed.
       - name: Install dependencies
         run: npm ci
+
+      - name: Validate Prisma schema
+        run: npx prisma validate
 
       - name: Generate Prisma client
         run: npx prisma generate
 
-      - name: Apply migrations
+      - name: Apply migrations (test database)
         run: npx prisma migrate deploy
 
       - name: Lint
@@ -58,8 +63,56 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
+      - name: Validate OpenAPI spec
+        run: npm run api:check
+
+      - name: Check translation completeness
+        run: npm run i18n:check
+
       - name: Unit & integration tests
         run: npm test
 
       - name: Production build
         run: npm run build
+
+  # Optional browser smoke test. Enable by setting the repository variable
+  # RUN_E2E=true; it starts the app against the CI database and drives a full
+  # workflow through Playwright.
+  e2e:
+    if: ${{ vars.RUN_E2E == 'true' }}
+    runs-on: ubuntu-latest
+    needs: verify
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: relay
+          POSTGRES_PASSWORD: relay
+          POSTGRES_DB: relay_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U relay"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://relay:relay@localhost:5432/relay_e2e
+      BASE_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: ci-only-secret-ci-only-secret-0123456789
+      HUSKY: '0'
+      NEXT_TELEMETRY_DISABLED: '1'
+      E2E: '1'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx prisma migrate deploy
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

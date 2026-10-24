@@ -13,6 +13,7 @@ import {
 import {
   createAutomationRule,
   deleteAutomationRule,
+  requeueFailedAutomationRuns,
   setAutomationRuleEnabled,
 } from './server/service'
 
@@ -50,6 +51,19 @@ export async function deleteAutomationAction(input: unknown): Promise<ActionResu
     await deleteAutomationRule(ctx, id)
     revalidatePath('/dashboard/settings')
     return ok(undefined)
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+/** Admin recovery: re-queue every failed automation run in the workspace. */
+export async function requeueFailedAutomationsAction(): Promise<ActionResult<{ count: number }>> {
+  try {
+    const ctx = await requireContext()
+    await rateLimit('automation:requeue', ctx.userId, RATE_LIMITS.orgMutate)
+    const count = await requeueFailedAutomationRuns(ctx)
+    revalidatePath('/dashboard/settings')
+    return ok({ count })
   } catch (error) {
     return fail(error)
   }

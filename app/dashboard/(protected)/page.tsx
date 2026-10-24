@@ -8,6 +8,8 @@ import { EmptyState } from '@/shared/components/empty-state'
 import { Card, CardContent, CardHeader } from '@/shared/components/ui/card'
 import { cn } from '@/shared/lib/utils'
 import { formatDate, formatRelativeTime, isOverdue } from '@/shared/lib/format'
+import { getTranslator } from '@/shared/i18n/server'
+import type { MessageKey } from '@/shared/i18n/translate'
 import {
   AlertTriangleIcon,
   ArrowRightIcon,
@@ -17,34 +19,35 @@ import {
   ListChecksIcon,
 } from 'lucide-react'
 
-const ACTIVITY_TEXT: Record<string, string> = {
-  CREATED: 'created',
-  CLAIMED: 'claimed',
-  ASSIGNED: 'was assigned',
-  UNASSIGNED: 'was unassigned',
-  STATUS_CHANGED: 'changed status of',
-  DUE_CHANGED: 'changed the due date of',
-  COMMENTED: 'commented on',
+const ACTIVITY_KEY: Record<string, MessageKey> = {
+  CREATED: 'activity.created',
+  CLAIMED: 'activity.claimed',
+  ASSIGNED: 'activity.assigned',
+  UNASSIGNED: 'activity.unassigned',
+  STATUS_CHANGED: 'activity.statusChanged',
+  DUE_CHANGED: 'activity.dueChanged',
+  COMMENTED: 'activity.commented',
 }
 
 export default async function DashboardPage() {
   const ctx = await requireContext()
+  const { t } = await getTranslator()
   const [user, data] = await Promise.all([getCurrentUser(), getDashboard(ctx)])
   const { stats, myOpenTasks, recentActivity } = data
 
   const cards = [
-    { label: 'My tasks', value: stats.myTasks, icon: ListChecksIcon, href: '/dashboard/tasks?assignee=me' },
-    { label: 'Available in pool', value: stats.pendingPool, icon: InboxIcon, href: '/dashboard/pool' },
-    { label: 'Completed today', value: stats.completedToday, icon: CheckCircle2Icon, href: '/dashboard/tasks?assignee=me&status=DONE' },
-    { label: 'Active instances', value: stats.activeInstances, icon: ClockIcon, href: '/dashboard/instances' },
-    { label: 'Overdue', value: stats.overdue, icon: AlertTriangleIcon, href: '/dashboard/tasks?assignee=me' },
+    { label: t('app.myTasks'), value: stats.myTasks, icon: ListChecksIcon, href: '/dashboard/tasks?assignee=me' },
+    { label: t('app.availableInPool'), value: stats.pendingPool, icon: InboxIcon, href: '/dashboard/pool' },
+    { label: t('app.completedToday'), value: stats.completedToday, icon: CheckCircle2Icon, href: '/dashboard/tasks?assignee=me&status=DONE' },
+    { label: t('app.activeInstances'), value: stats.activeInstances, icon: ClockIcon, href: '/dashboard/instances' },
+    { label: t('app.overdue'), value: stats.overdue, icon: AlertTriangleIcon, href: '/dashboard/tasks?assignee=me' },
   ]
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
       <PageHeader
-        title={`Welcome back, ${user?.name?.split(' ')[0] ?? 'there'}`}
-        description="Here is what is happening across your workspace."
+        title={`${t('app.greeting')}, ${user?.name?.split(' ')[0] ?? ''}`.trim()}
+        description={t('app.dashboardSubtitle')}
       />
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-5">
@@ -66,20 +69,20 @@ export default async function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <h2 className="text-lg font-semibold">My open tasks</h2>
+            <h2 className="text-lg font-semibold">{t('app.myOpenTasks')}</h2>
             <Link
               href="/dashboard/tasks?assignee=me"
               className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
             >
-              View all <ArrowRightIcon className="size-4" />
+              {t('app.viewAll')} <ArrowRightIcon className="size-4" />
             </Link>
           </CardHeader>
           <CardContent className="space-y-3">
             {myOpenTasks.length === 0 ? (
               <EmptyState
                 icon={ListChecksIcon}
-                title="No open tasks"
-                description="Claim a task from the pool to get started."
+                title={t('app.noOpenTasks')}
+                description={t('app.noOpenTasksBody')}
                 className="py-8"
               />
             ) : (
@@ -92,7 +95,7 @@ export default async function DashboardPage() {
                   <div className="space-y-1">
                     <p className="font-medium">{task.name}</p>
                     <p className="text-muted-foreground text-sm">
-                      {task.instance.workflow?.name ?? 'Workflow'}
+                      {task.instance.workflow?.name ?? t('app.workflowFallback')}
                       {task.dueAt && (
                         <span
                           className={cn(
@@ -100,7 +103,7 @@ export default async function DashboardPage() {
                             isOverdue(task.dueAt) && 'text-destructive font-medium'
                           )}
                         >
-                          Due {formatDate(task.dueAt)}
+                          {t('app.due')} {formatDate(task.dueAt)}
                         </span>
                       )}
                     </p>
@@ -114,20 +117,20 @@ export default async function DashboardPage() {
 
         <Card className="max-h-min">
           <CardHeader>
-            <h2 className="text-lg font-semibold">Recent activity</h2>
+            <h2 className="text-lg font-semibold">{t('app.recentActivity')}</h2>
           </CardHeader>
           <CardContent className="space-y-4">
             {recentActivity.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No activity yet.</p>
+              <p className="text-muted-foreground text-sm">{t('app.noActivity')}</p>
             ) : (
               recentActivity.map((event) => (
                 <div key={event.id} className="flex gap-3">
                   <div className="bg-primary mt-1.5 size-2 shrink-0 rounded-full" />
                   <div className="min-w-0 space-y-1">
                     <p className="text-sm">
-                      <span className="font-medium">{event.actor?.name ?? 'System'}</span>{' '}
+                      <span className="font-medium">{event.actor?.name ?? t('app.system')}</span>{' '}
                       <span className="text-muted-foreground">
-                        {ACTIVITY_TEXT[event.type] ?? 'updated'}{' '}
+                        {t(ACTIVITY_KEY[event.type] ?? 'app.updated')}{' '}
                       </span>
                       <Link
                         href={`/dashboard/tasks/${event.task.id}`}

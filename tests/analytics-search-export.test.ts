@@ -77,6 +77,55 @@ describe('analytics', () => {
     // The completed step appears as a bottleneck sample.
     expect(analytics.bottlenecks.some((b) => b.samples > 0)).toBe(true)
   })
+
+  it('keeps per-workflow overdue and bottlenecks isolated when step numbers collide', async () => {
+    const ctx = await createContext('OWNER')
+
+    const overdueFlow = await createWorkflow(ctx, { name: 'Overdue flow' })
+    await saveWorkflowDraft(ctx, {
+      workflowId: overdueFlow.id,
+      name: 'Overdue flow',
+      steps: [{ name: 'Shared step' }],
+    })
+    await publishWorkflow(ctx, overdueFlow.id)
+    const overdueInstance = await runInstance(ctx, overdueFlow.id)
+
+    const cleanFlow = await createWorkflow(ctx, { name: 'Clean flow' })
+    await saveWorkflowDraft(ctx, {
+      workflowId: cleanFlow.id,
+      name: 'Clean flow',
+      steps: [{ name: 'Shared step' }],
+    })
+    await publishWorkflow(ctx, cleanFlow.id)
+    const cleanInstance = await runInstance(ctx, cleanFlow.id)
+
+    const [overdueTask] = await prisma.task.findMany({ where: { instanceId: overdueInstance.id } })
+    await prisma.task.update({
+      where: { id: overdueTask.id },
+      data: { dueAt: new Date(Date.now() - 60 * 60 * 1000) },
+    })
+    const [cleanTask] = await prisma.task.findMany({ where: { instanceId: cleanInstance.id } })
+    await prisma.task.update({
+      where: { id: cleanTask.id },
+      data: { dueAt: new Date(Date.now() + 60 * 60 * 1000) },
+    })
+
+    const analytics = await getAnalytics(ctx)
+    const overdue = analytics.workflows.find((w) => w.workflowId === overdueFlow.id)!
+    const clean = analytics.workflows.find((w) => w.workflowId === cleanFlow.id)!
+
+    // The overdue workflow's rate must not leak into the clean workflow.
+    expect(overdue.overdueRate).toBe(1)
+    expect(clean.overdueRate).toBe(0)
+
+    // Both workflows have a step 1, but bottlenecks stay separated.
+    const stepOneWorkflows = analytics.bottlenecks
+      .filter((b) => b.stepOrder === 1)
+      .map((b) => b.workflowId)
+    expect(new Set(stepOneWorkflows).size).toBe(stepOneWorkflows.length)
+    expect(stepOneWorkflows).toContain(overdueFlow.id)
+    expect(stepOneWorkflows).toContain(cleanFlow.id)
+  })
 })
 
 describe('CSV export', () => {
@@ -104,5 +153,27 @@ describe('CSV export', () => {
     const foreign = await exportTasksCsv(ctxB)
     expect(foreign.rows).toBe(0)
     expect(foreign.csv).not.toContain('Setup accounts')
+  })
+
+  it('neutralises formula injection in attacker-controlled fields', async () => {
+    const ctx = await createContext('OWNER')
+    const workflow = await createWorkflow(ctx, { name: 'Injection' })
+    await saveWorkflowDraft(ctx, {
+      workflowId: workflow.id,
+      name: 'Injection',
+      steps: [{ name: 'Step' }],
+    })
+    await publishWorkflow(ctx, workflow.id)
+    const instance = await runInstance(ctx, workflow.id)
+    const [task] = await prisma.task.findMany({ where: { instanceId: instance.id } })
+    await prisma.task.update({
+      where: { id: task.id },
+      data: { name: '=HYPERLINK("http://evil.example","click")' },
+    })
+
+    const result = await exportTasksCsv(ctx)
+    // The dangerous value is prefixed with a spreadsheet text marker and quoted.
+    expect(result.csv).toContain(`'=HYPERLINK`)
+    expect(result.csv).not.toMatch(/(^|,)=HYPERLINK/)
   })
 })

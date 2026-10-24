@@ -63,24 +63,25 @@ _Scope: MVP threat model, controls actually implemented, and known limitations._
 - `DATABASE_URL`/`BETTER_AUTH_SECRET` are read from the environment; the Prisma
   client fails fast if `DATABASE_URL` is missing.
 
-## 7. Known limitations (accepted for the MVP)
+## 7. Known limitations (accepted)
 
-> Superseded in part by Relay V2. The V2 stages add: DB-backed rate limiting
-> (`shared/server/rate-limit.ts`), invitations with hashed single-use tokens,
-> multi-workspace support with a re-validated active-org cookie, an admin audit
-> trail (`org_audit_log`), structured redacting logs, and
-> `docs/THREAT_MODEL.md` + `docs/INCIDENT_RESPONSE.md`.
+> This section is kept honest: entries that have since been addressed are marked
+> **resolved** and point at the new control. The authoritative residual-risk list
+> is `docs/KNOWN_LIMITATIONS.md`.
 
-
-| Area | Limitation | Mitigation / next step |
+| Area | Status | Mitigation / next step |
 | --- | --- | --- |
-| Rate limiting | No per-IP/route throttling; the atomic claim prevents task duplication but not brute-force on auth endpoints | Add reverse-proxy/edge rate limiting; Better Auth rate-limit plugin |
-| SSL mode | The provided test URL uses `sslmode=require`, which current `pg` treats as `verify-full`; a future `pg` major switches semantics | Pin `sslmode=verify-full` (or `uselibpqstyle`) in production URLs |
-| Audit immutability | `TaskActivity` is append-only by convention, not by DB constraint | Restrict UPDATE/DELETE via DB roles or triggers if required |
-| Email verification | Disabled (`requireEmailVerification: false`) for the MVP | Enable with an email provider before public launch |
-| Session/2FA | Single-factor password only | Better Auth plugins (2FA, OAuth providers) |
-| Legacy RBAC | `features/permission/*` (client-only permission catalogue) and `features/user/repositories/userRepository.ts` remain in the tree but are **not** used for enforcement | Remove or repurpose when the permission matrix is finalized |
-| Dev transitive CVEs | `npm audit` reports 6 dev-only transitive advisories (build/lint tooling) | Track upstream; see `DEPENDENCY_AUDIT.md` §5 |
+| Rate limiting | **Resolved (V2).** DB-backed fixed-window limiting on mutation, invite, claim, search and export endpoints | Upgrade to a sliding window / token bucket for precise quotas |
+| SSRF on outbound requests | **Resolved (V2).** `shared/server/ssrf.ts` blocks non-http(s) schemes, credentials, private/reserved addresses (incl. after DNS resolution), non-standard ports and redirects | Close the DNS-rebinding TOCTOU with connect-time pinning or an egress proxy |
+| Cron secret handling | **Resolved (V2).** Bearer-only, constant-time, POST-only, never in a URL | — |
+| Default seed credentials | **Resolved (V2).** No defaults; weak/placeholder passwords refused; password never logged; demo data opt-in | — |
+| CSV formula injection | **Resolved (V2).** `features/export/server/csv.ts` neutralises formula-leading cells | — |
+| SSL mode | Open | Pin `sslmode=verify-full` in production URLs |
+| Audit immutability | Open | `org_audit_log` is append-only by convention, not by DB constraint |
+| Email verification | Open | Disabled (`requireEmailVerification: false`); enable with an email provider before a public launch |
+| Session / 2FA | Open | Single-factor password only; Better Auth plugins (2FA, OAuth) |
+| Translated dashboard surfaces | Open | App chrome, auth and the full public site/docs are EN+RU; deeper feature panels remain English-only (`docs/KNOWN_LIMITATIONS.md`) |
+| Dev transitive CVEs | Open | Track upstream; see `DEPENDENCY_AUDIT.md` §5 |
 
 ## 8. Verifying the boundaries
 
@@ -90,4 +91,32 @@ Run `npm test`. The suite asserts, among other things:
 - a MEMBER cannot manage workflows or members;
 - the last owner cannot be demoted and ADMINs cannot remove OWNERs;
 - invalid state transitions and cross-owner task actions are rejected;
-- concurrent claims elect exactly one winner.
+- concurrent claims elect exactly one winner;
+- cron endpoints reject query-string secrets and accept only bearer tokens;
+- the seed refuses weak/placeholder credentials and never logs them;
+- CSV exports neutralise formula injection without corrupting numbers/dates;
+- the SSRF guard blocks loopback/private/metadata targets and rebinding;
+- the outbox processes an event exactly once under parallel drains, recovers
+  expired leases, dead-letters exhausted work and can requeue it;
+- API keys enforce scopes, honour revocation and cannot read another tenant.
+
+## 9. V2 hardening summary
+
+The V2 pass (branch `v2/hardening`) closed the following classes of issue. Each
+is covered by a test; see `docs/PRODUCTION_HARDENING.md` for the full table.
+
+- **Seed**: no shipped defaults; explicit, validated credentials; no secret
+  logging; production refuses unsafe configuration.
+- **Cron**: `Authorization: Bearer` only, constant-time comparison, `POST`-only
+  state changes, failed runs release their idempotency key.
+- **Reliability**: atomic `SELECT … FOR UPDATE SKIP LOCKED` claims with leases,
+  bounded retries with backoff + jitter, explicit `PENDING`/`PROCESSING`/
+  `SUCCEEDED`/`FAILED` states, dead-letter + admin requeue, transactional
+  automation actions, idempotent fan-out. Delivery is at-least-once.
+- **Exports**: formula-injection-proof CSV.
+- **Analytics**: per-workflow overdue isolation; bottlenecks keyed by
+  `(workflowId, stepOrder)`.
+- **SSRF**: scheme/port/address policy with DNS resolve-then-check and bounded,
+  redirect-free requests.
+- **Invitations**: atomic single-use acceptance.
+- **Outbound secrets**: `CRON_SECRET` and API keys are never accepted from a URL.
