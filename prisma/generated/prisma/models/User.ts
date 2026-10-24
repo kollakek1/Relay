@@ -223,6 +223,7 @@ export type UserWhereInput = {
   decisions?: Prisma.TaskDecisionListRelationFilter
   apiKeys?: Prisma.ApiKeyListRelationFilter
   webhooks?: Prisma.WebhookEndpointListRelationFilter
+  templatesCreated?: Prisma.WorkflowTemplateListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   invitationsSent?: Prisma.InvitationListRelationFilter
   invitationsAccepted?: Prisma.InvitationListRelationFilter
@@ -252,6 +253,7 @@ export type UserOrderByWithRelationInput = {
   decisions?: Prisma.TaskDecisionOrderByRelationAggregateInput
   apiKeys?: Prisma.ApiKeyOrderByRelationAggregateInput
   webhooks?: Prisma.WebhookEndpointOrderByRelationAggregateInput
+  templatesCreated?: Prisma.WorkflowTemplateOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   invitationsSent?: Prisma.InvitationOrderByRelationAggregateInput
   invitationsAccepted?: Prisma.InvitationOrderByRelationAggregateInput
@@ -284,6 +286,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   decisions?: Prisma.TaskDecisionListRelationFilter
   apiKeys?: Prisma.ApiKeyListRelationFilter
   webhooks?: Prisma.WebhookEndpointListRelationFilter
+  templatesCreated?: Prisma.WorkflowTemplateListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   invitationsSent?: Prisma.InvitationListRelationFilter
   invitationsAccepted?: Prisma.InvitationListRelationFilter
@@ -343,6 +346,7 @@ export type UserCreateInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -372,6 +376,7 @@ export type UserUncheckedCreateInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -401,6 +406,7 @@ export type UserUpdateInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -430,6 +436,7 @@ export type UserUncheckedUpdateInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -775,6 +782,22 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
 }
 
+export type UserCreateNestedOneWithoutTemplatesCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTemplatesCreatedInput, Prisma.UserUncheckedCreateWithoutTemplatesCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTemplatesCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutTemplatesCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTemplatesCreatedInput, Prisma.UserUncheckedCreateWithoutTemplatesCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTemplatesCreatedInput
+  upsert?: Prisma.UserUpsertWithoutTemplatesCreatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTemplatesCreatedInput, Prisma.UserUpdateWithoutTemplatesCreatedInput>, Prisma.UserUncheckedUpdateWithoutTemplatesCreatedInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id: string
   name: string
@@ -797,6 +820,7 @@ export type UserCreateWithoutSessionsInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -825,6 +849,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -869,6 +894,7 @@ export type UserUpdateWithoutSessionsInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -897,6 +923,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -925,6 +952,7 @@ export type UserCreateWithoutAccountsInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -953,6 +981,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -997,6 +1026,7 @@ export type UserUpdateWithoutAccountsInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1025,6 +1055,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1053,6 +1084,7 @@ export type UserCreateWithoutApiKeysInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1081,6 +1113,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1125,6 +1158,7 @@ export type UserUpdateWithoutApiKeysInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1153,6 +1187,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1181,6 +1216,7 @@ export type UserCreateWithoutWebhooksInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1209,6 +1245,7 @@ export type UserUncheckedCreateWithoutWebhooksInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1253,6 +1290,7 @@ export type UserUpdateWithoutWebhooksInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1281,6 +1319,7 @@ export type UserUncheckedUpdateWithoutWebhooksInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1309,6 +1348,7 @@ export type UserCreateWithoutMembershipsInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1337,6 +1377,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1381,6 +1422,7 @@ export type UserUpdateWithoutMembershipsInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1409,6 +1451,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1438,6 +1481,7 @@ export type UserCreateWithoutInvitationsSentInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
   auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutActorInput
@@ -1466,6 +1510,7 @@ export type UserUncheckedCreateWithoutInvitationsSentInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
   auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -1499,6 +1544,7 @@ export type UserCreateWithoutInvitationsAcceptedInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutActorInput
@@ -1527,6 +1573,7 @@ export type UserUncheckedCreateWithoutInvitationsAcceptedInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -1571,6 +1618,7 @@ export type UserUpdateWithoutInvitationsSentInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutActorNestedInput
@@ -1599,6 +1647,7 @@ export type UserUncheckedUpdateWithoutInvitationsSentInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1638,6 +1687,7 @@ export type UserUpdateWithoutInvitationsAcceptedInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutActorNestedInput
@@ -1666,6 +1716,7 @@ export type UserUncheckedUpdateWithoutInvitationsAcceptedInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1694,6 +1745,7 @@ export type UserCreateWithoutAuditLogsInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1722,6 +1774,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1766,6 +1819,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1794,6 +1848,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1821,6 +1876,7 @@ export type UserCreateWithoutWorkflowsCreatedInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1849,6 +1905,7 @@ export type UserUncheckedCreateWithoutWorkflowsCreatedInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1893,6 +1950,7 @@ export type UserUpdateWithoutWorkflowsCreatedInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1921,6 +1979,7 @@ export type UserUncheckedUpdateWithoutWorkflowsCreatedInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1949,6 +2008,7 @@ export type UserCreateWithoutVersionsPublishedInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1977,6 +2037,7 @@ export type UserUncheckedCreateWithoutVersionsPublishedInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2021,6 +2082,7 @@ export type UserUpdateWithoutVersionsPublishedInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2049,6 +2111,7 @@ export type UserUncheckedUpdateWithoutVersionsPublishedInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2077,6 +2140,7 @@ export type UserCreateWithoutInstancesStartedInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -2105,6 +2169,7 @@ export type UserUncheckedCreateWithoutInstancesStartedInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2149,6 +2214,7 @@ export type UserUpdateWithoutInstancesStartedInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2177,6 +2243,7 @@ export type UserUncheckedUpdateWithoutInstancesStartedInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2205,6 +2272,7 @@ export type UserCreateWithoutTasksAssignedInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -2233,6 +2301,7 @@ export type UserUncheckedCreateWithoutTasksAssignedInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2266,6 +2335,7 @@ export type UserCreateWithoutTasksCreatedInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -2294,6 +2364,7 @@ export type UserUncheckedCreateWithoutTasksCreatedInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2338,6 +2409,7 @@ export type UserUpdateWithoutTasksAssignedInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2366,6 +2438,7 @@ export type UserUncheckedUpdateWithoutTasksAssignedInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2405,6 +2478,7 @@ export type UserUpdateWithoutTasksCreatedInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2433,6 +2507,7 @@ export type UserUncheckedUpdateWithoutTasksCreatedInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2461,6 +2536,7 @@ export type UserCreateWithoutDecisionsInput = {
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -2489,6 +2565,7 @@ export type UserUncheckedCreateWithoutDecisionsInput = {
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2533,6 +2610,7 @@ export type UserUpdateWithoutDecisionsInput = {
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2561,6 +2639,7 @@ export type UserUncheckedUpdateWithoutDecisionsInput = {
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2589,6 +2668,7 @@ export type UserCreateWithoutActivitiesInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -2617,6 +2697,7 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2661,6 +2742,7 @@ export type UserUpdateWithoutActivitiesInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2689,6 +2771,7 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2717,6 +2800,7 @@ export type UserCreateWithoutCommentsInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -2745,6 +2829,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2789,6 +2874,7 @@ export type UserUpdateWithoutCommentsInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2817,6 +2903,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2846,6 +2933,7 @@ export type UserCreateWithoutNotificationsInput = {
   decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateCreateNestedManyWithoutCreatedByInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
   auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutActorInput
@@ -2874,6 +2962,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
   auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -2918,6 +3007,7 @@ export type UserUpdateWithoutNotificationsInput = {
   decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUpdateManyWithoutCreatedByNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutActorNestedInput
@@ -2946,6 +3036,139 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  templatesCreated?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
+  invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
+  auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutTemplatesCreatedInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.Role
+  permissions?: Prisma.UserCreatepermissionsInput | string[]
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  workflowsCreated?: Prisma.WorkflowCreateNestedManyWithoutCreatedByInput
+  versionsPublished?: Prisma.WorkflowVersionCreateNestedManyWithoutPublishedByInput
+  instancesStarted?: Prisma.ProcessInstanceCreateNestedManyWithoutStartedByInput
+  tasksAssigned?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
+  activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutCreatedByInput
+  webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutCreatedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
+  invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
+  auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutTemplatesCreatedInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.Role
+  permissions?: Prisma.UserCreatepermissionsInput | string[]
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  workflowsCreated?: Prisma.WorkflowUncheckedCreateNestedManyWithoutCreatedByInput
+  versionsPublished?: Prisma.WorkflowVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  instancesStarted?: Prisma.ProcessInstanceUncheckedCreateNestedManyWithoutStartedByInput
+  tasksAssigned?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
+  activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutCreatedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
+  auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutTemplatesCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTemplatesCreatedInput, Prisma.UserUncheckedCreateWithoutTemplatesCreatedInput>
+}
+
+export type UserUpsertWithoutTemplatesCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTemplatesCreatedInput, Prisma.UserUncheckedUpdateWithoutTemplatesCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTemplatesCreatedInput, Prisma.UserUncheckedCreateWithoutTemplatesCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTemplatesCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTemplatesCreatedInput, Prisma.UserUncheckedUpdateWithoutTemplatesCreatedInput>
+}
+
+export type UserUpdateWithoutTemplatesCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  permissions?: Prisma.UserUpdatepermissionsInput | string[]
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  workflowsCreated?: Prisma.WorkflowUpdateManyWithoutCreatedByNestedInput
+  versionsPublished?: Prisma.WorkflowVersionUpdateManyWithoutPublishedByNestedInput
+  instancesStarted?: Prisma.ProcessInstanceUpdateManyWithoutStartedByNestedInput
+  tasksAssigned?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
+  activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutCreatedByNestedInput
+  webhooks?: Prisma.WebhookEndpointUpdateManyWithoutCreatedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
+  invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
+  auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTemplatesCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  permissions?: Prisma.UserUpdatepermissionsInput | string[]
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  workflowsCreated?: Prisma.WorkflowUncheckedUpdateManyWithoutCreatedByNestedInput
+  versionsPublished?: Prisma.WorkflowVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  instancesStarted?: Prisma.ProcessInstanceUncheckedUpdateManyWithoutStartedByNestedInput
+  tasksAssigned?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+  activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutCreatedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -2970,6 +3193,7 @@ export type UserCountOutputType = {
   decisions: number
   apiKeys: number
   webhooks: number
+  templatesCreated: number
   notifications: number
   invitationsSent: number
   invitationsAccepted: number
@@ -2990,6 +3214,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   decisions?: boolean | UserCountOutputTypeCountDecisionsArgs
   apiKeys?: boolean | UserCountOutputTypeCountApiKeysArgs
   webhooks?: boolean | UserCountOutputTypeCountWebhooksArgs
+  templatesCreated?: boolean | UserCountOutputTypeCountTemplatesCreatedArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   invitationsSent?: boolean | UserCountOutputTypeCountInvitationsSentArgs
   invitationsAccepted?: boolean | UserCountOutputTypeCountInvitationsAcceptedArgs
@@ -3100,6 +3325,13 @@ export type UserCountOutputTypeCountWebhooksArgs<ExtArgs extends runtime.Types.E
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountTemplatesCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WorkflowTemplateWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.NotificationWhereInput
 }
@@ -3149,6 +3381,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   decisions?: boolean | Prisma.User$decisionsArgs<ExtArgs>
   apiKeys?: boolean | Prisma.User$apiKeysArgs<ExtArgs>
   webhooks?: boolean | Prisma.User$webhooksArgs<ExtArgs>
+  templatesCreated?: boolean | Prisma.User$templatesCreatedArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   invitationsSent?: boolean | Prisma.User$invitationsSentArgs<ExtArgs>
   invitationsAccepted?: boolean | Prisma.User$invitationsAcceptedArgs<ExtArgs>
@@ -3207,6 +3440,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   decisions?: boolean | Prisma.User$decisionsArgs<ExtArgs>
   apiKeys?: boolean | Prisma.User$apiKeysArgs<ExtArgs>
   webhooks?: boolean | Prisma.User$webhooksArgs<ExtArgs>
+  templatesCreated?: boolean | Prisma.User$templatesCreatedArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   invitationsSent?: boolean | Prisma.User$invitationsSentArgs<ExtArgs>
   invitationsAccepted?: boolean | Prisma.User$invitationsAcceptedArgs<ExtArgs>
@@ -3232,6 +3466,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     decisions: Prisma.$TaskDecisionPayload<ExtArgs>[]
     apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
     webhooks: Prisma.$WebhookEndpointPayload<ExtArgs>[]
+    templatesCreated: Prisma.$WorkflowTemplatePayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     invitationsSent: Prisma.$InvitationPayload<ExtArgs>[]
     invitationsAccepted: Prisma.$InvitationPayload<ExtArgs>[]
@@ -3654,6 +3889,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   decisions<T extends Prisma.User$decisionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$decisionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskDecisionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   apiKeys<T extends Prisma.User$apiKeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webhooks<T extends Prisma.User$webhooksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$webhooksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  templatesCreated<T extends Prisma.User$templatesCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$templatesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkflowTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invitationsSent<T extends Prisma.User$invitationsSentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invitationsAccepted<T extends Prisma.User$invitationsAcceptedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$invitationsAcceptedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4398,6 +4634,30 @@ export type User$webhooksArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.WebhookEndpointScalarFieldEnum | Prisma.WebhookEndpointScalarFieldEnum[]
+}
+
+/**
+ * User.templatesCreated
+ */
+export type User$templatesCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkflowTemplate
+   */
+  select?: Prisma.WorkflowTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkflowTemplate
+   */
+  omit?: Prisma.WorkflowTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkflowTemplateInclude<ExtArgs> | null
+  where?: Prisma.WorkflowTemplateWhereInput
+  orderBy?: Prisma.WorkflowTemplateOrderByWithRelationInput | Prisma.WorkflowTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.WorkflowTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkflowTemplateScalarFieldEnum | Prisma.WorkflowTemplateScalarFieldEnum[]
 }
 
 /**

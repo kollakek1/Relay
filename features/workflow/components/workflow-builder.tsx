@@ -29,7 +29,6 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog'
 import { useAction } from '@/shared/hooks/useAction'
-import { formatDateTime } from '@/shared/lib/format'
 import type { ConditionOp, FormFieldType } from '@/features/workflow/server/engine'
 import {
   deleteWorkflowAction,
@@ -446,27 +445,6 @@ export function WorkflowBuilder({
             {workflow.status !== 'PUBLISHED' && (
               <p className="text-muted-foreground text-xs">Publish the workflow before starting instances.</p>
             )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Versions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {workflow.versions.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No published versions yet.</p>
-            ) : (
-              workflow.versions.map((version) => (
-                <div key={version.id} className="flex items-center justify-between text-sm">
-                  <span className="font-medium">v{version.version}</span>
-                  <span className="text-muted-foreground">{formatDateTime(version.publishedAt)}</span>
-                </div>
-              ))
-            )}
-            <p className="text-muted-foreground text-xs">
-              Published versions are immutable. Running instances keep their version even when you edit the draft.
-            </p>
           </CardContent>
         </Card>
 

@@ -6,7 +6,10 @@ import { fail, ok, type ActionResult } from '@/shared/server/errors'
 import { parseInput } from '@/shared/server/action-utils'
 import { rateLimit, RATE_LIMITS } from '@/shared/server/rate-limit'
 import {
+  createFromTemplateSchema,
   createWorkflowSchema,
+  draftFromVersionSchema,
+  saveAsTemplateSchema,
   saveWorkflowSchema,
   workflowIdSchema,
 } from './schemas/workflowSchema'
@@ -17,6 +20,11 @@ import {
   runInstance,
   saveWorkflowDraft,
 } from './server/service'
+import {
+  createWorkflowFromTemplate,
+  saveWorkflowAsTemplate,
+} from './server/templates'
+import { createDraftFromVersion } from './server/versioning'
 
 export async function createWorkflowAction(input: unknown): Promise<ActionResult<{ id: string }>> {
   try {
@@ -81,6 +89,50 @@ export async function runInstanceAction(input: unknown): Promise<ActionResult<{ 
     revalidatePath('/dashboard/instances')
     revalidatePath('/dashboard/tasks')
     return ok({ id: instance.id })
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function createFromTemplateAction(
+  input: unknown
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const ctx = await requireContext()
+    const data = parseInput(createFromTemplateSchema, input)
+    await rateLimit('workflow:template', ctx.userId, RATE_LIMITS.workflowMutate)
+    const workflow = await createWorkflowFromTemplate(ctx, data)
+    revalidatePath('/dashboard/workflows')
+    revalidatePath('/dashboard/templates')
+    return ok({ id: workflow.id })
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function saveAsTemplateAction(input: unknown): Promise<ActionResult<{ id: string }>> {
+  try {
+    const ctx = await requireContext()
+    const data = parseInput(saveAsTemplateSchema, input)
+    await rateLimit('workflow:save-template', ctx.userId, RATE_LIMITS.workflowMutate)
+    const template = await saveWorkflowAsTemplate(ctx, data)
+    revalidatePath('/dashboard/templates')
+    return ok({ id: template.id })
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function createDraftFromVersionAction(
+  input: unknown
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const ctx = await requireContext()
+    const data = parseInput(draftFromVersionSchema, input)
+    await rateLimit('workflow:from-version', ctx.userId, RATE_LIMITS.workflowMutate)
+    const result = await createDraftFromVersion(ctx, data.workflowId, data.version)
+    revalidatePath(`/dashboard/workflows/${data.workflowId}`)
+    return ok(result)
   } catch (error) {
     return fail(error)
   }

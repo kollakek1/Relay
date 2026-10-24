@@ -176,3 +176,10 @@ export type Comment = Prisma.CommentModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model WorkflowTemplate
+ * A reusable workflow definition. `organizationId = null` means a built-in
+ * template available to every workspace; otherwise it is a workspace template
+ * saved from an existing process.
+ */
+export type WorkflowTemplate = Prisma.WorkflowTemplateModel

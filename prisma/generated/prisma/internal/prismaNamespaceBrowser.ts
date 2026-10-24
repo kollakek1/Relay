@@ -74,7 +74,8 @@ export const ModelName = {
   TaskDecision: 'TaskDecision',
   TaskActivity: 'TaskActivity',
   Comment: 'Comment',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  WorkflowTemplate: 'WorkflowTemplate'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -380,6 +381,7 @@ export const TaskScalarFieldEnum = {
   requiredRole: 'requiredRole',
   fields: 'fields',
   formValues: 'formValues',
+  tags: 'tags',
   assigneeId: 'assigneeId',
   createdById: 'createdById',
   dueAt: 'dueAt',
@@ -445,6 +447,20 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const WorkflowTemplateScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  steps: 'steps',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type WorkflowTemplateScalarFieldEnum = (typeof WorkflowTemplateScalarFieldEnum)[keyof typeof WorkflowTemplateScalarFieldEnum]
 
 
 export const SortOrder = {

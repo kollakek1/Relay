@@ -54,6 +54,7 @@ enum ActivityType {
   DUE_CHANGED
   COMMENTED
   DECIDED
+  REOPENED
 }
 
 enum NotificationType {
@@ -176,6 +177,8 @@ model Task {
   fields         Json?
   /// Submitted form values (validated server-side before completion).
   formValues     Json?
+  /// Free-form labels for filtering and reporting.
+  tags           String[]     @default([])
   assigneeId     String?
   assignee       User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   createdById    String
@@ -263,4 +266,23 @@ model Notification {
   @@index([userId, readAt])
   @@index([organizationId])
   @@map("notification")
+}
+
+/// A reusable workflow definition. `organizationId = null` means a built-in
+/// template available to every workspace; otherwise it is a workspace template
+/// saved from an existing process.
+model WorkflowTemplate {
+  id             String        @id @default(cuid())
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  category       String?
+  steps          Json
+  createdById    String?
+  createdBy      User?         @relation("TemplateCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt      DateTime      @default(now())
+
+  @@index([organizationId])
+  @@map("workflow_template")
 }

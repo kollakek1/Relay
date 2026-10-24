@@ -110,7 +110,8 @@ export const ActivityType = {
   STATUS_CHANGED: 'STATUS_CHANGED',
   DUE_CHANGED: 'DUE_CHANGED',
   COMMENTED: 'COMMENTED',
-  DECIDED: 'DECIDED'
+  DECIDED: 'DECIDED',
+  REOPENED: 'REOPENED'
 } as const
 
 export type ActivityType = (typeof ActivityType)[keyof typeof ActivityType]

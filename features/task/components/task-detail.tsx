@@ -61,6 +61,7 @@ const ACTIVITY_LABEL: Record<ActivityType, string> = {
   DUE_CHANGED: 'changed the due date',
   COMMENTED: 'commented',
   DECIDED: 'made a decision on',
+  REOPENED: 'reopened',
 }
 
 export interface TaskDetailData {

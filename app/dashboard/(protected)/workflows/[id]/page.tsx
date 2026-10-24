@@ -4,6 +4,8 @@ import { canManageWorkflows, canWorkOnTasks } from '@/shared/server/permissions'
 import { getWorkflow } from '@/features/workflow/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { WorkflowBuilder } from '@/features/workflow/components/workflow-builder'
+import { VersionHistory } from '@/features/workflow/components/version-history'
+import { compareVersions, listVersions } from '@/features/workflow/server/versioning'
 import type { ConditionOp, FormFieldType } from '@/features/workflow/server/engine'
 import { AppError } from '@/shared/server/errors'
 
@@ -22,6 +24,12 @@ export default async function WorkflowDetailPage({
     if (error instanceof AppError && error.code === 'NOT_FOUND') notFound()
     throw error
   }
+
+  const versions = await listVersions(ctx, id)
+  const diff =
+    versions.length >= 2
+      ? await compareVersions(ctx, id, versions[1].version, versions[0].version)
+      : null
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
@@ -76,6 +84,19 @@ export default async function WorkflowDetailPage({
         }}
         canManage={canManageWorkflows(ctx.role)}
         canRun={canWorkOnTasks(ctx.role)}
+      />
+
+      <VersionHistory
+        workflowId={workflow.id}
+        canManage={canManageWorkflows(ctx.role)}
+        versions={versions.map((version) => ({
+          id: version.id,
+          version: version.version,
+          publishedAt: version.publishedAt,
+          publishedByName: version.publishedBy.name,
+          instances: version._count.instances,
+        }))}
+        diff={diff ? { from: diff.from, to: diff.to, diffs: diff.diffs } : null}
       />
     </main>
   )

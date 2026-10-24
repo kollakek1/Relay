@@ -99,6 +99,7 @@ export type TaskCountAggregateOutputType = {
   requiredRole: number
   fields: number
   formValues: number
+  tags: number
   assigneeId: number
   createdById: number
   dueAt: number
@@ -185,6 +186,7 @@ export type TaskCountAggregateInputType = {
   requiredRole?: true
   fields?: true
   formValues?: true
+  tags?: true
   assigneeId?: true
   createdById?: true
   dueAt?: true
@@ -298,6 +300,7 @@ export type TaskGroupByOutputType = {
   requiredRole: $Enums.OrgRole | null
   fields: runtime.JsonValue | null
   formValues: runtime.JsonValue | null
+  tags: string[]
   assigneeId: string | null
   createdById: string
   dueAt: Date | null
@@ -347,6 +350,7 @@ export type TaskWhereInput = {
   requiredRole?: Prisma.EnumOrgRoleNullableFilter<"Task"> | $Enums.OrgRole | null
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
+  tags?: Prisma.StringNullableListFilter<"Task">
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdById?: Prisma.StringFilter<"Task"> | string
   dueAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
@@ -380,6 +384,7 @@ export type TaskOrderByWithRelationInput = {
   requiredRole?: Prisma.SortOrderInput | Prisma.SortOrder
   fields?: Prisma.SortOrderInput | Prisma.SortOrder
   formValues?: Prisma.SortOrderInput | Prisma.SortOrder
+  tags?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   dueAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -416,6 +421,7 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   requiredRole?: Prisma.EnumOrgRoleNullableFilter<"Task"> | $Enums.OrgRole | null
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
+  tags?: Prisma.StringNullableListFilter<"Task">
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdById?: Prisma.StringFilter<"Task"> | string
   dueAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
@@ -449,6 +455,7 @@ export type TaskOrderByWithAggregationInput = {
   requiredRole?: Prisma.SortOrderInput | Prisma.SortOrder
   fields?: Prisma.SortOrderInput | Prisma.SortOrder
   formValues?: Prisma.SortOrderInput | Prisma.SortOrder
+  tags?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   dueAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -483,6 +490,7 @@ export type TaskScalarWhereWithAggregatesInput = {
   requiredRole?: Prisma.EnumOrgRoleNullableWithAggregatesFilter<"Task"> | $Enums.OrgRole | null
   fields?: Prisma.JsonNullableWithAggregatesFilter<"Task">
   formValues?: Prisma.JsonNullableWithAggregatesFilter<"Task">
+  tags?: Prisma.StringNullableListFilter<"Task">
   assigneeId?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   createdById?: Prisma.StringWithAggregatesFilter<"Task"> | string
   dueAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
@@ -507,6 +515,7 @@ export type TaskCreateInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -538,6 +547,7 @@ export type TaskUncheckedCreateInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -565,6 +575,7 @@ export type TaskUpdateInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -596,6 +607,7 @@ export type TaskUncheckedUpdateInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -625,6 +637,7 @@ export type TaskCreateManyInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -649,6 +662,7 @@ export type TaskUpdateManyMutationInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -673,6 +687,7 @@ export type TaskUncheckedUpdateManyInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -709,6 +724,7 @@ export type TaskCountOrderByAggregateInput = {
   requiredRole?: Prisma.SortOrder
   fields?: Prisma.SortOrder
   formValues?: Prisma.SortOrder
+  tags?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   dueAt?: Prisma.SortOrder
@@ -951,6 +967,10 @@ export type TaskUncheckedUpdateManyWithoutInstanceNestedInput = {
   deleteMany?: Prisma.TaskScalarWhereInput | Prisma.TaskScalarWhereInput[]
 }
 
+export type TaskCreatetagsInput = {
+  set: string[]
+}
+
 export type EnumTaskStatusFieldUpdateOperationsInput = {
   set?: $Enums.TaskStatus
 }
@@ -961,6 +981,11 @@ export type EnumTaskPriorityFieldUpdateOperationsInput = {
 
 export type NullableEnumApprovalDecisionFieldUpdateOperationsInput = {
   set?: $Enums.ApprovalDecision | null
+}
+
+export type TaskUpdatetagsInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type TaskCreateNestedOneWithoutDecisionsInput = {
@@ -1018,6 +1043,7 @@ export type TaskCreateWithoutOrganizationInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1047,6 +1073,7 @@ export type TaskUncheckedCreateWithoutOrganizationInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1105,6 +1132,7 @@ export type TaskScalarWhereInput = {
   requiredRole?: Prisma.EnumOrgRoleNullableFilter<"Task"> | $Enums.OrgRole | null
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
+  tags?: Prisma.StringNullableListFilter<"Task">
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdById?: Prisma.StringFilter<"Task"> | string
   dueAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
@@ -1129,6 +1157,7 @@ export type TaskCreateWithoutAssigneeInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1159,6 +1188,7 @@ export type TaskUncheckedCreateWithoutAssigneeInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   createdById: string
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
@@ -1195,6 +1225,7 @@ export type TaskCreateWithoutCreatedByInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1225,6 +1256,7 @@ export type TaskUncheckedCreateWithoutCreatedByInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
@@ -1293,6 +1325,7 @@ export type TaskCreateWithoutInstanceInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1322,6 +1355,7 @@ export type TaskUncheckedCreateWithoutInstanceInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1375,6 +1409,7 @@ export type TaskCreateWithoutDecisionsInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1405,6 +1440,7 @@ export type TaskUncheckedCreateWithoutDecisionsInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1447,6 +1483,7 @@ export type TaskUpdateWithoutDecisionsInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1477,6 +1514,7 @@ export type TaskUncheckedUpdateWithoutDecisionsInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1503,6 +1541,7 @@ export type TaskCreateWithoutActivitiesInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1533,6 +1572,7 @@ export type TaskUncheckedCreateWithoutActivitiesInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1575,6 +1615,7 @@ export type TaskUpdateWithoutActivitiesInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1605,6 +1646,7 @@ export type TaskUncheckedUpdateWithoutActivitiesInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1631,6 +1673,7 @@ export type TaskCreateWithoutCommentsInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1661,6 +1704,7 @@ export type TaskUncheckedCreateWithoutCommentsInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1703,6 +1747,7 @@ export type TaskUpdateWithoutCommentsInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1733,6 +1778,7 @@ export type TaskUncheckedUpdateWithoutCommentsInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1760,6 +1806,7 @@ export type TaskCreateManyOrganizationInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1784,6 +1831,7 @@ export type TaskUpdateWithoutOrganizationInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1813,6 +1861,7 @@ export type TaskUncheckedUpdateWithoutOrganizationInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1841,6 +1890,7 @@ export type TaskUncheckedUpdateManyWithoutOrganizationInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1867,6 +1917,7 @@ export type TaskCreateManyAssigneeInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   createdById: string
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
@@ -1892,6 +1943,7 @@ export type TaskCreateManyCreatedByInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
@@ -1915,6 +1967,7 @@ export type TaskUpdateWithoutAssigneeInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1945,6 +1998,7 @@ export type TaskUncheckedUpdateWithoutAssigneeInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1973,6 +2027,7 @@ export type TaskUncheckedUpdateManyWithoutAssigneeInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1996,6 +2051,7 @@ export type TaskUpdateWithoutCreatedByInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2026,6 +2082,7 @@ export type TaskUncheckedUpdateWithoutCreatedByInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2054,6 +2111,7 @@ export type TaskUncheckedUpdateManyWithoutCreatedByInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2078,6 +2136,7 @@ export type TaskCreateManyInstanceInput = {
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -2102,6 +2161,7 @@ export type TaskUpdateWithoutInstanceInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2131,6 +2191,7 @@ export type TaskUncheckedUpdateWithoutInstanceInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2159,6 +2220,7 @@ export type TaskUncheckedUpdateManyWithoutInstanceInput = {
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2234,6 +2296,7 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   requiredRole?: boolean
   fields?: boolean
   formValues?: boolean
+  tags?: boolean
   assigneeId?: boolean
   createdById?: boolean
   dueAt?: boolean
@@ -2268,6 +2331,7 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   requiredRole?: boolean
   fields?: boolean
   formValues?: boolean
+  tags?: boolean
   assigneeId?: boolean
   createdById?: boolean
   dueAt?: boolean
@@ -2298,6 +2362,7 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   requiredRole?: boolean
   fields?: boolean
   formValues?: boolean
+  tags?: boolean
   assigneeId?: boolean
   createdById?: boolean
   dueAt?: boolean
@@ -2328,6 +2393,7 @@ export type TaskSelectScalar = {
   requiredRole?: boolean
   fields?: boolean
   formValues?: boolean
+  tags?: boolean
   assigneeId?: boolean
   createdById?: boolean
   dueAt?: boolean
@@ -2339,7 +2405,7 @@ export type TaskSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "instanceId" | "stepOrder" | "name" | "description" | "status" | "priority" | "kind" | "decision" | "decisionNote" | "requiredRole" | "fields" | "formValues" | "assigneeId" | "createdById" | "dueAt" | "claimedAt" | "completedAt" | "cancelReason" | "claimVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "instanceId" | "stepOrder" | "name" | "description" | "status" | "priority" | "kind" | "decision" | "decisionNote" | "requiredRole" | "fields" | "formValues" | "tags" | "assigneeId" | "createdById" | "dueAt" | "claimedAt" | "completedAt" | "cancelReason" | "claimVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
 export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   instance?: boolean | Prisma.ProcessInstanceDefaultArgs<ExtArgs>
@@ -2401,6 +2467,10 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
      * Submitted form values (validated server-side before completion).
      */
     formValues: runtime.JsonValue | null
+    /**
+     * Free-form labels for filtering and reporting.
+     */
+    tags: string[]
     assigneeId: string | null
     createdById: string
     dueAt: Date | null
@@ -2860,6 +2930,7 @@ export interface TaskFieldRefs {
   readonly requiredRole: Prisma.FieldRef<"Task", 'OrgRole'>
   readonly fields: Prisma.FieldRef<"Task", 'Json'>
   readonly formValues: Prisma.FieldRef<"Task", 'Json'>
+  readonly tags: Prisma.FieldRef<"Task", 'String[]'>
   readonly assigneeId: Prisma.FieldRef<"Task", 'String'>
   readonly createdById: Prisma.FieldRef<"Task", 'String'>
   readonly dueAt: Prisma.FieldRef<"Task", 'DateTime'>

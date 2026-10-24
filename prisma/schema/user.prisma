@@ -22,6 +22,7 @@ model User {
   decisions          TaskDecision[]    @relation("TaskDecisionActor")
   apiKeys            ApiKey[]          @relation("ApiKeyCreator")
   webhooks           WebhookEndpoint[] @relation("WebhookCreator")
+  templatesCreated   WorkflowTemplate[] @relation("TemplateCreator")
   notifications      Notification[]    @relation("NotificationRecipient")
   invitationsSent    Invitation[]      @relation("InvitationInviter")
   invitationsAccepted Invitation[]     @relation("InvitationAcceptor")

@@ -61,6 +61,23 @@ export const saveWorkflowSchema = z.object({
 
 export const workflowIdSchema = z.object({ workflowId: z.string().min(1) })
 
+export const createFromTemplateSchema = z.object({
+  templateId: z.string().min(1),
+  name: z.string().trim().min(2).max(120).optional(),
+})
+
+export const saveAsTemplateSchema = z.object({
+  workflowId: z.string().min(1),
+  name: z.string().trim().min(2).max(120),
+  description: z.string().trim().max(300).optional(),
+  category: z.string().trim().max(60).optional(),
+})
+
+export const draftFromVersionSchema = z.object({
+  workflowId: z.string().min(1),
+  version: z.number().int().min(1),
+})
+
 // `z.input` keeps `kind`/`fields`/`condition` optional for callers (actions pass
 // fully-parsed values; services/tests may supply partial steps).
 export type WorkflowStepInput = z.input<typeof workflowStepSchema>
