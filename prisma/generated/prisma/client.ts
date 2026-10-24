@@ -87,6 +87,19 @@ export type OrgAuditLog = Prisma.OrgAuditLogModel
  */
 export type RateLimitBucket = Prisma.RateLimitBucketModel
 /**
+ * Model IdempotencyKey
+ * Idempotency / dedupe keys for at-least-once serverless work (scheduled jobs).
+ * A successful `create` means "this unit of work has not been done yet"; a
+ * unique-constraint violation means "already done, skip".
+ */
+export type IdempotencyKey = Prisma.IdempotencyKeyModel
+/**
+ * Model JobRun
+ * Execution log for scheduled/background jobs, so periodic work is observable
+ * and diagnosable without a long-running worker.
+ */
+export type JobRun = Prisma.JobRunModel
+/**
  * Model User
  * 
  */

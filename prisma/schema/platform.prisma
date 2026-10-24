@@ -11,3 +11,31 @@ model RateLimitBucket {
   @@index([expiresAt])
   @@map("rate_limit_bucket")
 }
+
+/// Idempotency / dedupe keys for at-least-once serverless work (scheduled jobs).
+/// A successful `create` means "this unit of work has not been done yet"; a
+/// unique-constraint violation means "already done, skip".
+model IdempotencyKey {
+  key       String   @id
+  scope     String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("idempotency_key")
+}
+
+/// Execution log for scheduled/background jobs, so periodic work is observable
+/// and diagnosable without a long-running worker.
+model JobRun {
+  id         String    @id @default(cuid())
+  job        String
+  status     String
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  metrics    Json?
+  error      String?
+
+  @@index([job, startedAt])
+  @@map("job_run")
+}

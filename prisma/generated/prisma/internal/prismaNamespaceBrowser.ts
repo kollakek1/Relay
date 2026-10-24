@@ -59,6 +59,8 @@ export const ModelName = {
   Invitation: 'Invitation',
   OrgAuditLog: 'OrgAuditLog',
   RateLimitBucket: 'RateLimitBucket',
+  IdempotencyKey: 'IdempotencyKey',
+  JobRun: 'JobRun',
   User: 'User',
   Workflow: 'Workflow',
   WorkflowStep: 'WorkflowStep',
@@ -197,6 +199,29 @@ export const RateLimitBucketScalarFieldEnum = {
 } as const
 
 export type RateLimitBucketScalarFieldEnum = (typeof RateLimitBucketScalarFieldEnum)[keyof typeof RateLimitBucketScalarFieldEnum]
+
+
+export const IdempotencyKeyScalarFieldEnum = {
+  key: 'key',
+  scope: 'scope',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt'
+} as const
+
+export type IdempotencyKeyScalarFieldEnum = (typeof IdempotencyKeyScalarFieldEnum)[keyof typeof IdempotencyKeyScalarFieldEnum]
+
+
+export const JobRunScalarFieldEnum = {
+  id: 'id',
+  job: 'job',
+  status: 'status',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  metrics: 'metrics',
+  error: 'error'
+} as const
+
+export type JobRunScalarFieldEnum = (typeof JobRunScalarFieldEnum)[keyof typeof JobRunScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {

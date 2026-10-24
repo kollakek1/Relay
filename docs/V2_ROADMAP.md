@@ -90,6 +90,7 @@ blocked by a missing external service is documented with the reason.
 | B — Security & foundation | ✅ done |
 | C — Organizations & teams | ✅ done |
 | H — Analytics, search, export | ✅ done |
+| F — Serverless automation | 🟡 partial (SLA scan + idempotency + JobRun; generic trigger/action engine pending) |
 | I — DX & operations | 🟡 partial (CI added; E2E pending) |
 | D — Workflow Engine V2 | planned |
 | E — Tasks & approvals | planned |

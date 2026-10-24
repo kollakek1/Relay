@@ -44,6 +44,8 @@ enum NotificationType {
   WORKFLOW_PUBLISHED
   INSTANCE_STARTED
   ORG_INVITATION
+  TASK_DUE_SOON
+  TASK_OVERDUE
 }
 
 model Workflow {

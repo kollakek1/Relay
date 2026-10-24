@@ -18,6 +18,8 @@ import {
   RocketIcon,
   UserIcon,
   MailIcon,
+  ClockIcon,
+  AlertTriangleIcon,
 } from 'lucide-react'
 
 export interface NotificationView {
@@ -38,6 +40,8 @@ const TYPE_ICON: Record<NotificationType, typeof BellIcon> = {
   WORKFLOW_PUBLISHED: RocketIcon,
   INSTANCE_STARTED: RocketIcon,
   ORG_INVITATION: MailIcon,
+  TASK_DUE_SOON: ClockIcon,
+  TASK_OVERDUE: AlertTriangleIcon,
 }
 
 export function NotificationsList({ notifications }: { notifications: NotificationView[] }) {

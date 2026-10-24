@@ -89,6 +89,29 @@ role-based access enforced on the server.
 | `npm run db:seed` | Seed the root admin + demo data |
 | `npm run db:generate` | Regenerate the Prisma client |
 
+## ⏱ Scheduled jobs (serverless)
+
+Relay has no long-running worker. Periodic work runs as a **bounded, idempotent,
+secret-protected endpoint** that any cron/scheduler can hit:
+
+```bash
+# every hour (platform scheduler, GitHub Actions cron, cron-job.org, …)
+curl -X POST https://your-app/api/jobs/sla-scan \
+  -H "Authorization: Bearer $CRON_SECRET"
+```
+
+`POST /api/jobs/sla-scan` scans for overdue / due-within-24h tasks and creates
+notifications, then prunes expired rate-limit counters. It is:
+
+- **idempotent per hour** (repeated triggers are no-ops) and **per task per day**
+  (a task is never double-notified),
+- **bounded** (at most 500 tasks per run, no unbounded loops),
+- **safe to re-run** after a missed schedule,
+- **observable** via the `job_run` table.
+
+Without `CRON_SECRET` configured the endpoint returns `503` — it never pretends
+to have run. See `docs/ARCHITECTURE.md` and `docs/THREAT_MODEL.md`.
+
 ## 📁 Project Structure
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
