@@ -18,106 +18,143 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu'
+import { Badge } from '@/shared/components/ui/badge'
 import {
-  Home,
-  FileText,
-  Users,
-  CheckSquare,
-  Settings,
-  LogOut,
-  ChevronUp,
-  Workflow,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/shared/components/ui/alert-dialog'
+import {
+  BellIcon,
+  BoxesIcon,
+  CheckSquareIcon,
+  ChevronUpIcon,
+  HomeIcon,
+  InboxIcon,
+  LogOutIcon,
+  SettingsIcon,
+  UsersIcon,
+  WorkflowIcon,
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { useState } from 'react'
 import { cn } from '@/shared/lib/utils'
 import { useAuth } from '@/features/auth/hooks/useAuth'
+import { Loader2Icon } from 'lucide-react'
 
 const navItems = [
-  {
-    title: 'Home',
-    href: '/dashboard',
-    icon: Home,
-  },
-  {
-    title: 'Processes',
-    href: '/dashboard/processes',
-    icon: Workflow,
-  },
-  {
-    title: 'Tasks',
-    href: '/dashboard/tasks',
-    icon: CheckSquare,
-  },
-  {
-    title: 'Documents',
-    href: '/dashboard/documents',
-    icon: FileText,
-  },
-  {
-    title: 'Team',
-    href: '/dashboard/team',
-    icon: Users,
-  },
-  {
-    title: 'Settings',
-    href: '/dashboard/settings',
-    icon: Settings,
-  },
+  { title: 'Home', href: '/dashboard', icon: HomeIcon },
+  { title: 'Workflows', href: '/dashboard/workflows', icon: WorkflowIcon },
+  { title: 'Tasks', href: '/dashboard/tasks', icon: CheckSquareIcon },
+  { title: 'Task Pool', href: '/dashboard/pool', icon: InboxIcon },
+  { title: 'Instances', href: '/dashboard/instances', icon: BoxesIcon },
+  { title: 'Team', href: '/dashboard/team', icon: UsersIcon },
+  { title: 'Notifications', href: '/dashboard/notifications', icon: BellIcon },
+  { title: 'Settings', href: '/dashboard/settings', icon: SettingsIcon },
 ]
 
-export function DashboardSidebar() {
+export function DashboardSidebar({ unreadCount = 0 }: { unreadCount?: number }) {
   const pathname = usePathname()
-  const { user } = useAuth()
+  const { user, logout, isLoading } = useAuth()
+  const [confirmLogout, setConfirmLogout] = useState(false)
+
+  const isActive = (href: string) =>
+    pathname === href || (href !== '/dashboard' && pathname.startsWith(`${href}/`))
 
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <p className="text-4xl font-bold">Relay</p>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map((item) => {
-                const isActive = pathname === item.href
-                return (
+    <>
+      <Sidebar>
+        <SidebarHeader>
+          <p className="px-2 py-1 text-2xl font-bold">Relay</p>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Menu</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navItems.map((item) => (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild className={cn(isActive && 'bg-accent')}>
+                    <SidebarMenuButton asChild isActive={isActive(item.href)}>
                       <Link href={item.href}>
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
+                        {item.href === '/dashboard/notifications' && unreadCount > 0 && (
+                          <Badge className="ml-auto" variant="default">
+                            {unreadCount}
+                          </Badge>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="w-full">
-                  <span className="flex-1 text-left">{user?.name}</span>
-                  <ChevronUp className="h-4 w-4" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" className="w-[--radix-dropdown-menu-trigger-width]">
-                <DropdownMenuItem className="text-destructive">
-                  <LogOut />
-                  Log Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-    </Sidebar>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton className="w-full" aria-label="Account menu">
+                    <span className="flex-1 truncate text-left">{user?.name ?? 'Account'}</span>
+                    <ChevronUpIcon className="h-4 w-4" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  className="w-[--radix-dropdown-menu-trigger-width]"
+                >
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/settings">
+                      <SettingsIcon />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onSelect={(event) => {
+                      event.preventDefault()
+                      setConfirmLogout(true)
+                    }}
+                  >
+                    <LogOutIcon />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+
+      <AlertDialog open={confirmLogout} onOpenChange={setConfirmLogout}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Log out of Relay?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You will need to sign in again to access your workspace.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className={cn(isLoading && 'pointer-events-none opacity-80')}
+              onClick={() => logout()}
+            >
+              {isLoading && <Loader2Icon className="animate-spin" />}
+              Log out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

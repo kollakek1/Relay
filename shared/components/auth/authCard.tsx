@@ -1,122 +1,245 @@
 'use client'
+
 import { useState } from 'react'
 import { Button } from '@/shared/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/shared/components/ui/card'
 import { Input } from '@/shared/components/ui/input'
 import { Label } from '@/shared/components/ui/label'
 import { Checkbox } from '@/shared/components/ui/checkbox'
-import { EyeClosedIcon, EyeIcon, Loader2Icon, LogInIcon } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs'
+import { EyeClosedIcon, EyeIcon, Loader2Icon, LogInIcon, UserPlusIcon } from 'lucide-react'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { LoginFormData, loginSchema } from '@/features/auth/schemas/authSchema'
+import {
+  LoginFormData,
+  RegisterFormData,
+  loginSchema,
+  registerSchema,
+} from '@/features/auth/schemas/authSchema'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { toast } from 'sonner'
 
 export function AuthCard() {
-  const { login } = useAuth()
-  const [passwordHidden, setPasswordHidden] = useState<boolean>(true)
+  const { login, register: registerUser } = useAuth()
+  const [passwordHidden, setPasswordHidden] = useState(true)
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
+  const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      rememberMe: true,
-    },
+    defaultValues: { email: '', password: '', rememberMe: true },
   })
 
-  const onSubmit = async (data: LoginFormData) => {
-    const response = await login(data)
+  const registerForm = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
+  })
 
+  const onLogin = async (data: LoginFormData) => {
+    const response = await login(data)
     if (!response.success) {
-      toast.error(response.error || 'Ошибка входа', { position: 'top-right' })
+      toast.error(response.error || 'Unable to sign in', { position: 'top-right' })
       return
     }
+    toast.success('Welcome back!', { position: 'top-right' })
+  }
 
-    toast.success('Добро пожаловать!', { position: 'top-right' })
+  const onRegister = async (data: RegisterFormData) => {
+    const response = await registerUser(data)
+    if (!response.success) {
+      toast.error(response.error || 'Unable to create the account', { position: 'top-right' })
+      return
+    }
+    toast.success('Account created', { position: 'top-right' })
   }
 
   return (
     <Card className="w-full max-w-lg">
       <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
-        <CardDescription>Enter your email below to login to your account</CardDescription>
+        <CardTitle>Welcome to Relay</CardTitle>
+        <CardDescription>Sign in to your workspace or create a new account.</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                type="email"
-                placeholder="m@example.com"
-                {...register('email')}
-                aria-invalid={!!errors.email}
-                disabled={isSubmitting}
-              />
-              {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
-            </div>
+      <CardContent>
+        <Tabs defaultValue="login">
+          <TabsList className="mb-4 w-full">
+            <TabsTrigger value="login">Sign in</TabsTrigger>
+            <TabsTrigger value="register">Create account</TabsTrigger>
+          </TabsList>
 
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-              </div>
-              <div className="flex items-center">
+          <TabsContent value="login">
+            <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="login-email">Email</Label>
                 <Input
-                  className="flex-1 rounded-r-none"
-                  type={passwordHidden ? 'password' : 'text'}
-                  {...register('password')}
-                  aria-invalid={!!errors.password}
-                  disabled={isSubmitting}
+                  id="login-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  {...loginForm.register('email')}
+                  aria-invalid={!!loginForm.formState.errors.email}
+                  disabled={loginForm.formState.isSubmitting}
                 />
-                <Button
-                  className="rounded-l-none hover:scale-100 active:scale-100"
-                  variant={'outline'}
-                  size={'icon'}
-                  type={'button'}
-                  onClick={() => setPasswordHidden((prev) => !prev)}
-                  disabled={isSubmitting}
-                  aria-label={passwordHidden ? 'Показать пароль' : 'Скрыть пароль'}
-                >
-                  {passwordHidden ? <EyeIcon /> : <EyeClosedIcon />}
-                </Button>
+                {loginForm.formState.errors.email && (
+                  <p className="text-destructive text-sm">
+                    {loginForm.formState.errors.email.message}
+                  </p>
+                )}
               </div>
-              {errors.password && (
-                <p className="text-destructive text-sm">{errors.password.message}</p>
-              )}
-            </div>
 
-            <div className="flex w-full items-center justify-end gap-2">
-              <p>Remember Me</p>
-              <Checkbox
-                onCheckedChange={(checked) => {
-                  setValue('rememberMe', checked as boolean)
-                }}
-                className="mt-1"
-              />
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="mt-4">
-          <Button type="submit" size={'lg'} className="w-full" disabled={isSubmitting}>
-            Login
-            {isSubmitting ? <Loader2Icon className="animate-spin" /> : <LogInIcon />}
-          </Button>
-        </CardFooter>
-      </form>
+              <div className="space-y-2">
+                <Label htmlFor="login-password">Password</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="login-password"
+                    className="flex-1"
+                    type={passwordHidden ? 'password' : 'text'}
+                    autoComplete="current-password"
+                    {...loginForm.register('password')}
+                    aria-invalid={!!loginForm.formState.errors.password}
+                    disabled={loginForm.formState.isSubmitting}
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    type="button"
+                    onClick={() => setPasswordHidden((prev) => !prev)}
+                    disabled={loginForm.formState.isSubmitting}
+                    aria-label={passwordHidden ? 'Show password' : 'Hide password'}
+                  >
+                    {passwordHidden ? <EyeIcon /> : <EyeClosedIcon />}
+                  </Button>
+                </div>
+                {loginForm.formState.errors.password && (
+                  <p className="text-destructive text-sm">
+                    {loginForm.formState.errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-2">
+                <Label htmlFor="login-remember" className="cursor-pointer">
+                  Remember me
+                </Label>
+                <Checkbox
+                  id="login-remember"
+                  defaultChecked
+                  onCheckedChange={(checked) =>
+                    loginForm.setValue('rememberMe', checked as boolean)
+                  }
+                />
+              </div>
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full"
+                disabled={loginForm.formState.isSubmitting}
+              >
+                {loginForm.formState.isSubmitting ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <LogInIcon />
+                )}
+                Sign in
+              </Button>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="register">
+            <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="register-name">Name</Label>
+                <Input
+                  id="register-name"
+                  autoComplete="name"
+                  placeholder="Jane Doe"
+                  {...registerForm.register('name')}
+                  aria-invalid={!!registerForm.formState.errors.name}
+                  disabled={registerForm.formState.isSubmitting}
+                />
+                {registerForm.formState.errors.name && (
+                  <p className="text-destructive text-sm">
+                    {registerForm.formState.errors.name.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="register-email">Email</Label>
+                <Input
+                  id="register-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  {...registerForm.register('email')}
+                  aria-invalid={!!registerForm.formState.errors.email}
+                  disabled={registerForm.formState.isSubmitting}
+                />
+                {registerForm.formState.errors.email && (
+                  <p className="text-destructive text-sm">
+                    {registerForm.formState.errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="register-password">Password</Label>
+                  <Input
+                    id="register-password"
+                    type="password"
+                    autoComplete="new-password"
+                    {...registerForm.register('password')}
+                    aria-invalid={!!registerForm.formState.errors.password}
+                    disabled={registerForm.formState.isSubmitting}
+                  />
+                  {registerForm.formState.errors.password && (
+                    <p className="text-destructive text-sm">
+                      {registerForm.formState.errors.password.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="register-confirm">Confirm password</Label>
+                  <Input
+                    id="register-confirm"
+                    type="password"
+                    autoComplete="new-password"
+                    {...registerForm.register('confirmPassword')}
+                    aria-invalid={!!registerForm.formState.errors.confirmPassword}
+                    disabled={registerForm.formState.isSubmitting}
+                  />
+                  {registerForm.formState.errors.confirmPassword && (
+                    <p className="text-destructive text-sm">
+                      {registerForm.formState.errors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full"
+                disabled={registerForm.formState.isSubmitting}
+              >
+                {registerForm.formState.isSubmitting ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <UserPlusIcon />
+                )}
+                Create account
+              </Button>
+            </form>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
     </Card>
   )
 }
