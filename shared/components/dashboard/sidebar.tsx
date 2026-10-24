@@ -46,6 +46,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { cn } from '@/shared/lib/utils'
 import { useAuth } from '@/features/auth/hooks/useAuth'
+import { ThemeToggle } from '@/shared/components/theme-toggle'
 import { Loader2Icon } from 'lucide-react'
 
 const navItems = [
@@ -71,7 +72,12 @@ export function DashboardSidebar({ unreadCount = 0 }: { unreadCount?: number }) 
     <>
       <Sidebar>
         <SidebarHeader>
-          <p className="px-2 py-1 text-2xl font-bold">Relay</p>
+          <div className="flex items-center justify-between px-2 py-1">
+            <Link href="/dashboard" className="text-2xl font-bold">
+              Relay
+            </Link>
+            <ThemeToggle />
+          </div>
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>

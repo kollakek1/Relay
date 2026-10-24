@@ -18,7 +18,7 @@ export default function Home() {
         </h2>
         <div className="flex gap-4">
           <Button size={'xl'} variant={'secondary'} asChild>
-            <Link href={'/learn'}>
+            <Link href={'https://github.com/kollakek1/Relay#readme'} target="_blank" rel="noreferrer">
               Learn <BookIcon />
             </Link>
           </Button>
