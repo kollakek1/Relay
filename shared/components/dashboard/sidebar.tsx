@@ -50,24 +50,27 @@ import { useState } from 'react'
 import { cn } from '@/shared/lib/utils'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { ThemeToggle } from '@/shared/components/theme-toggle'
+import { LanguageSwitcher } from '@/shared/i18n/language-switcher'
+import { useT } from '@/shared/i18n/provider'
+import type { MessageKey } from '@/shared/i18n/translate'
 import {
   WorkspaceSwitcher,
   type WorkspaceSummary,
 } from '@/features/organization/components/workspace-switcher'
 import { Loader2Icon } from 'lucide-react'
 
-const navItems = [
-  { title: 'Home', href: '/dashboard', icon: HomeIcon },
-  { title: 'Search', href: '/dashboard/search', icon: SearchIcon },
-  { title: 'Workflows', href: '/dashboard/workflows', icon: WorkflowIcon },
-  { title: 'Templates', href: '/dashboard/templates', icon: LayoutTemplateIcon },
-  { title: 'Tasks', href: '/dashboard/tasks', icon: CheckSquareIcon },
-  { title: 'Task Pool', href: '/dashboard/pool', icon: InboxIcon },
-  { title: 'Instances', href: '/dashboard/instances', icon: BoxesIcon },
-  { title: 'Analytics', href: '/dashboard/analytics', icon: BarChart3Icon },
-  { title: 'Team', href: '/dashboard/team', icon: UsersIcon },
-  { title: 'Notifications', href: '/dashboard/notifications', icon: BellIcon },
-  { title: 'Settings', href: '/dashboard/settings', icon: SettingsIcon },
+const navItems: Array<{ title: MessageKey; href: string; icon: typeof HomeIcon }> = [
+  { title: 'app.dashboard', href: '/dashboard', icon: HomeIcon },
+  { title: 'app.search', href: '/dashboard/search', icon: SearchIcon },
+  { title: 'app.workflows', href: '/dashboard/workflows', icon: WorkflowIcon },
+  { title: 'app.templates', href: '/dashboard/templates', icon: LayoutTemplateIcon },
+  { title: 'app.tasks', href: '/dashboard/tasks', icon: CheckSquareIcon },
+  { title: 'app.taskPool', href: '/dashboard/pool', icon: InboxIcon },
+  { title: 'app.instances', href: '/dashboard/instances', icon: BoxesIcon },
+  { title: 'app.analytics', href: '/dashboard/analytics', icon: BarChart3Icon },
+  { title: 'app.team', href: '/dashboard/team', icon: UsersIcon },
+  { title: 'app.notifications', href: '/dashboard/notifications', icon: BellIcon },
+  { title: 'app.settings', href: '/dashboard/settings', icon: SettingsIcon },
 ]
 
 export function DashboardSidebar({
@@ -80,6 +83,7 @@ export function DashboardSidebar({
   activeOrganizationId?: string | null
 }) {
   const pathname = usePathname()
+  const t = useT()
   const { user, logout, isLoading } = useAuth()
   const [confirmLogout, setConfirmLogout] = useState(false)
 
@@ -94,13 +98,16 @@ export function DashboardSidebar({
             <Link href="/dashboard" className="text-2xl font-bold">
               Relay
             </Link>
-            <ThemeToggle />
+            <div className="flex items-center gap-1">
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </div>
           </div>
           <WorkspaceSwitcher workspaces={workspaces} activeId={activeOrganizationId} />
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Menu</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('app.menu')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {navItems.map((item) => (
@@ -108,7 +115,7 @@ export function DashboardSidebar({
                     <SidebarMenuButton asChild isActive={isActive(item.href)}>
                       <Link href={item.href}>
                         <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
+                        <span>{t(item.title)}</span>
                         {item.href === '/dashboard/notifications' && unreadCount > 0 && (
                           <Badge className="ml-auto" variant="default">
                             {unreadCount}
@@ -128,8 +135,8 @@ export function DashboardSidebar({
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton className="w-full" aria-label="Account menu">
-                    <span className="flex-1 truncate text-left">{user?.name ?? 'Account'}</span>
+                  <SidebarMenuButton className="w-full" aria-label={t('app.accountMenu')}>
+                    <span className="flex-1 truncate text-left">{user?.name ?? t('app.account')}</span>
                     <ChevronUpIcon className="h-4 w-4" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
@@ -140,7 +147,7 @@ export function DashboardSidebar({
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard/settings">
                       <SettingsIcon />
-                      Settings
+                      {t('app.settings')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
@@ -151,7 +158,7 @@ export function DashboardSidebar({
                     }}
                   >
                     <LogOutIcon />
-                    Log out
+                    {t('app.signOut')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -163,19 +170,17 @@ export function DashboardSidebar({
       <AlertDialog open={confirmLogout} onOpenChange={setConfirmLogout}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Log out of Relay?</AlertDialogTitle>
-            <AlertDialogDescription>
-              You will need to sign in again to access your workspace.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t('app.logoutTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('app.logoutBody')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               className={cn(isLoading && 'pointer-events-none opacity-80')}
               onClick={() => logout()}
             >
               {isLoading && <Loader2Icon className="animate-spin" />}
-              Log out
+              {t('app.logoutConfirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

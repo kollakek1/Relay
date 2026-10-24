@@ -125,3 +125,23 @@ export async function retryDeliveryFor(ctx: Context, deliveryId: string) {
   assertManage(ctx)
   await retryDelivery(deliveryId, ctx.organizationId)
 }
+
+/**
+ * Re-queues every failed (dead-lettered) delivery in the workspace so the next
+ * drain retries it. Returns the number of deliveries requeued.
+ */
+export async function requeueFailedDeliveries(ctx: Context): Promise<number> {
+  assertManage(ctx)
+  const result = await prisma.webhookDelivery.updateMany({
+    where: { endpoint: { organizationId: ctx.organizationId }, status: 'FAILED' },
+    data: {
+      status: 'PENDING',
+      attempts: 0,
+      nextAttemptAt: new Date(),
+      error: null,
+      lockedAt: null,
+      lockedBy: null,
+    },
+  })
+  return result.count
+}

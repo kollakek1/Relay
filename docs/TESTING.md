@@ -57,6 +57,26 @@ npm run db:seed     # optional: root admin + demo data
 | Approvals | `workflow-approvals.test.ts` | ANY approve/reject/request-changes, ALL requires all, rejection short-circuit, claim/progress guards, pool exclusion, approver notifications |
 | Templates & version diff | `workflow-templates-versioning.test.ts` | structural diff, built-in templates produce real drafts, save/reuse workspace templates, tenant isolation, version restore |
 | API, keys & webhooks | `integration-api-webhooks.test.ts` | hashed keys + scope enforcement, key dies with its creator's membership, SSRF guard, outbox fan-out + HMAC signature, backoff/retry/failure, endpoint auto-disable |
+| Cron authentication | `job-auth.test.ts` | bearer-only, query secret rejected, constant-time compare, fail-closed |
+| Seed safety | `seed-hardening.test.ts` | weak/placeholder passwords refused, password never logged, plus a source scan of `seed.ts`/`.env.example` for shipped credentials |
+| CSV safety | `csv-export.test.ts` | formula injection flagged/neutralised, structural escaping, control characters stripped, numbers/dates preserved |
+| SSRF classification | `ssrf.test.ts` | IP-literal ranges, odd encodings, port policy, DNS resolve-then-check, rebinding, unresolvable hosts |
+| Outbox reliability | `outbox-reliability.test.ts` | exactly-once under parallel drains, lease reclaim vs held lease, blocked-vs-healthy batch isolation, HMAC verification, automation retry/dead-letter/requeue |
+| API key & invitation security | `security-regression.test.ts` | scope filtering, revocation, cross-tenant read blocked, concurrent single-use invitation acceptance |
+| Analytics isolation | `analytics-search-export.test.ts` | per-workflow overdue rates do not leak across workflows that share step numbers |
+
+## Static checks
+
+```bash
+npm run db:validate   # Prisma schema is valid
+npm run api:check     # OpenAPI 3.1 spec validates AND matches the route files
+npm run i18n:check    # RU/EN key parity, no empty values, plural sanity
+```
+
+`api:check` fails if a documented path has no route handler, or if a route under
+`app/api/v1` is undocumented — so the docs cannot drift from the code.
+`i18n:check` is backed by the type system: `ru.ts` is typed as `Messages`, so a
+missing key is already a compile error; the script catches runtime-only escapes.
 
 ## Remote test database note
 
@@ -126,8 +146,9 @@ defect.
 
 ## Not yet automated
 
-
-- Browser-level E2E (Playwright) for the rendered UI — the MVP verifies server
-  behaviour and the real data layer; UI flows were checked manually against a
-  running dev server.
+- Browser-level E2E (Playwright) is **provided** (`e2e/`, `npm run test:e2e`) but
+  gated behind `E2E=1` because it needs a live PostgreSQL, applied migrations and
+  a running server. CI enables it only when the repository variable
+  `RUN_E2E=true` is set (`.github/workflows/ci.yml`).
 - Load testing of the claim endpoint beyond 5-way concurrency.
+- Visual regression snapshots.

@@ -11,7 +11,13 @@ import { WebhooksPanel } from '@/features/webhooks/components/webhooks-panel'
 import { AutomationsPanel } from '@/features/automation/components/automations-panel'
 import { listApiKeys } from '@/features/api/server/keys'
 import { listDeliveries, listWebhookEndpoints } from '@/features/webhooks/server/service'
-import { listAutomationRules, listAutomationRuns } from '@/features/automation/server/service'
+import {
+  getAutomationHealth,
+  listAutomationRules,
+  listAutomationRuns,
+} from '@/features/automation/server/service'
+import { getOutboxHealth } from '@/features/webhooks/server/delivery'
+import { OperationsCard } from '@/shared/components/dashboard/operations-card'
 import { formatDate } from '@/shared/lib/format'
 
 export default async function SettingsPage() {
@@ -19,15 +25,20 @@ export default async function SettingsPage() {
   const organization = ctx ? await getOrganization(ctx) : null
   const canManage = ctx ? canManageMembers(ctx.role) : false
 
-  const [apiKeys, endpoints, deliveries, rules, automationRuns] = ctx && canManage
-    ? await Promise.all([
-        listApiKeys(ctx),
-        listWebhookEndpoints(ctx),
-        listDeliveries(ctx, 20),
-        listAutomationRules(ctx),
-        listAutomationRuns(ctx, 20),
-      ])
-    : [[], [], [], [], []]
+  const [apiKeys, endpoints, deliveries, rules, automationRuns, automationHealth, outboxHealth] =
+    ctx && canManage
+      ? await Promise.all([
+          listApiKeys(ctx),
+          listWebhookEndpoints(ctx),
+          listDeliveries(ctx, 20),
+          listAutomationRules(ctx),
+          listAutomationRuns(ctx, 20),
+          getAutomationHealth(ctx),
+          getOutboxHealth(ctx.organizationId),
+        ])
+      : [[], [], [], [], [], null, null]
+
+  const failedDeliveries = deliveries.filter((delivery) => delivery.status === 'FAILED').length
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-8 px-4 py-8 lg:p-10">
@@ -107,8 +118,7 @@ export default async function SettingsPage() {
           <CardHeader>
             <CardTitle>Integrations</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-8">
-            <ApiKeysPanel
+          <CardContent className="space-y-8">            <ApiKeysPanel
               canManage={canManage}
               keys={apiKeys.map((key) => ({
                 id: key.id,
@@ -162,6 +172,18 @@ export default async function SettingsPage() {
             />
           </CardContent>
         </Card>
+      )}
+
+      {ctx && canManage && automationHealth && outboxHealth && (
+        <OperationsCard
+          snapshot={{
+            outboxPending: outboxHealth.pending,
+            outboxFailed: outboxHealth.failed,
+            deliveriesFailed: failedDeliveries,
+            automationsFailed: automationHealth.failed,
+            automationsDeadLettered: automationHealth.deadLettered,
+          }}
+        />
       )}
     </main>
   )

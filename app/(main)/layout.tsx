@@ -1,4 +1,5 @@
-import { Header } from '@/shared/components/props/Header'
+import { SiteFooter } from '@/shared/components/site/site-footer'
+import { SiteHeader } from '@/shared/components/site/site-header'
 
 export default function Layout({
   children,
@@ -6,9 +7,10 @@ export default function Layout({
   children: React.ReactNode
 }>) {
   return (
-    <>
-      <Header />
-      {children}
-    </>
+    <div className="flex min-h-svh flex-col">
+      <SiteHeader />
+      <main className="flex-1 pt-16">{children}</main>
+      <SiteFooter />
+    </div>
   )
 }

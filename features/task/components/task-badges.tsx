@@ -1,15 +1,21 @@
+'use client'
+
 import type { TaskPriority, TaskStatus } from '@/prisma/generated/prisma/enums'
 import { Badge } from '@/shared/components/ui/badge'
 import { cn } from '@/shared/lib/utils'
+import { useT } from '@/shared/i18n/provider'
+import type { MessageKey } from '@/shared/i18n/translate'
 
-const STATUS_LABEL: Record<TaskStatus, string> = {
-  BLOCKED: 'Blocked',
-  PENDING: 'Available',
-  CLAIMED: 'Claimed',
-  IN_PROGRESS: 'In progress',
-  DONE: 'Done',
-  CANCELLED: 'Cancelled',
+const STATUS_KEY: Record<TaskStatus, MessageKey> = {
+  BLOCKED: 'status.BLOCKED',
+  PENDING: 'status.PENDING',
+  CLAIMED: 'status.CLAIMED',
+  IN_PROGRESS: 'status.IN_PROGRESS',
+  DONE: 'status.DONE',
+  CANCELLED: 'status.CANCELLED',
 }
+
+export { STATUS_KEY }
 
 const STATUS_CLASS: Record<TaskStatus, string> = {
   BLOCKED: 'bg-muted text-muted-foreground',
@@ -20,16 +26,22 @@ const STATUS_CLASS: Record<TaskStatus, string> = {
   CANCELLED: 'bg-destructive/10 text-destructive',
 }
 
+/** Localised, colour-independent status badge (the label always carries meaning). */
 export function TaskStatusBadge({ status }: { status: TaskStatus }) {
-  return <Badge className={cn('border-transparent', STATUS_CLASS[status])}>{STATUS_LABEL[status]}</Badge>
+  const t = useT()
+  return (
+    <Badge className={cn('border-transparent', STATUS_CLASS[status])}>{t(STATUS_KEY[status])}</Badge>
+  )
 }
 
-const PRIORITY_LABEL: Record<TaskPriority, string> = {
-  LOW: 'Low',
-  MEDIUM: 'Medium',
-  HIGH: 'High',
-  URGENT: 'Urgent',
+const PRIORITY_KEY: Record<TaskPriority, MessageKey> = {
+  LOW: 'status.LOW',
+  MEDIUM: 'status.MEDIUM',
+  HIGH: 'status.HIGH',
+  URGENT: 'status.URGENT',
 }
+
+export { PRIORITY_KEY }
 
 const PRIORITY_CLASS: Record<TaskPriority, string> = {
   LOW: 'text-muted-foreground',
@@ -39,11 +51,10 @@ const PRIORITY_CLASS: Record<TaskPriority, string> = {
 }
 
 export function TaskPriorityBadge({ priority }: { priority: TaskPriority }) {
+  const t = useT()
   return (
     <span className={cn('text-xs font-medium uppercase', PRIORITY_CLASS[priority])}>
-      {PRIORITY_LABEL[priority]}
+      {t(PRIORITY_KEY[priority])}
     </span>
   )
 }
-
-export { STATUS_LABEL, PRIORITY_LABEL }

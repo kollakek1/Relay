@@ -14,6 +14,7 @@ import {
 import {
   createWebhookEndpoint,
   deleteWebhookEndpoint,
+  requeueFailedDeliveries,
   retryDeliveryFor,
   updateWebhookEndpoint,
 } from './server/service'
@@ -67,6 +68,19 @@ export async function retryDeliveryAction(input: unknown): Promise<ActionResult>
     await retryDeliveryFor(ctx, id)
     revalidatePath('/dashboard/settings')
     return ok(undefined)
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+/** Admin recovery: re-queue every failed webhook delivery in the workspace. */
+export async function requeueFailedDeliveriesAction(): Promise<ActionResult<{ count: number }>> {
+  try {
+    const ctx = await requireContext()
+    await rateLimit('webhook:requeue', ctx.userId, RATE_LIMITS.orgMutate)
+    const count = await requeueFailedDeliveries(ctx)
+    revalidatePath('/dashboard/settings')
+    return ok({ count })
   } catch (error) {
     return fail(error)
   }

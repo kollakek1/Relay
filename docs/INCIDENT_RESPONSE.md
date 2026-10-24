@@ -26,7 +26,7 @@ operation — there are no long-lived processes to drain.
 ### 3.1 Suspected secret compromise
 - Rotate `BETTER_AUTH_SECRET` (invalidates existing sessions opportunistically),
   `DATABASE_URL` credentials, and any provider keys (`RESEND_API_KEY`).
-- Revoke and reissue any API keys (Stage G) and webhook signing secrets.
+- Revoke and reissue any API keys (**Settings → API keys**) and webhook signing secrets.
 - Confirm no secret is present in the repo: `git log -p | grep -i secret`
   (the app never commits `.env`; `.env.example` holds placeholders only).
 
@@ -66,8 +66,34 @@ operation — there are no long-lived processes to drain.
 - Roll back to the previous image. Migrations are additive; do **not** use
   `db push`. If a migration must be reverted, write an explicit down migration.
 
+### 3.8 Background work not progressing
+Symptoms: webhooks not delivered, SLA notifications missing, automations not
+running.
+
+1. Confirm the scheduler is calling the endpoints: `SELECT * FROM "job_run"
+   ORDER BY "finishedAt" DESC LIMIT 20;` — no recent rows means no calls.
+2. Confirm `CRON_SECRET` is set; the endpoints return `503` without it.
+3. Inspect backlog and dead-letters:
+   ```sql
+   SELECT "status", count(*) FROM "outbox_event" GROUP BY 1;
+   SELECT "status", count(*) FROM "webhook_delivery" GROUP BY 1;
+   SELECT "status", count(*) FROM "automation_run" GROUP BY 1;
+   ```
+4. **Stuck in `PROCESSING`** with an old `lockedAt` is a crashed worker. The next
+   drain reclaims rows past the lease automatically; to unstick immediately:
+   ```sql
+   UPDATE "outbox_event" SET "status"='PENDING', "lockedAt"=NULL, "lockedBy"=NULL
+     WHERE "status"='PROCESSING' AND "lockedAt" < now() - interval '15 minutes';
+   ```
+   The same pattern applies to `webhook_delivery` and `automation_run`.
+5. **Dead-lettered** rows are safe to requeue from the admin UI (webhooks panel /
+   automation diagnostics); requeuing resets attempts and schedules an immediate
+   retry.
+6. One endpoint failing never blocks others; a `FAILED` delivery is expected until
+   its endpoint is fixed. Endpoints are auto-disabled after repeated exhaustion.
+
 ## 4. Data-subject / owner requests
-- Export an organization's data with the CSV export (Stage H) scoped to that org.
+- Export an organization's data with the CSV export scoped to that org.
 - Deletion: removing memberships cascades correctly; organization deletion is an
   explicit admin operation. Log every such action in `org_audit_log`.
 

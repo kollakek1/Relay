@@ -56,8 +56,12 @@ role-based access enforced on the server.
 - ⏱ **Serverless automation** — idempotent, cron-triggered SLA scan and outbox
   drain; no worker.
 - 🛡 **Hardened** — DB-backed rate limiting, structured redacting logs, audit
-  trail. See `docs/THREAT_MODEL.md`.
+  trail, SSRF-guarded outbound requests, safe CSV exports.
 - 🌗 **shadcn/ui design system** — light/dark themes, responsive, accessible.
+- 🌍 **English & Русский** — the interface, docs and API reference are bilingual,
+  with a remembered language preference.
+- 📖 **Documentation & API reference** — guides under `/docs`, an interactive
+  `/api-reference` and a machine-readable OpenAPI 3.1 spec validated in CI.
 
 ## 🛠 Tech Stack
 
@@ -159,17 +163,21 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
 - [Testing guide](docs/TESTING.md) · [Incident response](docs/INCIDENT_RESPONSE.md) · [Dependency audit](docs/DEPENDENCY_AUDIT.md)
 - [MVP audit](docs/MVP_AUDIT.md) · [Roadmap](docs/MVP_ROADMAP.md) · [V2 roadmap](docs/V2_ROADMAP.md)
 - Guides: [quickstart](docs/guides/QUICKSTART.md) · [deployment](docs/guides/DEPLOYMENT.md) · [configuration](docs/guides/CONFIGURATION.md) · [workflows](docs/guides/WORKFLOWS.md) · [automations](docs/guides/AUTOMATIONS.md) · [integrations](docs/guides/INTEGRATIONS.md)
-- API: [OpenAPI 3.1](docs/api/openapi.yaml) · interactive reference at `/api-reference`
+- API: [OpenAPI 3.1](docs/api/openapi.json) · interactive reference at `/api-reference` · download at `/api/openapi`
+- Interface & docs: English and Русский (switch in the header / sidebar)
 
 ## 🚦 Scope
 
 **Implemented (V1 + V2):** workflow → publish/version → run → tasks → atomic pool
 → comments → activity → notifications → real dashboard → roles & tenant
 isolation → invitations & multi-workspace → audit log → analytics → global search
-→ CSV export → rate limiting → idempotent SLA automation → CI → tests.
+→ CSV export → rate limiting → reliability-hardened outbox & automation retries
+→ public API & signed webhooks → English/Russian interface → docs & API
+reference → Playwright smoke test (opt-in) → CI.
 
-**Not implemented yet (documented in `docs/V2_ROADMAP.md`):** browser E2E
-(Playwright), full BPMN, attachments (no storage), external integrations
-(Telegram), billing, AI provider.
+**Not implemented yet (documented in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md)):**
+full BPMN (parallel branches/gateways), attachments (no storage), external chat
+integrations, billing, AI provider, and translation of the deeper dashboard
+feature panels (the chrome, auth and the whole public site/docs are bilingual).
 
 <div align="center"> Developed with ❤️ by <b>kollakek</b> </div>

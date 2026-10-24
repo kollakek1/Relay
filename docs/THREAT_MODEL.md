@@ -13,7 +13,7 @@ we explicitly do not yet._
 | Membership & roles | Access control decisions |
 | Invitations & tokens | Entry point into a tenant |
 | Sessions / auth credentials | Account takeover |
-| API keys & webhook signing secrets (later stages) | Machine access to tenant data |
+| API keys & webhook signing secrets | Machine access to tenant data |
 | Audit log | Non-repudiation of admin actions |
 | Secrets in env (`DATABASE_URL`, `BETTER_AUTH_SECRET`, provider keys) | Full compromise if leaked |
 
@@ -49,19 +49,26 @@ Browser (untrusted)  ──▶  Next.js Server Actions / Route Handlers (trusted
 | T8 | Secret leakage in logs | structured logger redacts sensitive keys | `logger.ts` |
 | T9 | Auth-session confusion | server-resolved session on every request | `auth-context.ts` |
 | T10 | Over-permissive data exposure | `NOT_FOUND` (not `FORBIDDEN`) for foreign ids avoids existence leaks | services |
+| T11 | SSRF via user-defined outbound URLs | scheme allow-list, no credentials, port policy, private/reserved address blocking, **DNS resolve-then-check**, no redirect following, bounded response | `shared/server/ssrf.ts`, `tests/ssrf.test.ts` |
+| T12 | Webhook signature forgery / replay | HMAC-SHA256 over `t.body` with a timestamp header; receivers deduplicate on the delivery id | `delivery.ts`, `tests/outbox-reliability.test.ts` |
+| T13 | API key leakage / over-reach | only the hash is stored; explicit scopes; keys act with the creator's current role; revocable | `features/api/server/keys.ts`, `tests/security-regression.test.ts` |
+| T14 | Cron secret exposure | `Authorization: Bearer` only, constant-time compare, never in the URL; POST-only | `shared/server/job-auth.ts`, `tests/job-auth.test.ts` |
+| T15 | Duplicate/parallel processing of events | atomic `FOR UPDATE SKIP LOCKED` claims with leases + unique idempotency keys | `delivery.ts`, `tests/outbox-reliability.test.ts` |
+| T16 | CSV formula injection in exports | formula-leading cells are neutralised while numbers/dates are preserved | `features/export/server/csv.ts`, `tests/csv-export.test.ts` |
+| T17 | Insecure default seed credentials | no defaults; weak/placeholder passwords refused; password never logged; demo data opt-in | `prisma/seed-lib.ts`, `tests/seed-hardening.test.ts` |
 
 ## 4. Threats not yet fully addressed (residual)
 
 | # | Threat | Status / plan |
 | --- | --- | --- |
-| R1 | SSRF via user-defined HTTP automation actions | **Not implemented yet** — design requires connect/redirect limits, loopback/private-IP blocking, protocol allowlist (planned Stage F) |
-| R2 | Webhook signature forgery / replay | planned Stage G (HMAC + timestamp + idempotency) |
-| R3 | API key leakage | planned Stage G (hashed storage, scopes, last-used, revoke) |
-| R4 | Email verification / account enumeration | verification disabled; enumerate via invite/registration responses is limited but not eliminated |
-| R5 | Immutable audit at the DB level | append-only by convention; DB roles/triggers not enforced |
-| R6 | Distributed rate limiting fairness | fixed window (not sliding); acceptable for MVP, upgradeable |
-| R7 | Dependency CVEs in dev tooling | tracked in `DEPENDENCY_AUDIT.md` |
-| R8 | TLS semantics of `sslmode=require` | `pg` currently treats it as `verify-full`; pin explicitly in production |
+| R1 | SSRF DNS rebinding (TOCTOU between resolve-then-check and connect) | Residual. Mitigated by resolving and validating every address before connecting; a connect-time pinned socket or egress proxy would close it fully. Documented in `docs/KNOWN_LIMITATIONS.md`. |
+| R2 | Exact-once webhook delivery | Not claimed. Delivery is at-least-once with in-database effectively-once semantics; receivers deduplicate on `x-relay-delivery`. |
+| R3 | Email verification / account enumeration | Verification disabled; enumeration via invite/registration responses is limited but not eliminated. |
+| R4 | Immutable audit at the DB level | append-only by convention; DB roles/triggers not enforced |
+| R5 | Distributed rate limiting fairness | fixed window (not sliding); acceptable for abuse control, upgradeable |
+| R6 | Dependency CVEs in dev tooling | tracked in `DEPENDENCY_AUDIT.md` |
+| R7 | TLS semantics of `sslmode=require` | `pg` currently treats it as `verify-full`; pin `sslmode=verify-full` explicitly in production |
+| R8 | Translated dashboard surfaces | app chrome, auth and the full public site/docs are EN+RU; deeper feature panels remain English-only (see `docs/KNOWN_LIMITATIONS.md`) |
 
 ## 5. Assumptions
 

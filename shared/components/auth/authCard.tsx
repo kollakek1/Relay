@@ -25,8 +25,10 @@ import {
 } from '@/features/auth/schemas/authSchema'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { toast } from 'sonner'
+import { useT } from '@/shared/i18n/provider'
 
 export function AuthCard() {
+  const t = useT()
   const { login, register: registerUser } = useAuth()
   const [passwordHidden, setPasswordHidden] = useState(true)
 
@@ -43,43 +45,43 @@ export function AuthCard() {
   const onLogin = async (data: LoginFormData) => {
     const response = await login(data)
     if (!response.success) {
-      toast.error(response.error || 'Unable to sign in', { position: 'top-right' })
+      toast.error(response.error || t('auth.unableSignIn'), { position: 'top-right' })
       return
     }
-    toast.success('Welcome back!', { position: 'top-right' })
+    toast.success(t('auth.welcomeToast'), { position: 'top-right' })
   }
 
   const onRegister = async (data: RegisterFormData) => {
     const response = await registerUser(data)
     if (!response.success) {
-      toast.error(response.error || 'Unable to create the account', { position: 'top-right' })
+      toast.error(response.error || t('auth.unableRegister'), { position: 'top-right' })
       return
     }
-    toast.success('Account created', { position: 'top-right' })
+    toast.success(t('auth.accountCreatedToast'), { position: 'top-right' })
   }
 
   return (
     <Card className="w-full max-w-lg">
       <CardHeader>
-        <CardTitle>Welcome to Relay</CardTitle>
-        <CardDescription>Sign in to your workspace or create a new account.</CardDescription>
+        <CardTitle>{t('auth.title')}</CardTitle>
+        <CardDescription>{t('auth.description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="login">
           <TabsList className="mb-4 w-full">
-            <TabsTrigger value="login">Sign in</TabsTrigger>
-            <TabsTrigger value="register">Create account</TabsTrigger>
+            <TabsTrigger value="login">{t('auth.signInTab')}</TabsTrigger>
+            <TabsTrigger value="register">{t('auth.signUpTab')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login">
             <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="login-email">Email</Label>
+                <Label htmlFor="login-email">{t('auth.emailLabel')}</Label>
                 <Input
                   id="login-email"
                   type="email"
                   autoComplete="email"
-                  placeholder="you@example.com"
+                  placeholder={t('auth.emailPlaceholder')}
                   {...loginForm.register('email')}
                   aria-invalid={!!loginForm.formState.errors.email}
                   disabled={loginForm.formState.isSubmitting}
@@ -92,7 +94,7 @@ export function AuthCard() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="login-password">Password</Label>
+                <Label htmlFor="login-password">{t('auth.passwordLabel')}</Label>
                 <div className="flex items-center gap-2">
                   <Input
                     id="login-password"
@@ -109,7 +111,7 @@ export function AuthCard() {
                     type="button"
                     onClick={() => setPasswordHidden((prev) => !prev)}
                     disabled={loginForm.formState.isSubmitting}
-                    aria-label={passwordHidden ? 'Show password' : 'Hide password'}
+                    aria-label={passwordHidden ? t('auth.showPassword') : t('auth.hidePassword')}
                   >
                     {passwordHidden ? <EyeIcon /> : <EyeClosedIcon />}
                   </Button>
@@ -123,7 +125,7 @@ export function AuthCard() {
 
               <div className="flex items-center justify-end gap-2">
                 <Label htmlFor="login-remember" className="cursor-pointer">
-                  Remember me
+                  {t('auth.rememberMe')}
                 </Label>
                 <Checkbox
                   id="login-remember"
@@ -145,7 +147,7 @@ export function AuthCard() {
                 ) : (
                   <LogInIcon />
                 )}
-                Sign in
+                {t('auth.signIn')}
               </Button>
             </form>
           </TabsContent>
@@ -153,11 +155,11 @@ export function AuthCard() {
           <TabsContent value="register">
             <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="register-name">Name</Label>
+                <Label htmlFor="register-name">{t('auth.nameLabel')}</Label>
                 <Input
                   id="register-name"
                   autoComplete="name"
-                  placeholder="Jane Doe"
+                  placeholder={t('auth.namePlaceholder')}
                   {...registerForm.register('name')}
                   aria-invalid={!!registerForm.formState.errors.name}
                   disabled={registerForm.formState.isSubmitting}
@@ -170,12 +172,12 @@ export function AuthCard() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="register-email">Email</Label>
+                <Label htmlFor="register-email">{t('auth.emailLabel')}</Label>
                 <Input
                   id="register-email"
                   type="email"
                   autoComplete="email"
-                  placeholder="you@example.com"
+                  placeholder={t('auth.emailPlaceholder')}
                   {...registerForm.register('email')}
                   aria-invalid={!!registerForm.formState.errors.email}
                   disabled={registerForm.formState.isSubmitting}
@@ -189,7 +191,7 @@ export function AuthCard() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="register-password">Password</Label>
+                  <Label htmlFor="register-password">{t('auth.passwordLabel')}</Label>
                   <Input
                     id="register-password"
                     type="password"
@@ -206,7 +208,7 @@ export function AuthCard() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="register-confirm">Confirm password</Label>
+                  <Label htmlFor="register-confirm">{t('auth.confirmPasswordLabel')}</Label>
                   <Input
                     id="register-confirm"
                     type="password"
@@ -234,7 +236,7 @@ export function AuthCard() {
                 ) : (
                   <UserPlusIcon />
                 )}
-                Create account
+                {t('auth.signUp')}
               </Button>
             </form>
           </TabsContent>

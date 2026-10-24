@@ -163,15 +163,58 @@ See `docs/KNOWN_LIMITATIONS.md`. The important ones:
 
 ## 5. Final verification log
 
-Filled in during Phase G. Each line is a real command result, not a prediction.
+Every row is a real command result from this branch, not a prediction.
 
 | Check | Command | Result |
 | --- | --- | --- |
-| Typecheck | `npm run typecheck` | _pending_ |
-| Lint | `npm run lint` | _pending_ |
-| Prisma generate (clean) | `npm run db:generate` | _pending_ |
-| Migrations | `npm run db:deploy` | _pending_ |
-| Unit + integration | `npm test` | _pending_ |
-| OpenAPI valid | `npm run api:check` | _pending_ |
-| i18n completeness | `npm run i18n:check` | _pending_ |
-| Production build | `npm run build` | _pending_ |
+| Typecheck | `npm run typecheck` | ✅ pass (0 errors) |
+| Lint | `npm run lint` | ✅ pass (0 problems) |
+| Prisma generate (clean) | `mv prisma/generated … && npm run db:generate` | ✅ regenerated from `prisma/schema`; typecheck then passed with no committed client |
+| Prisma validation | `npx prisma validate` | ✅ schema valid |
+| Migrations | `npx prisma migrate deploy` | ✅ 13 migrations applied (`…reliability_leases` added) |
+| Unit + integration tests | `npm test` | ✅ 23 files · 139 tests passed |
+| OpenAPI check | `npm run api:check` | ✅ 3.1.0; 6 documented paths ↔ 6 implemented routes; refs resolve |
+| i18n completeness | `npm run i18n:check` | ✅ 334 keys × 2 locales; no missing/empty keys |
+| Production build | `npm run build` | ✅ built; all public + dashboard routes emitted |
+| Browser E2E | `E2E=1 npx playwright test` | ✅ 4 passed (landing + RU/EN switch; docs + API reference + OpenAPI download; localised 404; full workflow lifecycle: sign-up → create → publish → run → claim → complete) |
+| Migration status | `npm run db:status` | ✅ no pending migrations |
+
+---
+
+## 6. Change map (where to look)
+
+| Area | Files |
+| --- | --- |
+| Seed hardening | `prisma/seed-lib.ts`, `prisma/seed.ts`, `.env.example`, `tests/seed-hardening.test.ts` |
+| Cron auth | `shared/server/job-auth.ts`, `app/api/jobs/{drain,sla-scan}/route.ts`, `tests/job-auth.test.ts` |
+| Outbox reliability | `features/webhooks/server/delivery.ts`, `features/automation/server/service.ts`, `shared/server/retry.ts`, `prisma/migrations/20261025090000_reliability_leases/`, `tests/outbox-reliability.test.ts` |
+| CSV safety | `features/export/server/csv.ts`, `features/export/server/service.ts`, `tests/csv-export.test.ts` |
+| Analytics | `features/analytics/server/service.ts`, `app/dashboard/(protected)/analytics/page.tsx`, `tests/analytics-search-export.test.ts` |
+| SSRF | `shared/server/ssrf.ts`, `tests/ssrf.test.ts` |
+| Invitation race | `features/organization/server/invitations.ts`, `tests/security-regression.test.ts` |
+| Prisma / Git | `.gitignore`, `package.json`, `.github/workflows/ci.yml`, `docs/ARCHITECTURE.md` |
+| i18n | `shared/i18n/**`, `app/layout.tsx`, `scripts/check-i18n.ts`, `tests/i18n*` |
+| Public site | `app/(main)/**`, `shared/components/site/**` |
+| OpenAPI & reference | `docs/api/openapi.json`, `app/(main)/api-reference/**`, `app/api/openapi/route.ts`, `scripts/check-openapi.ts` |
+| Docs | `docs/**`, `docs/guides/**` |
+| E2E | `playwright.config.ts`, `e2e/workflow.spec.ts` |
+| Admin diagnostics | `shared/components/dashboard/operations-card.tsx`, `features/{webhooks,automation}` service + actions |
+
+---
+
+## 7. Residual limitations
+
+See `docs/KNOWN_LIMITATIONS.md`. The most important open items, stated plainly:
+
+- **SSRF DNS rebinding** has a residual TOCTOU window (resolve-then-check, not
+  connect-time pinning). The realistic attack is blocked; closing it fully needs
+  an egress proxy.
+- **Delivery is at-least-once**, not exactly-once. Receivers must deduplicate on
+  `x-relay-delivery`.
+- **Rate limiting is a fixed window.**
+- **Email verification is disabled.**
+- **Deeper dashboard feature panels are English-only.** The i18n foundation, the
+  entire public site, docs, API reference, app chrome and authentication are
+  bilingual; the workflow builder, task-detail form labels, settings panels and
+  the webhooks/automations panels are not yet translated.
+- **Browser E2E is opt-in** (`E2E=1`) because it needs a live database and server.
