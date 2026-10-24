@@ -7,36 +7,21 @@ import { z } from 'zod'
  */
 export const workflowStepSchema = z.object({
   name: z.string().trim().min(1, 'Step name is required').max(120),
-  description: z
-    .string()
-    .trim()
-    .max(2000)
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
+  description: z.string().trim().max(2000).optional(),
   assigneeRole: z.enum(['OWNER', 'ADMIN', 'MEMBER']).nullable().optional(),
   dueInDays: z.number().int().min(0).max(365).nullable().optional(),
 })
 
 export const createWorkflowSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(120),
-  description: z
-    .string()
-    .trim()
-    .max(2000)
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
+  description: z.string().trim().max(2000).optional(),
 })
 
 /** Full draft replacement: metadata + ordered steps (at least one). */
 export const saveWorkflowSchema = z.object({
   workflowId: z.string().min(1),
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(120),
-  description: z
-    .string()
-    .trim()
-    .max(2000)
-    .optional()
-    .transform((v) => (v === '' ? undefined : v)),
+  description: z.string().trim().max(2000).optional(),
   steps: z.array(workflowStepSchema).min(1, 'A workflow needs at least one step').max(50),
 })
 

@@ -16,8 +16,8 @@ export interface SnapshotStep {
 export function buildStepSnapshot(steps: WorkflowStepInput[]): SnapshotStep[] {
   return steps.map((step, index) => ({
     order: index + 1,
-    name: step.name,
-    description: step.description ?? null,
+    name: step.name.trim(),
+    description: step.description?.trim() ? step.description.trim() : null,
     assigneeRole: step.assigneeRole ?? null,
     dueInDays: step.dueInDays ?? null,
   }))

@@ -66,7 +66,7 @@ export async function createWorkflow(ctx: Context, input: CreateWorkflowInput) {
     data: {
       organizationId: ctx.organizationId,
       name: input.name,
-      description: input.description ?? null,
+      description: input.description?.trim() || null,
       createdById: ctx.userId,
       status: 'DRAFT',
       steps: {
@@ -114,7 +114,7 @@ export async function saveWorkflowDraft(ctx: Context, input: SaveWorkflowInput) 
     })
     await tx.workflow.update({
       where: { id: workflow.id },
-      data: { name: input.name, description: input.description ?? null },
+      data: { name: input.name, description: input.description?.trim() || null },
     })
     return tx.workflow.findUniqueOrThrow({
       where: { id: workflow.id },
