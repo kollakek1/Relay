@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Button } from '../ui/button'
-import { ImageIcon, BookIcon, ArrowRightIcon, GithubIcon } from 'lucide-react'
+import { ImageIcon, BookIcon, ArrowRightIcon, CodeIcon } from 'lucide-react'
 
 export const Header = () => {
   return (
@@ -19,7 +19,7 @@ export const Header = () => {
         </div>
         <div className="flex items-center gap-2">
           <Button variant={'secondary'}>
-            Github <GithubIcon />
+            Github <CodeIcon />
           </Button>
           <Button asChild>
             <Link href="/dashboard">
