@@ -7,9 +7,11 @@ import { AppError } from '@/shared/server/errors'
 import { PageHeader } from '@/shared/components/page-header'
 import { TaskDetail } from '@/features/task/components/task-detail'
 import { normalizeFields, normalizeSnapshot } from '@/features/workflow/server/engine'
+import { getTranslator } from '@/shared/i18n/server'
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const ctx = await requireContext()
+  const { t } = await getTranslator()
   const { id } = await params
 
   let task
@@ -28,7 +30,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
-      <PageHeader title={task.name} description="Task details, history and comments." />
+      <PageHeader title={task.name} description={t('pages.taskDetailDescription')} />
       <TaskDetail
         task={{
           id: task.id,

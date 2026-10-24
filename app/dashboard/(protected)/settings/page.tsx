@@ -1,6 +1,6 @@
 import { getContext, getCurrentUser } from '@/shared/server/auth-context'
 import { getOrganization } from '@/features/organization/server/service'
-import { ROLE_LABEL, canManageMembers } from '@/shared/server/permissions'
+import { canManageMembers } from '@/shared/server/permissions'
 import { PageHeader } from '@/shared/components/page-header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { Badge } from '@/shared/components/ui/badge'
@@ -19,9 +19,11 @@ import {
 import { getOutboxHealth } from '@/features/webhooks/server/delivery'
 import { OperationsCard } from '@/shared/components/dashboard/operations-card'
 import { formatDate } from '@/shared/lib/format'
+import { getTranslator } from '@/shared/i18n/server'
 
 export default async function SettingsPage() {
   const [user, ctx] = await Promise.all([getCurrentUser(), getContext()])
+  const { t } = await getTranslator()
   const organization = ctx ? await getOrganization(ctx) : null
   const canManage = ctx ? canManageMembers(ctx.role) : false
 
@@ -42,21 +44,21 @@ export default async function SettingsPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-8 px-4 py-8 lg:p-10">
-      <PageHeader title="Settings" description="Manage your profile and workspace." />
+      <PageHeader title={t('pages.settingsTitle')} description={t('pages.settingsDescription')} />
 
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
+          <CardTitle>{t('profile.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {user && <ProfileForm initialName={user.name} />}
           <div className="grid gap-2 text-sm sm:grid-cols-2">
             <div>
-              <p className="text-muted-foreground">Email</p>
+              <p className="text-muted-foreground">{t('profile.email')}</p>
               <p className="font-medium">{user?.email ?? '—'}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">User ID</p>
+              <p className="text-muted-foreground">{t('profile.userId')}</p>
               <p className="font-mono text-xs">{user?.id ?? '—'}</p>
             </div>
           </div>
@@ -65,7 +67,7 @@ export default async function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Workspace</CardTitle>
+          <CardTitle>{t('settings.workspace')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {organization && (
@@ -80,15 +82,15 @@ export default async function SettingsPage() {
           )}
           <div className="grid gap-2 border-t pt-4 text-sm sm:grid-cols-3">
             <div>
-              <p className="text-muted-foreground">Slug</p>
+              <p className="text-muted-foreground">{t('settings.slug')}</p>
               <p className="font-mono text-xs">{organization?.slug ?? '—'}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">Members</p>
+              <p className="text-muted-foreground">{t('settings.members')}</p>
               <p className="font-medium">{organization?._count.memberships ?? 0}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">Workflows</p>
+              <p className="text-muted-foreground">{t('settings.workflows')}</p>
               <p className="font-medium">{organization?._count.workflows ?? 0}</p>
             </div>
           </div>
@@ -97,18 +99,16 @@ export default async function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Access level</CardTitle>
+          <CardTitle>{t('settings.accessLevel')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-muted-foreground text-sm">
-              Your role determines what you can do in this workspace.
-            </p>
-            <Badge>{ctx ? ROLE_LABEL[ctx.role] : '—'}</Badge>
+            <p className="text-muted-foreground text-sm">{t('settings.accessLevelBody')}</p>
+            <Badge>{ctx ? t(`status.${ctx.role}`) : '—'}</Badge>
           </div>
           <p className="text-muted-foreground text-xs">
-            Members are added via invitations. Roles and ownership are managed on the Team page.
-            {organization ? ` Workspace created ${formatDate(organization.createdAt)}.` : ''}
+            {t('settings.accessLevelNote')}
+            {organization ? ` ${t('settings.createdOn', { date: formatDate(organization.createdAt) })}` : ''}
           </p>
         </CardContent>
       </Card>
@@ -116,7 +116,7 @@ export default async function SettingsPage() {
       {ctx && canManage && (
         <Card>
           <CardHeader>
-            <CardTitle>Integrations</CardTitle>
+            <CardTitle>{t('settings.integrations')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-8">            <ApiKeysPanel
               canManage={canManage}

@@ -100,15 +100,26 @@ test.describe('workflow lifecycle', () => {
     const claim = page.getByRole('button', { name: 'Claim' }).first()
     await expect(claim).toBeVisible({ timeout: 20_000 })
     await claim.click()
+    // Wait for the action to be confirmed before navigating: a navigation would
+    // abort the in-flight server action.
+    await expect(page.getByText('Task claimed')).toBeVisible({ timeout: 20_000 })
 
     // --- 5. Complete the task ----------------------------------------------
     await page.goto('/dashboard/tasks')
     await page.getByRole('link', { name: stepName }).first().click()
     await page.waitForURL('**/dashboard/tasks/**', { timeout: 30_000 })
 
+    // If the pool claim did not stick, the detail page offers a claim action.
+    const claimHere = page.getByRole('button', { name: 'Claim task' })
+    if (await claimHere.isVisible().catch(() => false)) {
+      await claimHere.click()
+      await expect(page.getByText('Task claimed')).toBeVisible({ timeout: 20_000 })
+    }
+
     const startWorking = page.getByRole('button', { name: 'Start working' })
     if (await startWorking.isVisible().catch(() => false)) {
       await startWorking.click()
+      await page.waitForTimeout(500)
     }
     await page.getByRole('button', { name: 'Complete' }).click()
     await expect(page.getByText(/done/i).first()).toBeVisible({ timeout: 20_000 })

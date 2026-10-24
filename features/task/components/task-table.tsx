@@ -10,6 +10,7 @@ import { formatDate, isOverdue } from '@/shared/lib/format'
 import { cn } from '@/shared/lib/utils'
 import { claimTaskAction } from '@/features/task/actions'
 import { TaskPriorityBadge, TaskStatusBadge } from './task-badges'
+import { useT } from '@/shared/i18n/provider'
 import { HandIcon, Loader2Icon } from 'lucide-react'
 
 export interface TaskRow {
@@ -38,6 +39,7 @@ export function TaskTable({
   const router = useRouter()
   const pathname = usePathname()
   const params = useSearchParams()
+  const t = useT()
   const { isPending, run } = useAction()
 
   const pageCount = Math.max(1, Math.ceil(total / pageSize))
@@ -50,7 +52,7 @@ export function TaskTable({
 
   const claim = (taskId: string) =>
     run(() => claimTaskAction({ taskId }), {
-      success: 'Task claimed',
+      success: t('toast.taskClaimed'),
       onSuccess: () => router.refresh(),
     })
 
@@ -60,11 +62,11 @@ export function TaskTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Task</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Assignee</TableHead>
-              <TableHead>Due</TableHead>
+              <TableHead>{t('table.task')}</TableHead>
+              <TableHead>{t('table.status')}</TableHead>
+              <TableHead>{t('table.priority')}</TableHead>
+              <TableHead>{t('table.assignee')}</TableHead>
+              <TableHead>{t('table.due')}</TableHead>
               {showClaim && <TableHead className="w-28" />}
             </TableRow>
           </TableHeader>
@@ -86,7 +88,7 @@ export function TaskTable({
                   <TaskPriorityBadge priority={task.priority} />
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {task.assignee?.name ?? 'Unassigned'}
+                  {task.assignee?.name ?? t('table.unassigned')}
                 </TableCell>
                 <TableCell
                   className={cn(
@@ -101,10 +103,10 @@ export function TaskTable({
                     {task.status === 'PENDING' && !task.assignee ? (
                       <Button size="sm" disabled={isPending} onClick={() => claim(task.id)}>
                         {isPending ? <Loader2Icon className="animate-spin" /> : <HandIcon />}
-                        Claim
+                        {t('table.claim')}
                       </Button>
                     ) : (
-                      <span className="text-muted-foreground text-xs">Taken</span>
+                      <span className="text-muted-foreground text-xs">{t('table.taken')}</span>
                     )}
                   </TableCell>
                 )}
@@ -117,11 +119,11 @@ export function TaskTable({
       {pageCount > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground text-sm">
-            Page {page} of {pageCount} · {total} tasks
+            {t('table.pageOf', { page, pages: pageCount })} · {t('table.totalTasks', { count: total })}
           </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => goToPage(page - 1)}>
-              Previous
+              {t('table.previous')}
             </Button>
             <Button
               variant="outline"
@@ -129,7 +131,7 @@ export function TaskTable({
               disabled={page >= pageCount}
               onClick={() => goToPage(page + 1)}
             >
-              Next
+              {t('table.next')}
             </Button>
           </div>
         </div>

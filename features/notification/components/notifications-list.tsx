@@ -9,6 +9,7 @@ import { useAction } from '@/shared/hooks/useAction'
 import { formatRelativeTime } from '@/shared/lib/format'
 import { cn } from '@/shared/lib/utils'
 import { markNotificationsReadAction } from '@/features/notification/actions'
+import { useT } from '@/shared/i18n/provider'
 import {
   BellIcon,
   CheckCheckIcon,
@@ -51,13 +52,14 @@ const TYPE_ICON: Record<NotificationType, typeof BellIcon> = {
 
 export function NotificationsList({ notifications }: { notifications: NotificationView[] }) {
   const router = useRouter()
+  const t = useT()
   const { isPending, run } = useAction()
 
   const unread = notifications.filter((item) => !item.readAt).length
 
   const markAll = () =>
     run(() => markNotificationsReadAction({}), {
-      success: 'All notifications marked as read',
+      success: t('notifications.markedAllRead'),
       onSuccess: () => router.refresh(),
     })
 
@@ -74,19 +76,19 @@ export function NotificationsList({ notifications }: { notifications: Notificati
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-muted-foreground text-sm">
-          {unread > 0 ? `${unread} unread` : 'You are all caught up'}
+          {unread > 0 ? t('notifications.unreadCount', { count: unread }) : t('notifications.allCaughtUp')}
         </p>
         <Button variant="outline" size="sm" onClick={markAll} disabled={isPending || unread === 0}>
           <CheckCheckIcon />
-          Mark all as read
+          {t('notifications.markAllRead')}
         </Button>
       </div>
 
       {notifications.length === 0 ? (
         <EmptyState
           icon={BellIcon}
-          title="No notifications"
-          description="You will be notified when tasks are assigned to you or updated."
+          title={t('notifications.emptyTitle')}
+          description={t('notifications.emptyBody')}
         />
       ) : (
         <div className="border-border bg-card divide-border divide-y overflow-hidden rounded-xl border">
@@ -108,7 +110,9 @@ export function NotificationsList({ notifications }: { notifications: Notificati
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 text-sm font-medium">
                     {notification.title}
-                    {!notification.readAt && <Badge className="h-1.5 w-1.5 p-0" aria-label="Unread" />}
+                    {!notification.readAt && (
+                      <Badge className="h-1.5 w-1.5 p-0" aria-label={t('notifications.unread')} />
+                    )}
                   </p>
                   {notification.body && (
                     <p className="text-muted-foreground text-sm">{notification.body}</p>

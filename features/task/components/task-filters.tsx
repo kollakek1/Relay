@@ -12,6 +12,8 @@ import {
 } from '@/shared/components/ui/select'
 import { Loader2Icon, SearchIcon } from 'lucide-react'
 import { TASK_STATUSES, TASK_PRIORITIES } from '@/features/task/schemas/taskSchema'
+import { useT } from '@/shared/i18n/provider'
+import type { MessageKey } from '@/shared/i18n/translate'
 
 const STATUS_OPTIONS = ['all', ...TASK_STATUSES] as const
 const PRIORITY_OPTIONS = ['all', ...TASK_PRIORITIES] as const
@@ -20,6 +22,7 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
   const router = useRouter()
   const pathname = usePathname()
   const params = useSearchParams()
+  const t = useT()
   const [isPending, startTransition] = useTransition()
   const [search, setSearch] = useState(params.get('q') ?? '')
 
@@ -50,9 +53,9 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
           autoComplete="off"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search tasks"
+          placeholder={t('filters.searchTasks')}
           className="pl-9"
-          aria-label="Search tasks"
+          aria-label={t('filters.searchLabel')}
         />
         {isPending && (
           <Loader2Icon className="text-muted-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin" />
@@ -60,13 +63,13 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
       </div>
 
       <Select value={params.get('status') ?? 'all'} onValueChange={(value) => update('status', value)}>
-        <SelectTrigger id="task-filter-status" className="w-36" aria-label="Filter by status">
-          <SelectValue placeholder="Status" />
+        <SelectTrigger id="task-filter-status" className="w-36" aria-label={t('filters.filterByStatus')}>
+          <SelectValue placeholder={t('filters.status')} />
         </SelectTrigger>
         <SelectContent>
           {STATUS_OPTIONS.map((status) => (
             <SelectItem key={status} value={status}>
-              {status === 'all' ? 'All statuses' : status.replace('_', ' ').toLowerCase()}
+              {status === 'all' ? t('filters.allStatuses') : t(`status.${status}` as MessageKey)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -77,13 +80,17 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
           value={params.get('assignee') ?? 'all'}
           onValueChange={(value) => update('assignee', value)}
         >
-          <SelectTrigger id="task-filter-assignee" className="w-36" aria-label="Filter by assignee">
-            <SelectValue placeholder="Assignee" />
+          <SelectTrigger
+            id="task-filter-assignee"
+            className="w-36"
+            aria-label={t('filters.filterByAssignee')}
+          >
+            <SelectValue placeholder={t('filters.assignee')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Everyone</SelectItem>
-            <SelectItem value="me">Assigned to me</SelectItem>
-            <SelectItem value="unassigned">Unassigned</SelectItem>
+            <SelectItem value="all">{t('filters.everyone')}</SelectItem>
+            <SelectItem value="me">{t('filters.assignedToMe')}</SelectItem>
+            <SelectItem value="unassigned">{t('filters.unassigned')}</SelectItem>
           </SelectContent>
         </Select>
       )}
@@ -92,13 +99,13 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
         value={params.get('priority') ?? 'all'}
         onValueChange={(value) => update('priority', value)}
       >
-        <SelectTrigger id="task-filter-priority" className="w-32" aria-label="Filter by priority">
-          <SelectValue placeholder="Priority" />
+        <SelectTrigger id="task-filter-priority" className="w-32" aria-label={t('filters.filterByPriority')}>
+          <SelectValue placeholder={t('filters.priority')} />
         </SelectTrigger>
         <SelectContent>
           {PRIORITY_OPTIONS.map((priority) => (
             <SelectItem key={priority} value={priority}>
-              {priority === 'all' ? 'Any priority' : priority.toLowerCase()}
+              {priority === 'all' ? t('filters.anyPriority') : t(`status.${priority}` as MessageKey)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -108,13 +115,13 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
         value={params.get('sort') ?? 'createdAt'}
         onValueChange={(value) => update('sort', value)}
       >
-        <SelectTrigger id="task-filter-sort" className="w-40" aria-label="Sort tasks">
-          <SelectValue placeholder="Sort" />
+        <SelectTrigger id="task-filter-sort" className="w-40" aria-label={t('filters.sortTasks')}>
+          <SelectValue placeholder={t('filters.sort')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="createdAt">Newest first</SelectItem>
-          <SelectItem value="dueAt">By due date</SelectItem>
-          <SelectItem value="priority">By priority</SelectItem>
+          <SelectItem value="createdAt">{t('filters.newestFirst')}</SelectItem>
+          <SelectItem value="dueAt">{t('filters.byDueDate')}</SelectItem>
+          <SelectItem value="priority">{t('filters.byPriority')}</SelectItem>
         </SelectContent>
       </Select>
     </div>

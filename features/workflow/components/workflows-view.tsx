@@ -22,6 +22,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { EmptyState } from '@/shared/components/empty-state'
 import { createWorkflowAction } from '@/features/workflow/actions'
 import { useAction } from '@/shared/hooks/useAction'
+import { useT } from '@/shared/i18n/provider'
+import type { MessageKey } from '@/shared/i18n/translate'
 import { formatDate } from '@/shared/lib/format'
 import { Loader2Icon, PlusIcon, SearchIcon, WorkflowIcon } from 'lucide-react'
 
@@ -52,6 +54,7 @@ export function WorkflowsView({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const t = useT()
   const { isPending, run } = useAction()
   const [isSearching, startSearch] = useTransition()
   const [open, setOpen] = useState(false)
@@ -75,7 +78,7 @@ export function WorkflowsView({
 
   const createWorkflow = () => {
     run(() => createWorkflowAction({ name, description }), {
-      success: 'Draft workflow created',
+      success: t('workflowList.created'),
       onSuccess: (data) => {
         setOpen(false)
         setName('')
@@ -96,9 +99,9 @@ export function WorkflowsView({
             autoComplete="off"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search workflows"
+            placeholder={t('filters.searchWorkflows')}
             className="pl-9"
-            aria-label="Search workflows"
+            aria-label={t('filters.searchWorkflows')}
           />
           {isSearching && (
             <Loader2Icon className="text-muted-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin" />
@@ -110,43 +113,41 @@ export function WorkflowsView({
             <DialogTrigger asChild>
               <Button>
                 <PlusIcon />
-                New workflow
+                {t('workflowList.new')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>New workflow</DialogTitle>
-                <DialogDescription>
-                  Create a draft, then add the steps your process should run through.
-                </DialogDescription>
+                <DialogTitle>{t('workflowList.new')}</DialogTitle>
+                <DialogDescription>{t('workflowList.newDescription')}</DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="workflow-name">Name</Label>
+                  <Label htmlFor="workflow-name">{t('workflowList.name')}</Label>
                   <Input
                     id="workflow-name"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
-                    placeholder="Content review"
+                    placeholder={t('workflowList.namePlaceholder')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="workflow-description">Description</Label>
+                  <Label htmlFor="workflow-description">{t('workflowList.description')}</Label>
                   <Textarea
                     id="workflow-description"
                     value={description}
                     onChange={(event) => setDescription(event.target.value)}
-                    placeholder="What does this process do?"
+                    placeholder={t('workflowList.descriptionPlaceholder')}
                   />
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button onClick={createWorkflow} disabled={isPending || name.trim().length < 2}>
                   {isPending && <Loader2Icon className="animate-spin" />}
-                  Create draft
+                  {t('workflowList.createDraft')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -157,13 +158,13 @@ export function WorkflowsView({
       {workflows.length === 0 ? (
         <EmptyState
           icon={WorkflowIcon}
-          title={initialQuery ? 'No workflows match your search' : 'No workflows yet'}
+          title={initialQuery ? t('workflowList.emptySearchTitle') : t('workflowList.emptyTitle')}
           description={
             initialQuery
-              ? 'Try a different search term.'
+              ? t('workflowList.emptySearchBody')
               : canManage
-                ? 'Create your first workflow to start automating work.'
-                : 'An administrator has not published a workflow yet.'
+                ? t('workflowList.emptyBodyManage')
+                : t('workflowList.emptyBodyReadonly')
           }
         />
       ) : (
@@ -171,12 +172,12 @@ export function WorkflowsView({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Steps</TableHead>
-                <TableHead>Versions</TableHead>
-                <TableHead>Runs</TableHead>
-                <TableHead>Updated</TableHead>
+                <TableHead>{t('table.name')}</TableHead>
+                <TableHead>{t('table.status')}</TableHead>
+                <TableHead>{t('table.steps')}</TableHead>
+                <TableHead>{t('table.versions')}</TableHead>
+                <TableHead>{t('table.runs')}</TableHead>
+                <TableHead>{t('table.updated')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -196,7 +197,9 @@ export function WorkflowsView({
                     )}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={STATUS_VARIANT[workflow.status]}>{workflow.status}</Badge>
+                    <Badge variant={STATUS_VARIANT[workflow.status]}>
+                      {t(`status.${workflow.status}` as MessageKey)}
+                    </Badge>
                   </TableCell>
                   <TableCell>{workflow._count.steps}</TableCell>
                   <TableCell>{workflow._count.versions}</TableCell>

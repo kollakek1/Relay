@@ -1,6 +1,9 @@
 import { en, type Messages } from './messages/en'
 import { ru } from './messages/ru'
 import type { Locale } from './config'
+import type { PluralNode } from './plural'
+
+export type { PluralNode }
 
 /**
  * Translation runtime.
@@ -12,11 +15,6 @@ import type { Locale } from './config'
  */
 
 export const MESSAGES: Record<Locale, Messages> = { en, ru }
-
-export interface PluralNode {
-  one: string
-  other: string
-}
 
 export type DeepKeys<T> = T extends object
   ? {
@@ -108,7 +106,12 @@ export function findUntranslatedKeys(): string[] {
       return
     }
     if (node && typeof node === 'object') {
-      for (const [child, value] of Object.entries(node as Record<string, unknown>)) {
+      const record = node as Record<string, unknown>
+      if (typeof record.other === 'string' && ('one' in record || 'few' in record || 'many' in record)) {
+        english.set(prefix, JSON.stringify(record))
+        return
+      }
+      for (const [child, value] of Object.entries(record)) {
         collect(value, prefix ? `${prefix}.${child}` : child)
       }
     }
@@ -122,7 +125,12 @@ export function findUntranslatedKeys(): string[] {
       return
     }
     if (node && typeof node === 'object') {
-      for (const [child, value] of Object.entries(node as Record<string, unknown>)) {
+      const record = node as Record<string, unknown>
+      if (typeof record.other === 'string' && ('one' in record || 'few' in record || 'many' in record)) {
+        if (english.get(prefix) === JSON.stringify(record)) identical.push(prefix)
+        return
+      }
+      for (const [child, value] of Object.entries(record)) {
         walk(value, prefix ? `${prefix}.${child}` : child)
       }
     }

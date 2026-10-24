@@ -7,6 +7,7 @@ import { Button } from '@/shared/components/ui/button'
 import { Progress } from '@/shared/components/ui/progress'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table'
 import { formatDateTime } from '@/shared/lib/format'
+import { getTranslator } from '@/shared/i18n/server'
 import { BoxesIcon, DownloadIcon } from 'lucide-react'
 
 const STATUS_VARIANT = {
@@ -17,18 +18,19 @@ const STATUS_VARIANT = {
 
 export default async function InstancesPage() {
   const ctx = await requireContext()
+  const { t } = await getTranslator()
   const instances = await listInstances(ctx)
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
       <PageHeader
-        title="Process instances"
-        description="Every run of a published workflow."
+        title={t('pages.runsTitle')}
+        description={t('pages.runsDescription')}
         actions={
           <Button variant="outline" size="sm" asChild>
             <a href="/api/export?kind=instances" download>
               <DownloadIcon />
-              Export CSV
+              {t('pages.exportCsv')}
             </a>
           </Button>
         }
@@ -37,20 +39,20 @@ export default async function InstancesPage() {
       {instances.length === 0 ? (
         <EmptyState
           icon={BoxesIcon}
-          title="No process instances"
-          description="Publish a workflow and start an instance to see runs here."
+          title={t('pages.runsEmptyTitle')}
+          description={t('pages.runsEmptyBody')}
         />
       ) : (
         <div className="border-border bg-card overflow-hidden rounded-xl border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Workflow</TableHead>
-                <TableHead>Version</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Progress</TableHead>
-                <TableHead>Started by</TableHead>
-                <TableHead>Started</TableHead>
+                <TableHead>{t('table.workflow')}</TableHead>
+                <TableHead>{t('table.version')}</TableHead>
+                <TableHead>{t('table.status')}</TableHead>
+                <TableHead>{t('table.progress')}</TableHead>
+                <TableHead>{t('table.startedBy')}</TableHead>
+                <TableHead>{t('table.started')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

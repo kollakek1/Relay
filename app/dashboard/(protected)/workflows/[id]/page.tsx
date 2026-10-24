@@ -8,6 +8,7 @@ import { VersionHistory } from '@/features/workflow/components/version-history'
 import { compareVersions, listVersions } from '@/features/workflow/server/versioning'
 import type { ConditionOp, FormFieldType } from '@/features/workflow/server/engine'
 import { AppError } from '@/shared/server/errors'
+import { getTranslator } from '@/shared/i18n/server'
 
 export default async function WorkflowDetailPage({
   params,
@@ -15,6 +16,7 @@ export default async function WorkflowDetailPage({
   params: Promise<{ id: string }>
 }) {
   const ctx = await requireContext()
+  const { t } = await getTranslator()
   const { id } = await params
 
   let workflow
@@ -35,7 +37,7 @@ export default async function WorkflowDetailPage({
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
       <PageHeader
         title={workflow.name}
-        description="Edit the draft, publish versions and start process instances."
+        description={t('pages.workflowDetailDescription')}
       />
       <WorkflowBuilder
         workflow={{

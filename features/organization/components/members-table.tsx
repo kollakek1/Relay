@@ -38,6 +38,8 @@ import {
   updateMemberRoleAction,
 } from '@/features/organization/actions'
 import { useAction } from '@/shared/hooks/useAction'
+import { useT } from '@/shared/i18n/provider'
+import type { MessageKey } from '@/shared/i18n/translate'
 import { formatDate, initials } from '@/shared/lib/format'
 
 export interface TeamMember {
@@ -47,10 +49,10 @@ export interface TeamMember {
   user: { id: string; name: string; email: string; image: string | null }
 }
 
-const ROLE_LABELS: Record<OrgRole, string> = {
-  OWNER: 'Owner',
-  ADMIN: 'Admin',
-  MEMBER: 'Member',
+const ROLE_KEY: Record<OrgRole, MessageKey> = {
+  OWNER: 'status.OWNER',
+  ADMIN: 'status.ADMIN',
+  MEMBER: 'status.MEMBER',
 }
 
 export function MembersTable({
@@ -65,6 +67,7 @@ export function MembersTable({
   currentRole: OrgRole
 }) {
   const { isPending, run } = useAction()
+  const t = useT()
   const [query, setQuery] = useState('')
   const [pendingRemoval, setPendingRemoval] = useState<TeamMember | null>(null)
   const [pendingTransfer, setPendingTransfer] = useState<TeamMember | null>(null)
@@ -76,21 +79,22 @@ export function MembersTable({
       (member) =>
         member.user.name.toLowerCase().includes(term) ||
         member.user.email.toLowerCase().includes(term) ||
-        ROLE_LABELS[member.role].toLowerCase().includes(term)
+        t(ROLE_KEY[member.role]).toLowerCase().includes(term)
     )
-  }, [members, query])
+  }, [members, query, t])
 
   const changeRole = (member: TeamMember, role: OrgRole) => {
     if (role === member.role) return
     run(() => updateMemberRoleAction({ membershipId: member.id, role }), {
-      success: `Role updated to ${ROLE_LABELS[role]}`,
+      success: t('membersTable.roleUpdatedTo', { role: t(ROLE_KEY[role]) }),
     })
   }
 
   const confirmRemove = () => {
     const member = pendingRemoval
     setPendingRemoval(null)
-    if (member) run(() => removeMemberAction({ membershipId: member.id }), { success: 'Member removed' })
+    if (member)
+      run(() => removeMemberAction({ membershipId: member.id }), { success: t('members.removed') })
   }
 
   const confirmTransfer = () => {
@@ -98,7 +102,7 @@ export function MembersTable({
     setPendingTransfer(null)
     if (member)
       run(() => transferOwnershipAction({ membershipId: member.id }), {
-        success: `${member.user.name} is now the owner`,
+        success: t('membersTable.transferred', { name: member.user.name }),
       })
   }
 
@@ -113,26 +117,26 @@ export function MembersTable({
             autoComplete="off"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search members"
+            placeholder={t('membersTable.search')}
             className="pl-9"
-            aria-label="Search members"
+            aria-label={t('membersTable.search')}
           />
         </div>
         <p className="text-muted-foreground text-sm">
-          {members.length} {members.length === 1 ? 'member' : 'members'}
+          {t('membersTable.memberCount', { count: members.length })}
         </p>
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState icon={UsersIcon} title="No members match your search" />
+        <EmptyState icon={UsersIcon} title={t('membersTable.emptySearch')} />
       ) : (
         <div className="border-border bg-card overflow-hidden rounded-xl border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Member</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead className="text-right">Role</TableHead>
+                <TableHead>{t('members.member')}</TableHead>
+                <TableHead>{t('members.joined')}</TableHead>
+                <TableHead className="text-right">{t('members.role')}</TableHead>
                 {canManage && <TableHead className="w-12" />}
               </TableRow>
             </TableHeader>
@@ -149,7 +153,11 @@ export function MembersTable({
                         <div className="min-w-0">
                           <p className="truncate font-medium">
                             {member.user.name}
-                            {isSelf && <span className="text-muted-foreground ml-2 text-xs">(you)</span>}
+                            {isSelf && (
+                              <span className="text-muted-foreground ml-2 text-xs">
+                                ({t('members.you')})
+                              </span>
+                            )}
                           </p>
                           <p className="text-muted-foreground truncate text-xs">{member.user.email}</p>
                         </div>
@@ -167,20 +175,20 @@ export function MembersTable({
                             size="sm"
                             id={`role-${member.id}`}
                             className="ml-auto w-32"
-                            aria-label={`Role for ${member.user.name}`}
+                            aria-label={t('membersTable.roleFor', { name: member.user.name })}
                           >
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {(Object.keys(ROLE_LABELS) as OrgRole[]).map((role) => (
+                            {(Object.keys(ROLE_KEY) as OrgRole[]).map((role) => (
                               <SelectItem key={role} value={role}>
-                                {ROLE_LABELS[role]}
+                                {t(ROLE_KEY[role])}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       ) : (
-                        <Badge variant="secondary">{ROLE_LABELS[member.role]}</Badge>
+                        <Badge variant="secondary">{t(ROLE_KEY[member.role])}</Badge>
                       )}
                     </TableCell>
                     {canManage && (
@@ -191,7 +199,7 @@ export function MembersTable({
                               <Button
                                 variant="ghost"
                                 size="icon-sm"
-                                aria-label={`Manage ${member.user.name}`}
+                                aria-label={t('membersTable.manage', { name: member.user.name })}
                               >
                                 <MoreVerticalIcon />
                               </Button>
@@ -206,7 +214,7 @@ export function MembersTable({
                                     }}
                                   >
                                     <UserCogIcon />
-                                    Transfer ownership
+                                    {t('membersTable.transfer')}
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                 </>
@@ -219,7 +227,7 @@ export function MembersTable({
                                 }}
                               >
                                 <Trash2Icon />
-                                Remove
+                                {t('membersTable.remove')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -237,19 +245,19 @@ export function MembersTable({
       <AlertDialog open={!!pendingRemoval} onOpenChange={(open) => !open && setPendingRemoval(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove member?</AlertDialogTitle>
+            <AlertDialogTitle>{t('membersTable.removeTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {pendingRemoval?.user.name} will lose access to this workspace. This cannot be undone.
+              {t('membersTable.removeBody', { name: pendingRemoval?.user.name ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-white hover:bg-destructive/90"
               onClick={confirmRemove}
             >
               {isPending && <Loader2Icon className="animate-spin" />}
-              Remove
+              {t('membersTable.remove')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -258,16 +266,16 @@ export function MembersTable({
       <AlertDialog open={!!pendingTransfer} onOpenChange={(open) => !open && setPendingTransfer(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Transfer ownership?</AlertDialogTitle>
+            <AlertDialogTitle>{t('membersTable.transferTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {pendingTransfer?.user.name} will become an OWNER and you will be demoted to ADMIN.
+              {t('membersTable.transferBody', { name: pendingTransfer?.user.name ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmTransfer}>
               {isPending && <Loader2Icon className="animate-spin" />}
-              Transfer
+              {t('membersTable.transferAction')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

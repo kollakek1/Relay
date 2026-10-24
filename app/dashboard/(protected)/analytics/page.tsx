@@ -13,34 +13,33 @@ import {
   TableRow,
 } from '@/shared/components/ui/table'
 import { formatDuration, formatPercent } from '@/shared/lib/format'
+import { getTranslator } from '@/shared/i18n/server'
 import { BarChart3Icon } from 'lucide-react'
 
 export default async function AnalyticsPage() {
   const ctx = await requireContext()
+  const { t } = await getTranslator()
   const analytics = await getAnalytics(ctx)
   const { overview, workflows, bottlenecks } = analytics
 
   const cards = [
-    { label: 'Total runs', value: overview.instances.total },
-    { label: 'Running', value: overview.instances.running },
-    { label: 'Completed', value: overview.instances.completed },
-    { label: 'Cancelled', value: overview.instances.cancelled },
-    { label: 'Open tasks', value: overview.tasks.open },
-    { label: 'Done tasks', value: overview.tasks.done },
-    { label: 'Overdue tasks', value: overview.tasks.overdue },
-    { label: 'Avg cycle time', value: formatDuration(overview.cycleTimeMs.avg) },
-    { label: 'Median cycle time', value: formatDuration(overview.cycleTimeMs.median) },
-    { label: 'Overdue rate', value: formatPercent(overview.tasks.overdueRate) },
+    { label: t('analytics.totalRuns'), value: overview.instances.total },
+    { label: t('analytics.running'), value: overview.instances.running },
+    { label: t('analytics.completed'), value: overview.instances.completed },
+    { label: t('analytics.cancelled'), value: overview.instances.cancelled },
+    { label: t('analytics.openTasks'), value: overview.tasks.open },
+    { label: t('analytics.doneTasks'), value: overview.tasks.done },
+    { label: t('analytics.overdueTasks'), value: overview.tasks.overdue },
+    { label: t('analytics.avgCycleTime'), value: formatDuration(overview.cycleTimeMs.avg) },
+    { label: t('analytics.medianCycleTime'), value: formatDuration(overview.cycleTimeMs.median) },
+    { label: t('analytics.overdueRate'), value: formatPercent(overview.tasks.overdueRate) },
   ]
 
   const hasData = overview.instances.total > 0 || overview.tasks.total > 0
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
-      <PageHeader
-        title="Analytics"
-        description="Throughput, cycle time and bottlenecks for this workspace."
-      />
+      <PageHeader title={t('pages.analyticsTitle')} description={t('pages.analyticsDescription')} />
 
       <section className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {cards.map((card) => (
@@ -56,24 +55,24 @@ export default async function AnalyticsPage() {
       {!hasData ? (
         <EmptyState
           icon={BarChart3Icon}
-          title="No process data yet"
-          description="Publish and run a workflow to start collecting metrics."
+          title={t('pages.noProcessData')}
+          description={t('pages.noProcessDataBody')}
         />
       ) : (
         <div className="grid gap-6">
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold">By workflow</h2>
+              <h2 className="text-lg font-semibold">{t('analytics.byWorkflow')}</h2>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Workflow</TableHead>
-                    <TableHead>Runs</TableHead>
-                    <TableHead>Completed</TableHead>
-                    <TableHead>Avg cycle</TableHead>
-                    <TableHead>Overdue</TableHead>
+                    <TableHead>{t('table.workflow')}</TableHead>
+                    <TableHead>{t('analytics.runsColumn')}</TableHead>
+                    <TableHead>{t('analytics.completedColumn')}</TableHead>
+                    <TableHead>{t('analytics.avgCycleColumn')}</TableHead>
+                    <TableHead>{t('analytics.overdueColumn')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -100,19 +99,19 @@ export default async function AnalyticsPage() {
 
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold">Step bottlenecks</h2>
+              <h2 className="text-lg font-semibold">{t('analytics.stepBottlenecks')}</h2>
             </CardHeader>
             <CardContent>
               {bottlenecks.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No completed tasks yet.</p>
+                <p className="text-muted-foreground text-sm">{t('analytics.noCompletedTasks')}</p>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Step</TableHead>
-                      <TableHead>Samples</TableHead>
-                      <TableHead>Avg duration</TableHead>
-                      <TableHead>Overdue</TableHead>
+                      <TableHead>{t('analytics.stepColumn')}</TableHead>
+                      <TableHead>{t('analytics.samplesColumn')}</TableHead>
+                      <TableHead>{t('analytics.avgDurationColumn')}</TableHead>
+                      <TableHead>{t('analytics.overdueColumn')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

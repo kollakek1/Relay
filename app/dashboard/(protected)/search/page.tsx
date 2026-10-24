@@ -6,6 +6,7 @@ import { EmptyState } from '@/shared/components/empty-state'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { Badge } from '@/shared/components/ui/badge'
 import { SearchInput } from '@/features/search/components/search-input'
+import { getTranslator } from '@/shared/i18n/server'
 import { SearchIcon } from 'lucide-react'
 
 export default async function SearchPage({
@@ -14,6 +15,7 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string }>
 }) {
   const ctx = await requireContext()
+  const { t } = await getTranslator()
   const { q } = await searchParams
   const results = await searchAll(ctx, q ?? '')
   const total =
@@ -21,7 +23,7 @@ export default async function SearchPage({
 
   const groups = [
     {
-      title: 'Workflows',
+      title: t('search.groupWorkflows'),
       items: results.workflows.map((w) => ({
         key: w.id,
         href: `/dashboard/workflows/${w.id}`,
@@ -30,16 +32,16 @@ export default async function SearchPage({
       })),
     },
     {
-      title: 'Tasks',
-      items: results.tasks.map((t) => ({
-        key: t.id,
-        href: `/dashboard/tasks/${t.id}`,
-        label: t.name,
-        meta: t.assignee ? `${t.status} · ${t.assignee}` : t.status,
+      title: t('search.groupTasks'),
+      items: results.tasks.map((task) => ({
+        key: task.id,
+        href: `/dashboard/tasks/${task.id}`,
+        label: task.name,
+        meta: task.assignee ? `${task.status} · ${task.assignee}` : task.status,
       })),
     },
     {
-      title: 'Process instances',
+      title: t('search.groupInstances'),
       items: results.instances.map((i) => ({
         key: i.id,
         href: `/dashboard/instances`,
@@ -48,7 +50,7 @@ export default async function SearchPage({
       })),
     },
     {
-      title: 'Members',
+      title: t('search.groupMembers'),
       items: results.members.map((m) => ({
         key: m.id,
         href: `/dashboard/team`,
@@ -60,16 +62,16 @@ export default async function SearchPage({
 
   return (
     <main className="mx-auto w-full max-w-4xl space-y-8 px-4 py-8 lg:p-10">
-      <PageHeader title="Search" description="Find anything across this workspace." />
+      <PageHeader title={t('pages.searchTitle')} description={t('pages.searchDescription')} />
       <SearchInput initialQuery={q ?? ''} />
 
       {!q || q.trim().length < 2 ? (
-        <p className="text-muted-foreground text-sm">Type at least two characters to search.</p>
+        <p className="text-muted-foreground text-sm">{t('search.promptBody')}</p>
       ) : total === 0 ? (
         <EmptyState
           icon={SearchIcon}
-          title={`No results for “${q}”`}
-          description="Try a different term."
+          title={t('search.noResultsTitle', { query: q })}
+          description={t('search.noResultsBody')}
         />
       ) : (
         <div className="grid gap-6 sm:grid-cols-2">

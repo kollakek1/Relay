@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select'
 import { useAction } from '@/shared/hooks/useAction'
+import { useT } from '@/shared/i18n/provider'
 import { updateOrganizationAction } from '@/features/organization/actions'
 import { Loader2Icon, SaveIcon } from 'lucide-react'
 
@@ -49,6 +50,7 @@ export function OrganizationSettingsForm({
 }) {
   const router = useRouter()
   const { isPending, run } = useAction()
+  const t = useT()
   const [name, setName] = useState(organization.name)
   const [description, setDescription] = useState(organization.description ?? '')
   const [timezone, setTimezone] = useState(organization.timezone)
@@ -57,16 +59,16 @@ export function OrganizationSettingsForm({
     return (
       <div className="grid gap-2 text-sm sm:grid-cols-2">
         <div>
-          <p className="text-muted-foreground">Name</p>
+          <p className="text-muted-foreground">{t('orgSettings.name')}</p>
           <p className="font-medium">{organization.name}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Timezone</p>
+          <p className="text-muted-foreground">{t('orgSettings.timezone')}</p>
           <p className="font-medium">{organization.timezone}</p>
         </div>
         {organization.description && (
           <div className="sm:col-span-2">
-            <p className="text-muted-foreground">Description</p>
+            <p className="text-muted-foreground">{t('orgSettings.description')}</p>
             <p>{organization.description}</p>
           </div>
         )}
@@ -78,7 +80,7 @@ export function OrganizationSettingsForm({
 
   const save = () =>
     run(() => updateOrganizationAction({ name, description, timezone }), {
-      success: 'Workspace updated',
+      success: t('orgSettings.updated'),
       onSuccess: () => router.refresh(),
     })
 
@@ -86,7 +88,7 @@ export function OrganizationSettingsForm({
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="org-name">Name</Label>
+          <Label htmlFor="org-name">{t('orgSettings.name')}</Label>
           <Input
             id="org-name"
             value={name}
@@ -96,7 +98,7 @@ export function OrganizationSettingsForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="org-timezone">Timezone</Label>
+          <Label htmlFor="org-timezone">{t('orgSettings.timezone')}</Label>
           <Select value={timezone} onValueChange={setTimezone} disabled={isPending}>
             <SelectTrigger id="org-timezone" className="w-full">
               <SelectValue />
@@ -112,19 +114,19 @@ export function OrganizationSettingsForm({
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="org-description">Description</Label>
+        <Label htmlFor="org-description">{t('orgSettings.description')}</Label>
         <Textarea
           id="org-description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           disabled={isPending}
-          placeholder="What does this workspace do?"
+          placeholder={t('orgSettings.descriptionPlaceholder')}
         />
       </div>
       <div className="flex justify-end">
         <Button onClick={save} disabled={isPending || name.trim().length < 2}>
           {isPending ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-          Save
+          {t('common.save')}
         </Button>
       </div>
     </div>

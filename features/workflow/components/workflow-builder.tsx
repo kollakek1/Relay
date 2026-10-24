@@ -29,6 +29,8 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog'
 import { useAction } from '@/shared/hooks/useAction'
+import { useT } from '@/shared/i18n/provider'
+import type { MessageKey } from '@/shared/i18n/translate'
 import type { ConditionOp, FormFieldType } from '@/features/workflow/server/engine'
 import {
   deleteWorkflowAction,
@@ -99,6 +101,25 @@ export interface BuilderWorkflow {
 const FIELD_TYPES: FormFieldType[] = ['text', 'textarea', 'number', 'date', 'select', 'checkbox']
 const OPS: ConditionOp[] = ['eq', 'neq', 'gt', 'lt', 'contains', 'isTrue', 'isFalse']
 
+const FIELD_TYPE_KEY: Record<FormFieldType, MessageKey> = {
+  text: 'builder.fieldTypeText',
+  textarea: 'builder.fieldTypeTextarea',
+  number: 'builder.fieldTypeNumber',
+  date: 'builder.fieldTypeDate',
+  select: 'builder.fieldTypeSelect',
+  checkbox: 'builder.fieldTypeCheckbox',
+}
+
+const OP_KEY: Record<ConditionOp, MessageKey> = {
+  eq: 'builder.opEq',
+  neq: 'builder.opNeq',
+  gt: 'builder.opGt',
+  lt: 'builder.opLt',
+  contains: 'builder.opContains',
+  isTrue: 'builder.opIsTrue',
+  isFalse: 'builder.opIsFalse',
+}
+
 const emptyStep = (): BuilderFormStep => ({
   name: '',
   description: '',
@@ -134,6 +155,7 @@ export function WorkflowBuilder({
   canRun: boolean
 }) {
   const router = useRouter()
+  const t = useT()
   const { isPending, run } = useAction()
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -195,7 +217,7 @@ export function WorkflowBuilder({
 
   const save = () =>
     run(() => saveWorkflowAction(buildPayload()), {
-      success: 'Draft saved',
+      success: t('toast.draftSaved'),
       onSuccess: () => router.refresh(),
     })
 
@@ -206,19 +228,19 @@ export function WorkflowBuilder({
         if (!saved.ok) return saved
         return publishWorkflowAction({ workflowId: workflow.id })
       },
-      { success: 'Workflow published', onSuccess: () => router.refresh() }
+      { success: t('toast.workflowPublished'), onSuccess: () => router.refresh() }
     )
 
   const startInstance = () =>
     run(() => runInstanceAction({ workflowId: workflow.id }), {
-      success: 'Process instance started',
+      success: t('toast.instanceStarted'),
       onSuccess: () => router.push('/dashboard/instances'),
     })
 
   const removeWorkflow = () => {
     setConfirmDelete(false)
     run(() => deleteWorkflowAction({ workflowId: workflow.id }), {
-      success: 'Workflow deleted',
+      success: t('toast.workflowDeleted'),
       onSuccess: () => router.push('/dashboard/workflows'),
     })
   }
@@ -228,15 +250,15 @@ export function WorkflowBuilder({
       <form onSubmit={handleSubmit(save)} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Details</CardTitle>
+            <CardTitle>{t('builder.details')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="builder-name">Name</Label>
+              <Label htmlFor="builder-name">{t('builder.name')}</Label>
               <Input id="builder-name" autoComplete="off" disabled={!canManage} {...register('name')} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="builder-description">Description</Label>
+              <Label htmlFor="builder-description">{t('builder.description')}</Label>
               <Textarea id="builder-description" disabled={!canManage} {...register('description')} />
             </div>
           </CardContent>
@@ -244,11 +266,11 @@ export function WorkflowBuilder({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Steps</CardTitle>
+            <CardTitle>{t('builder.steps')}</CardTitle>
             {canManage && (
               <Button type="button" variant="outline" size="sm" onClick={() => append(emptyStep())}>
                 <PlusIcon />
-                Add step
+                {t('builder.addStep')}
               </Button>
             )}
           </CardHeader>
@@ -257,17 +279,17 @@ export function WorkflowBuilder({
               <div key={field.id} className="border-border bg-background/60 space-y-4 rounded-lg border p-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-muted-foreground text-xs font-semibold uppercase">
-                    Step {index + 1}
+                    {t('builder.step', { number: index + 1 })}
                   </span>
                   {canManage && (
                     <div className="flex items-center gap-1">
-                      <Button type="button" variant="ghost" size="icon-xs" disabled={index === 0} onClick={() => move(index, index - 1)} aria-label="Move step up">
+                      <Button type="button" variant="ghost" size="icon-xs" disabled={index === 0} onClick={() => move(index, index - 1)} aria-label={t('builder.moveStepUp')}>
                         <ChevronUpIcon />
                       </Button>
-                      <Button type="button" variant="ghost" size="icon-xs" disabled={index === fields.length - 1} onClick={() => move(index, index + 1)} aria-label="Move step down">
+                      <Button type="button" variant="ghost" size="icon-xs" disabled={index === fields.length - 1} onClick={() => move(index, index + 1)} aria-label={t('builder.moveStepDown')}>
                         <ChevronDownIcon />
                       </Button>
-                      <Button type="button" variant="ghost" size="icon-xs" disabled={fields.length === 1} onClick={() => remove(index)} aria-label="Remove step">
+                      <Button type="button" variant="ghost" size="icon-xs" disabled={fields.length === 1} onClick={() => remove(index)} aria-label={t('builder.removeStep')}>
                         <Trash2Icon className="text-destructive" />
                       </Button>
                     </div>
@@ -276,15 +298,15 @@ export function WorkflowBuilder({
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor={`step-name-${index}`}>Step name</Label>
+                    <Label htmlFor={`step-name-${index}`}>{t('builder.stepName')}</Label>
                     <Input id={`step-name-${index}`} disabled={!canManage} {...register(`steps.${index}.name`)} />
                   </div>
                   <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor={`step-desc-${index}`}>Description</Label>
+                    <Label htmlFor={`step-desc-${index}`}>{t('builder.description')}</Label>
                     <Textarea id={`step-desc-${index}`} disabled={!canManage} {...register(`steps.${index}.description`)} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor={`step-kind-${index}`}>Step type</Label>
+                    <Label htmlFor={`step-kind-${index}`}>{t('builder.stepType')}</Label>
                     <Controller
                       control={control}
                       name={`steps.${index}.kind`}
@@ -294,8 +316,8 @@ export function WorkflowBuilder({
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="TASK">Task</SelectItem>
-                            <SelectItem value="APPROVAL">Approval</SelectItem>
+                            <SelectItem value="TASK">{t('status.TASK')}</SelectItem>
+                            <SelectItem value="APPROVAL">{t('status.APPROVAL')}</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
@@ -303,7 +325,7 @@ export function WorkflowBuilder({
                   </div>
                   {watchedSteps?.[index]?.kind === 'APPROVAL' && (
                     <div className="space-y-2">
-                      <Label htmlFor={`step-approval-${index}`}>Approval rule</Label>
+                      <Label htmlFor={`step-approval-${index}`}>{t('builder.approvalRule')}</Label>
                       <Controller
                         control={control}
                         name={`steps.${index}.approvalMode`}
@@ -317,8 +339,8 @@ export function WorkflowBuilder({
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="ANY">Any approver</SelectItem>
-                              <SelectItem value="ALL">All approvers</SelectItem>
+                              <SelectItem value="ANY">{t('builder.anyApprover')}</SelectItem>
+                              <SelectItem value="ALL">{t('builder.allApprovers')}</SelectItem>
                             </SelectContent>
                           </Select>
                         )}
@@ -326,7 +348,7 @@ export function WorkflowBuilder({
                     </div>
                   )}
                   <div className="space-y-2">
-                    <Label htmlFor={`step-role-${index}`}>Required role to claim</Label>                    <Controller
+                    <Label htmlFor={`step-role-${index}`}>{t('builder.requiredRole')}</Label>                    <Controller
                       control={control}
                       name={`steps.${index}.assigneeRole`}
                       render={({ field: cf }) => (
@@ -339,24 +361,24 @@ export function WorkflowBuilder({
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={NO_ROLE}>Anyone</SelectItem>
-                            <SelectItem value="MEMBER">Member+</SelectItem>
-                            <SelectItem value="ADMIN">Admin+</SelectItem>
-                            <SelectItem value="OWNER">Owner</SelectItem>
+                            <SelectItem value={NO_ROLE}>{t('builder.anyone')}</SelectItem>
+                            <SelectItem value="MEMBER">{t('builder.memberPlus')}</SelectItem>
+                            <SelectItem value="ADMIN">{t('builder.adminPlus')}</SelectItem>
+                            <SelectItem value="OWNER">{t('status.OWNER')}</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor={`step-due-${index}`}>Due in (days)</Label>
+                    <Label htmlFor={`step-due-${index}`}>{t('builder.dueInDays')}</Label>
                     <Input
                       id={`step-due-${index}`}
                       type="number"
                       min={0}
                       max={365}
                       disabled={!canManage}
-                      placeholder="No due date"
+                      placeholder={t('builder.noDueDate')}
                       {...register(`steps.${index}.dueInDays`, {
                         setValueAs: (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
                       })}
@@ -368,15 +390,15 @@ export function WorkflowBuilder({
 
                 <div className="border-border space-y-3 rounded-md border border-dashed p-3">
                   <p className="text-muted-foreground text-xs font-medium">
-                    Run condition — leave the field empty to always run this step
+                    {t('builder.conditionHint')}
                   </p>
                   <div className="grid gap-3 sm:grid-cols-3">
                     <div className="space-y-2">
-                      <Label htmlFor={`cond-field-${index}`}>Field</Label>
-                      <Input id={`cond-field-${index}`} disabled={!canManage} placeholder="e.g. priority" {...register(`steps.${index}.condition.field`)} />
+                      <Label htmlFor={`cond-field-${index}`}>{t('builder.field')}</Label>
+                      <Input id={`cond-field-${index}`} disabled={!canManage} placeholder={t('builder.fieldPlaceholder')} {...register(`steps.${index}.condition.field`)} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`cond-op-${index}`}>Operator</Label>
+                      <Label htmlFor={`cond-op-${index}`}>{t('builder.operator')}</Label>
                       <Controller
                         control={control}
                         name={`steps.${index}.condition.op`}
@@ -388,7 +410,7 @@ export function WorkflowBuilder({
                             <SelectContent>
                               {OPS.map((op) => (
                                 <SelectItem key={op} value={op}>
-                                  {op}
+                                  {t(OP_KEY[op])}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -397,14 +419,14 @@ export function WorkflowBuilder({
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`cond-value-${index}`}>Value</Label>
-                      <Input id={`cond-value-${index}`} disabled={!canManage} placeholder="e.g. high" {...register(`steps.${index}.condition.valueText`)} />
+                      <Label htmlFor={`cond-value-${index}`}>{t('builder.value')}</Label>
+                      <Input id={`cond-value-${index}`} disabled={!canManage} placeholder={t('builder.valuePlaceholder')} {...register(`steps.${index}.condition.valueText`)} />
                     </div>
                   </div>
                 </div>
               </div>
             ))}
-            {errors.steps && <p className="text-destructive text-sm">Check the step definitions.</p>}
+            {errors.steps && <p className="text-destructive text-sm">{t('builder.checkSteps')}</p>}
           </CardContent>
         </Card>
 
@@ -412,11 +434,11 @@ export function WorkflowBuilder({
           <div className="flex flex-wrap items-center gap-2">
             <Button type="submit" variant="outline" disabled={isPending}>
               {isPending ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-              Save draft
+              {t('builder.saveDraft')}
             </Button>
             <Button type="button" onClick={publish} disabled={isPending}>
               <RocketIcon />
-              Publish
+              {t('builder.publish')}
             </Button>
           </div>
         )}
@@ -425,25 +447,27 @@ export function WorkflowBuilder({
       <aside className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Status</CardTitle>
+            <CardTitle>{t('builder.status')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm">Current</span>
-              <Badge variant={workflow.status === 'PUBLISHED' ? 'default' : 'outline'}>{workflow.status}</Badge>
+              <span className="text-muted-foreground text-sm">{t('builder.current')}</span>
+              <Badge variant={workflow.status === 'PUBLISHED' ? 'default' : 'outline'}>
+                {t(`status.${workflow.status}` as MessageKey)}
+              </Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm">Runs</span>
+              <span className="text-muted-foreground text-sm">{t('builder.runs')}</span>
               <span className="text-sm font-medium">{workflow.instanceCount}</span>
             </div>
             {canRun && (
               <Button type="button" className="w-full" onClick={startInstance} disabled={isPending || workflow.status !== 'PUBLISHED'}>
                 <PlayIcon />
-                Start instance
+                {t('builder.startInstance')}
               </Button>
             )}
             {workflow.status !== 'PUBLISHED' && (
-              <p className="text-muted-foreground text-xs">Publish the workflow before starting instances.</p>
+              <p className="text-muted-foreground text-xs">{t('builder.publishFirst')}</p>
             )}
           </CardContent>
         </Card>
@@ -451,15 +475,15 @@ export function WorkflowBuilder({
         {canManage && (
           <Card>
             <CardHeader>
-              <CardTitle>Danger zone</CardTitle>
+              <CardTitle>{t('builder.dangerZone')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Button type="button" variant="destructive" className="w-full" onClick={() => setConfirmDelete(true)} disabled={workflow.instanceCount > 0}>
                 <Trash2Icon />
-                Delete workflow
+                {t('builder.deleteWorkflow')}
               </Button>
               {workflow.instanceCount > 0 && (
-                <p className="text-muted-foreground mt-2 text-xs">Workflows with runs cannot be deleted.</p>
+                <p className="text-muted-foreground mt-2 text-xs">{t('builder.deleteWithRuns')}</p>
               )}
             </CardContent>
           </Card>
@@ -469,15 +493,13 @@ export function WorkflowBuilder({
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this workflow?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This permanently removes the workflow, its versions and steps. This cannot be undone.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t('builder.deleteConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('builder.deleteConfirmBody')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction className="bg-destructive text-white hover:bg-destructive/90" onClick={removeWorkflow}>
-              Delete
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -503,23 +525,22 @@ function StepFieldsEditor({
 }) {
   const { fields, append, remove } = useFieldArray({ control, name: `steps.${index}.fields` })
   const watchedFields = useWatch({ control, name: `steps.${index}.fields` })
+  const t = useT()
 
   return (
     <div className="border-border space-y-3 rounded-md border border-dashed p-3">
       <div className="flex items-center justify-between">
-        <p className="text-muted-foreground text-xs font-medium">Form fields (optional)</p>
+        <p className="text-muted-foreground text-xs font-medium">{t('builder.formFields')}</p>
         {!disabled && (
           <Button type="button" variant="outline" size="xs" onClick={() => append(emptyField())}>
             <PlusIcon />
-            Add field
+            {t('builder.addField')}
           </Button>
         )}
       </div>
 
       {fields.length === 0 && (
-        <p className="text-muted-foreground text-xs">
-          No fields — the performer just marks the task done.
-        </p>
+        <p className="text-muted-foreground text-xs">{t('builder.noFields')}</p>
       )}
 
       {fields.map((field, fieldIndex) => {
@@ -529,15 +550,15 @@ function StepFieldsEditor({
             <div className="grid gap-2 sm:grid-cols-[1fr_1fr_9rem_auto]">
               <Input
                 id={`f-${index}-${fieldIndex}-key`}
-                aria-label="Field key"
-                placeholder="key (e.g. priority)"
+                aria-label={t('builder.fieldKey')}
+                placeholder={t('builder.fieldKeyPlaceholder')}
                 disabled={disabled}
                 {...register(`steps.${index}.fields.${fieldIndex}.key`)}
               />
               <Input
                 id={`f-${index}-${fieldIndex}-label`}
-                aria-label="Field label"
-                placeholder="Label"
+                aria-label={t('builder.fieldLabel')}
+                placeholder={t('builder.fieldLabelPlaceholder')}
                 disabled={disabled}
                 {...register(`steps.${index}.fields.${fieldIndex}.label`)}
               />
@@ -553,14 +574,14 @@ function StepFieldsEditor({
                     <SelectTrigger
                       id={`f-${index}-${fieldIndex}-type`}
                       className="w-full"
-                      aria-label="Field type"
+                      aria-label={t('builder.fieldType')}
                     >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {FIELD_TYPES.map((type) => (
                         <SelectItem key={type} value={type}>
-                          {type}
+                          {t(FIELD_TYPE_KEY[type])}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -573,7 +594,7 @@ function StepFieldsEditor({
                 size="icon-sm"
                 disabled={disabled}
                 onClick={() => remove(fieldIndex)}
-                aria-label="Remove field"
+                aria-label={t('builder.removeField')}
               >
                 <Trash2Icon className="text-destructive" />
               </Button>
@@ -584,8 +605,8 @@ function StepFieldsEditor({
                 <Input
                   id={`f-${index}-${fieldIndex}-options`}
                   className="min-w-52 flex-1"
-                  aria-label="Field options"
-                  placeholder="Options (comma separated)"
+                  aria-label={t('builder.fieldOptions')}
+                  placeholder={t('builder.fieldOptionsPlaceholder')}
                   disabled={disabled}
                   {...register(`steps.${index}.fields.${fieldIndex}.optionsText`)}
                 />
@@ -602,7 +623,7 @@ function StepFieldsEditor({
                     />
                   )}
                 />
-                Required
+                {t('builder.required')}
               </label>
             </div>
           </div>

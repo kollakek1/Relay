@@ -33,6 +33,8 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog'
 import { useAction } from '@/shared/hooks/useAction'
+import { useT } from '@/shared/i18n/provider'
+import type { MessageKey } from '@/shared/i18n/translate'
 import { formatRelativeTime } from '@/shared/lib/format'
 import {
   createAutomationAction,
@@ -77,6 +79,12 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | '
   FAILED: 'destructive',
 }
 
+const STATUS_KEY: Record<string, MessageKey> = {
+  SUCCESS: 'automations.success',
+  PENDING: 'automations.pending',
+  FAILED: 'automations.failed',
+}
+
 export function AutomationsPanel({
   rules,
   runs,
@@ -88,6 +96,7 @@ export function AutomationsPanel({
 }) {
   const router = useRouter()
   const { isPending, run } = useAction()
+  const t = useT()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [trigger, setTrigger] = useState<string>('task.completed')
@@ -106,7 +115,7 @@ export function AutomationsPanel({
 
   const create = () =>
     run(() => createAutomationAction({ name, trigger, action, config: config() }), {
-      success: 'Automation created',
+      success: t('toast.automationCreated'),
       onSuccess: () => {
         setOpen(false)
         setName('')
@@ -116,50 +125,46 @@ export function AutomationsPanel({
 
   const paramLabel =
     action === 'notify_role'
-      ? 'Role to notify'
+      ? t('automations.paramRole')
       : action === 'add_tag'
-        ? 'Tag'
+        ? t('automations.paramTag')
         : action === 'set_priority'
-          ? 'Priority'
-          : 'Task name'
+          ? t('automations.paramPriority')
+          : t('automations.paramTaskName')
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-medium">Automations</h3>
-          <p className="text-muted-foreground text-sm">
-            Rules that react to process events — no worker required.
-          </p>
+          <h3 className="font-medium">{t('automations.title')}</h3>
+          <p className="text-muted-foreground text-sm">{t('automations.subtitle')}</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
               <PlusIcon />
-              New rule
+              {t('automations.newRule')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>New automation</DialogTitle>
-              <DialogDescription>
-                When the trigger fires, the action runs once per event.
-              </DialogDescription>
+              <DialogTitle>{t('automations.createTitle')}</DialogTitle>
+              <DialogDescription>{t('automations.createBody')}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="automation-name">Name</Label>
+                <Label htmlFor="automation-name">{t('automations.name')}</Label>
                 <Input
                   id="automation-name"
                   value={name}
                   autoComplete="off"
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Tag urgent completions"
+                  placeholder={t('automations.namePlaceholder')}
                 />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="automation-trigger">Trigger</Label>
+                  <Label htmlFor="automation-trigger">{t('automations.trigger')}</Label>
                   <Select value={trigger} onValueChange={setTrigger}>
                     <SelectTrigger id="automation-trigger" className="w-full">
                       <SelectValue />
@@ -174,7 +179,7 @@ export function AutomationsPanel({
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="automation-action">Action</Label>
+                  <Label htmlFor="automation-action">{t('automations.action')}</Label>
                   <Select value={action} onValueChange={setAction}>
                     <SelectTrigger id="automation-action" className="w-full">
                       <SelectValue />
@@ -197,9 +202,9 @@ export function AutomationsPanel({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="MEMBER">Member and above</SelectItem>
-                      <SelectItem value="ADMIN">Admin and above</SelectItem>
-                      <SelectItem value="OWNER">Owner</SelectItem>
+                      <SelectItem value="MEMBER">{t('automations.memberAndAbove')}</SelectItem>
+                      <SelectItem value="ADMIN">{t('automations.adminAndAbove')}</SelectItem>
+                      <SelectItem value="OWNER">{t('status.OWNER')}</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : action === 'set_priority' ? (
@@ -208,10 +213,10 @@ export function AutomationsPanel({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="LOW">LOW</SelectItem>
-                      <SelectItem value="MEDIUM">MEDIUM</SelectItem>
-                      <SelectItem value="HIGH">HIGH</SelectItem>
-                      <SelectItem value="URGENT">URGENT</SelectItem>
+                      <SelectItem value="LOW">{t('status.LOW')}</SelectItem>
+                      <SelectItem value="MEDIUM">{t('status.MEDIUM')}</SelectItem>
+                      <SelectItem value="HIGH">{t('status.HIGH')}</SelectItem>
+                      <SelectItem value="URGENT">{t('status.URGENT')}</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : (
@@ -226,11 +231,11 @@ export function AutomationsPanel({
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={create} disabled={isPending || name.trim().length < 2 || !param.trim()}>
                 {isPending && <Loader2Icon className="animate-spin" />}
-                Create rule
+                {t('automations.create')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -238,7 +243,7 @@ export function AutomationsPanel({
       </div>
 
       {rules.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No automations yet.</p>
+        <p className="text-muted-foreground text-sm">{t('automations.empty')}</p>
       ) : (
         <div className="divide-border border-border divide-y rounded-lg border">
           {rules.map((rule) => (
@@ -247,13 +252,14 @@ export function AutomationsPanel({
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{rule.name}</p>
                 <p className="text-muted-foreground text-xs">
-                  {rule.trigger} → {rule.action} · {rule.runs} run
-                  {rule.runs === 1 ? '' : 's'}
-                  {rule.lastRunAt ? ` · last ${formatRelativeTime(rule.lastRunAt)}` : ''}
+                  {rule.trigger} → {rule.action} · {t('automations.runCount', { count: rule.runs })}
+                  {rule.lastRunAt
+                    ? ` · ${t('automations.lastRun', { time: formatRelativeTime(rule.lastRunAt) })}`
+                    : ''}
                 </p>
               </div>
               <Badge variant={rule.enabled ? 'secondary' : 'outline'}>
-                {rule.enabled ? 'Enabled' : 'Disabled'}
+                {rule.enabled ? t('automations.enabled') : t('automations.disabled')}
               </Badge>
               <Button
                 variant="outline"
@@ -261,16 +267,16 @@ export function AutomationsPanel({
                 disabled={isPending}
                 onClick={() =>
                   run(() => toggleAutomationAction({ id: rule.id, enabled: !rule.enabled }), {
-                    success: rule.enabled ? 'Rule disabled' : 'Rule enabled',
+                    success: rule.enabled ? t('automations.ruleDisabled') : t('automations.ruleEnabled'),
                   })
                 }
               >
-                {rule.enabled ? 'Disable' : 'Enable'}
+                {rule.enabled ? t('automations.disable') : t('automations.enable')}
               </Button>
               <Button
                 variant="ghost"
                 size="icon-sm"
-                aria-label={`Delete ${rule.name}`}
+                aria-label={t('automations.deleteRule', { name: rule.name })}
                 onClick={() => setPendingDelete(rule)}
               >
                 <Trash2Icon className="text-destructive" />
@@ -282,11 +288,13 @@ export function AutomationsPanel({
 
       {runs.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium">Recent runs</h4>
+          <h4 className="text-sm font-medium">{t('automations.recentRuns')}</h4>
           <div className="divide-border border-border max-h-64 divide-y overflow-y-auto rounded-lg border">
             {runs.map((run_) => (
               <div key={run_.id} className="flex flex-wrap items-center gap-2 p-2 text-xs">
-                <Badge variant={STATUS_VARIANT[run_.status] ?? 'outline'}>{run_.status}</Badge>
+                <Badge variant={STATUS_VARIANT[run_.status] ?? 'outline'}>
+                  {STATUS_KEY[run_.status] ? t(STATUS_KEY[run_.status]) : run_.status}
+                </Badge>
                 <span className="font-medium">{run_.ruleName}</span>
                 {run_.detail && <span className="text-muted-foreground truncate">{run_.detail}</span>}
                 <span className="text-muted-foreground ml-auto">
@@ -301,13 +309,13 @@ export function AutomationsPanel({
       <AlertDialog open={!!pendingDelete} onOpenChange={(next) => !next && setPendingDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete automation?</AlertDialogTitle>
+            <AlertDialogTitle>{t('automations.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              “{pendingDelete?.name}” will stop running. Its history is removed.
+              {t('automations.deleteBody', { name: pendingDelete?.name ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-white hover:bg-destructive/90"
               onClick={() => {
@@ -315,11 +323,11 @@ export function AutomationsPanel({
                 setPendingDelete(null)
                 if (rule)
                   run(() => deleteAutomationAction({ id: rule.id }), {
-                    success: 'Automation deleted',
+                    success: t('toast.automationDeleted'),
                   })
               }}
             >
-              Delete
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

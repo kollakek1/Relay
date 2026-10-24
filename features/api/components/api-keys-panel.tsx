@@ -27,6 +27,7 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog'
 import { useAction } from '@/shared/hooks/useAction'
+import { useT } from '@/shared/i18n/provider'
 import { formatDate, formatRelativeTime } from '@/shared/lib/format'
 import { toast } from 'sonner'
 import { createApiKeyAction, revokeApiKeyAction } from '@/features/api/actions'
@@ -53,6 +54,7 @@ export interface ApiKeyRow {
 export function ApiKeysPanel({ keys, canManage }: { keys: ApiKeyRow[]; canManage: boolean }) {
   const router = useRouter()
   const { isPending, run } = useAction()
+  const t = useT()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [scopes, setScopes] = useState<string[]>(['workflows:read', 'tasks:read'])
@@ -78,9 +80,9 @@ export function ApiKeysPanel({ keys, canManage }: { keys: ApiKeyRow[]; canManage
     if (!token) return
     try {
       await navigator.clipboard.writeText(token)
-      toast.success('API key copied')
+      toast.success(t('apiKeys.copied'))
     } catch {
-      toast.error('Copy failed — select the key manually')
+      toast.error(t('apiKeys.copyFailed'))
     }
   }
 
@@ -88,38 +90,38 @@ export function ApiKeysPanel({ keys, canManage }: { keys: ApiKeyRow[]; canManage
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-medium">API keys</h3>
+          <h3 className="font-medium">{t('apiKeys.title')}</h3>
           <p className="text-muted-foreground text-sm">
-            Machine credentials for the public API (<code>/api/v1</code>).
+            {t('apiKeys.subtitleBefore')}
+            <code>/api/v1</code>
+            {t('apiKeys.subtitleAfter')}
           </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
               <PlusIcon />
-              New key
+              {t('apiKeys.newKey')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create API key</DialogTitle>
-              <DialogDescription>
-                The key is shown once. A key acts with the current role of your account.
-              </DialogDescription>
+              <DialogTitle>{t('apiKeys.createTitle')}</DialogTitle>
+              <DialogDescription>{t('apiKeys.createBody')}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="api-key-name">Name</Label>
+                <Label htmlFor="api-key-name">{t('apiKeys.name')}</Label>
                 <Input
                   id="api-key-name"
                   value={name}
                   autoComplete="off"
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Reporting integration"
+                  placeholder={t('apiKeys.namePlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Scopes</Label>
+                <Label>{t('apiKeys.scopes')}</Label>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {SCOPES.map((scope) => (
                     <label key={scope} className="flex items-center gap-2 text-sm">
@@ -135,11 +137,11 @@ export function ApiKeysPanel({ keys, canManage }: { keys: ApiKeyRow[]; canManage
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={create} disabled={isPending || name.trim().length < 2 || scopes.length === 0}>
                 {isPending && <Loader2Icon className="animate-spin" />}
-                Create key
+                {t('apiKeys.create')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -148,23 +150,23 @@ export function ApiKeysPanel({ keys, canManage }: { keys: ApiKeyRow[]; canManage
 
       {token && (
         <div className="border-border bg-muted/40 space-y-2 rounded-lg border p-3">
-          <p className="text-sm font-medium">Copy your new key now — it will not be shown again.</p>
+          <p className="text-sm font-medium">{t('apiKeys.copyNow')}</p>
           <div className="flex items-center gap-2">
             <code className="bg-background min-w-0 flex-1 truncate rounded border px-2 py-1 text-xs">
               {token}
             </code>
             <Button variant="outline" size="sm" onClick={copyToken}>
-              Copy
+              {t('common.copy')}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setToken(null)}>
-              Dismiss
+              {t('common.dismiss')}
             </Button>
           </div>
         </div>
       )}
 
       {keys.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No API keys yet.</p>
+        <p className="text-muted-foreground text-sm">{t('apiKeys.empty')}</p>
       ) : (
         <div className="divide-border border-border divide-y rounded-lg border">
           {keys.map((key) => (
@@ -176,17 +178,20 @@ export function ApiKeysPanel({ keys, canManage }: { keys: ApiKeyRow[]; canManage
                   <span className="text-muted-foreground font-mono text-xs">{key.prefix}</span>
                 </p>
                 <p className="text-muted-foreground text-xs">
-                  {key.scopes.join(', ')} · created {formatDate(key.createdAt)} ·{' '}
-                  {key.lastUsedAt ? `used ${formatRelativeTime(key.lastUsedAt)}` : 'never used'}
+                  {key.scopes.join(', ')} · {t('apiKeys.created', { date: formatDate(key.createdAt) })}{' '}
+                  ·{' '}
+                  {key.lastUsedAt
+                    ? t('apiKeys.used', { time: formatRelativeTime(key.lastUsedAt) })
+                    : t('apiKeys.neverUsed')}
                 </p>
               </div>
               {key.revokedAt ? (
-                <Badge variant="outline">Revoked</Badge>
+                <Badge variant="outline">{t('apiKeys.revoked')}</Badge>
               ) : (
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  aria-label={`Revoke ${key.name}`}
+                  aria-label={t('apiKeys.revokeKey', { name: key.name })}
                   onClick={() => setPendingRevoke(key)}
                 >
                   <Trash2Icon className="text-destructive" />
@@ -200,13 +205,15 @@ export function ApiKeysPanel({ keys, canManage }: { keys: ApiKeyRow[]; canManage
       <AlertDialog open={!!pendingRevoke} onOpenChange={(next) => !next && setPendingRevoke(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Revoke API key?</AlertDialogTitle>
+            <AlertDialogTitle>{t('apiKeys.revokeTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Requests using <strong>{pendingRevoke?.name}</strong> will start failing immediately.
+              {t('apiKeys.revokeBodyBefore')}
+              <strong>{pendingRevoke?.name}</strong>
+              {t('apiKeys.revokeBodyAfter')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-white hover:bg-destructive/90"
               onClick={() => {
@@ -214,11 +221,11 @@ export function ApiKeysPanel({ keys, canManage }: { keys: ApiKeyRow[]; canManage
                 setPendingRevoke(null)
                 if (key)
                   run(() => revokeApiKeyAction({ id: key.id }), {
-                    success: 'API key revoked',
+                    success: t('toast.apiKeyRevoked'),
                   })
               }}
             >
-              Revoke
+              {t('apiKeys.revoke')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -4,9 +4,11 @@ import { listTemplates } from '@/features/workflow/server/templates'
 import { normalizeSnapshot } from '@/features/workflow/server/engine'
 import { PageHeader } from '@/shared/components/page-header'
 import { TemplatesView, type TemplateCard } from '@/features/workflow/components/templates-view'
+import { getTranslator } from '@/shared/i18n/server'
 
 export default async function TemplatesPage() {
   const ctx = await requireContext()
+  const { t } = await getTranslator()
   const { builtIn, saved } = await listTemplates(ctx)
 
   const templates: TemplateCard[] = [
@@ -31,8 +33,8 @@ export default async function TemplatesPage() {
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
       <PageHeader
-        title="Templates"
-        description="Start from a ready-made process. Using a template creates an editable draft you own."
+        title={t('pages.templatesTitle')}
+        description={t('pages.templatesDescription')}
       />
       <TemplatesView templates={templates} canManage={canManageWorkflows(ctx.role)} />
     </main>

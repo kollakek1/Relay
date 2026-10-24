@@ -33,6 +33,7 @@ import {
   switchOrganizationAction,
 } from '@/features/organization/actions'
 import { CheckIcon, ChevronsUpDownIcon, Loader2Icon, PlusIcon } from 'lucide-react'
+import { useT } from '@/shared/i18n/provider'
 
 export interface WorkspaceSummary {
   id: string
@@ -48,6 +49,7 @@ export function WorkspaceSwitcher({
   activeId: string | null
 }) {
   const router = useRouter()
+  const t = useT()
   const { isPending, run } = useAction()
   const [createOpen, setCreateOpen] = useState(false)
   const [name, setName] = useState('')
@@ -63,7 +65,7 @@ export function WorkspaceSwitcher({
 
   const createWorkspace = () => {
     run(() => bootstrapOrganizationAction({ name }), {
-      success: 'Workspace created',
+      success: t('workspace.created'),
       onSuccess: () => {
         setCreateOpen(false)
         setName('')
@@ -78,14 +80,14 @@ export function WorkspaceSwitcher({
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton size="lg" aria-label="Switch workspace">
+              <SidebarMenuButton size="lg" aria-label={t('workspace.switch')}>
                 <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg text-xs font-semibold">
                   {initials(active?.name)}
                 </div>
                 <div className="grid flex-1 text-left leading-tight">
-                  <span className="truncate font-medium">{active?.name ?? 'No workspace'}</span>
+                  <span className="truncate font-medium">{active?.name ?? t('workspace.none')}</span>
                   <span className="text-muted-foreground truncate text-xs">
-                    {active?.role ?? '—'}
+                    {active?.role ? t(`status.${active.role}`) : '—'}
                   </span>
                 </div>
                 <ChevronsUpDownIcon className="ml-auto size-4" />
@@ -95,7 +97,7 @@ export function WorkspaceSwitcher({
               align="start"
               className="w-[--radix-dropdown-menu-trigger-width] min-w-56"
             >
-              <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('workspace.heading')}</DropdownMenuLabel>
               {workspaces.map((workspace) => (
                 <DropdownMenuItem
                   key={workspace.id}
@@ -114,7 +116,7 @@ export function WorkspaceSwitcher({
                 }}
               >
                 <PlusIcon />
-                Create workspace
+                {t('workspace.create')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -124,28 +126,28 @@ export function WorkspaceSwitcher({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create a workspace</DialogTitle>
+            <DialogTitle>{t('workspace.createTitle')}</DialogTitle>
             <DialogDescription>
-              A new organization for a separate team or project. You will become its owner.
+              {t('workspace.createBody')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="workspace-name">Name</Label>
+            <Label htmlFor="workspace-name">{t('workspace.name')}</Label>
             <Input
               id="workspace-name"
               value={name}
               autoComplete="off"
               onChange={(event) => setName(event.target.value)}
-              placeholder="Acme Operations"
+              placeholder={t('workspace.namePlaceholder')}
             />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateOpen(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button onClick={createWorkspace} disabled={isPending || name.trim().length < 2}>
               {isPending && <Loader2Icon className="animate-spin" />}
-              Create
+              {t('common.create')}
             </Button>
           </DialogFooter>
         </DialogContent>

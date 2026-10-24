@@ -3,12 +3,14 @@
 import { useEffect, useState, useTransition } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/shared/components/ui/input'
+import { useT } from '@/shared/i18n/provider'
 import { Loader2Icon, SearchIcon } from 'lucide-react'
 
 export function SearchInput({ initialQuery }: { initialQuery: string }) {
   const router = useRouter()
   const pathname = usePathname()
   const params = useSearchParams()
+  const t = useT()
   const [isPending, startTransition] = useTransition()
   const [query, setQuery] = useState(initialQuery)
 
@@ -35,9 +37,9 @@ export function SearchInput({ initialQuery }: { initialQuery: string }) {
         autoFocus
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search workflows, tasks, instances, members…"
+        placeholder={t('search.placeholder')}
         className="pl-9"
-        aria-label="Global search"
+        aria-label={t('search.label')}
       />
       {isPending && (
         <Loader2Icon className="text-muted-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin" />

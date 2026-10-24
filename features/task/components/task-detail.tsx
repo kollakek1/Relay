@@ -29,6 +29,7 @@ import {
 } from '@/shared/components/ui/alert-dialog'
 import { useAction } from '@/shared/hooks/useAction'
 import { useT } from '@/shared/i18n/provider'
+import type { MessageKey } from '@/shared/i18n/translate'
 import { formatDateTime, formatRelativeTime } from '@/shared/lib/format'
 import {
   addCommentAction,
@@ -54,16 +55,16 @@ import {
   XIcon,
 } from 'lucide-react'
 
-const ACTIVITY_LABEL: Record<ActivityType, string> = {
-  CREATED: 'created this task',
-  CLAIMED: 'claimed this task',
-  ASSIGNED: 'assigned this task',
-  UNASSIGNED: 'unassigned this task',
-  STATUS_CHANGED: 'changed the status',
-  DUE_CHANGED: 'changed the due date',
-  COMMENTED: 'commented',
-  DECIDED: 'made a decision on',
-  REOPENED: 'reopened',
+const ACTIVITY_KEY: Record<ActivityType, MessageKey> = {
+  CREATED: 'taskDetail.activityCreated',
+  CLAIMED: 'taskDetail.activityClaimed',
+  ASSIGNED: 'taskDetail.activityAssigned',
+  UNASSIGNED: 'taskDetail.activityUnassigned',
+  STATUS_CHANGED: 'taskDetail.activityStatusChanged',
+  DUE_CHANGED: 'taskDetail.activityDueChanged',
+  COMMENTED: 'taskDetail.activityCommented',
+  DECIDED: 'taskDetail.activityDecided',
+  REOPENED: 'taskDetail.activityReopened',
 }
 
 export interface TaskDetailData {
@@ -169,7 +170,10 @@ export function TaskDetail({
   const refresh = () => router.refresh()
 
   const claim = () =>
-    run(() => claimTaskAction({ taskId: task.id }), { success: 'Task claimed', onSuccess: refresh })
+    run(() => claimTaskAction({ taskId: task.id }), {
+      success: t('toast.taskClaimed'),
+      onSuccess: refresh,
+    })
 
   const transition = (to: TaskStatus, message: string) =>
     run(
@@ -184,7 +188,7 @@ export function TaskDetail({
 
   const assign = (assigneeId: string) =>
     run(() => assignTaskAction({ taskId: task.id, assigneeId: assigneeId === 'none' ? null : assigneeId }), {
-      success: 'Assignment updated',
+      success: t('toast.assigneeUpdated'),
       onSuccess: refresh,
     })
 
@@ -202,11 +206,14 @@ export function TaskDetail({
           observerIds: observers,
           blockedByTaskId: blockedBy === 'none' ? null : blockedBy,
         }),
-      { success: 'Task updated', onSuccess: refresh }
+      { success: t('toast.updated'), onSuccess: refresh }
     )
 
   const reopen = () =>
-    run(() => reopenTaskAction({ taskId: task.id }), { success: 'Task reopened', onSuccess: refresh })
+    run(() => reopenTaskAction({ taskId: task.id }), {
+      success: t('toast.taskReopened'),
+      onSuccess: refresh,
+    })
 
   const [decisionNote, setDecisionNote] = useState('')
 
@@ -219,7 +226,7 @@ export function TaskDetail({
           note: decisionNote.trim() || undefined,
         }),
       {
-        success: 'Decision recorded',
+        success: t('toast.decisionRecorded'),
         onSuccess: () => {
           setDecisionNote('')
           refresh()
@@ -230,7 +237,7 @@ export function TaskDetail({
   const submitComment = () => {
     if (!comment.trim()) return
     run(() => addCommentAction({ taskId: task.id, body: comment }), {
-      success: 'Comment added',
+      success: t('toast.commentPosted'),
       onSuccess: () => {
         setComment('')
         refresh()
@@ -248,13 +255,13 @@ export function TaskDetail({
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground text-sm">
-              {task.description || 'No description provided.'}
+              {task.description || t('taskDetail.noDescription')}
             </p>
 
             {task.fields.length > 0 && (
               <div className="space-y-3 rounded-lg border p-4">
                 <p className="text-sm font-medium">
-                  {task.kind === 'APPROVAL' ? 'Decision form' : 'Form'}
+                  {task.kind === 'APPROVAL' ? t('taskDetail.decisionForm') : t('taskDetail.form')}
                 </p>
                 {task.fields.map((field) => (
                   <TaskFormField
@@ -268,7 +275,7 @@ export function TaskDetail({
                   />
                 ))}
                 {isTerminal && task.formValues && (
-                  <p className="text-muted-foreground text-xs">Submitted values are shown above.</p>
+                  <p className="text-muted-foreground text-xs">{t('taskDetail.submittedValues')}</p>
                 )}
               </div>
             )}
@@ -286,19 +293,19 @@ export function TaskDetail({
             <Separator />
             <div className="grid gap-3 text-sm sm:grid-cols-2">
               <div>
-                <p className="text-muted-foreground">Workflow</p>
+                <p className="text-muted-foreground">{t('table.workflow')}</p>
                 <p className="font-medium">{task.instance.workflow?.name ?? '—'}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Version</p>
+                <p className="text-muted-foreground">{t('table.version')}</p>
                 <p className="font-medium">v{task.instance.version.version}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Started by</p>
+                <p className="text-muted-foreground">{t('table.startedBy')}</p>
                 <p className="font-medium">{task.instance.startedBy.name}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Created</p>
+                <p className="text-muted-foreground">{t('table.created')}</p>
                 <p className="font-medium">{formatDateTime(task.createdAt)}</p>
               </div>
             </div>
@@ -306,9 +313,11 @@ export function TaskDetail({
             {task.kind === 'APPROVAL' && (
               <div className="space-y-4 rounded-lg border p-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">Approval</p>
+                  <p className="text-sm font-medium">{t('status.APPROVAL')}</p>
                   <Badge variant="outline">
-                    {task.approvalMode === 'ALL' ? 'All approvers required' : 'Any approver'}
+                    {task.approvalMode === 'ALL'
+                      ? t('taskDetail.allApprovers')
+                      : t('taskDetail.anyApprover')}
                   </Badge>
                 </div>
 
@@ -316,7 +325,9 @@ export function TaskDetail({
                   <div className="space-y-2">
                     {task.decisions.map((entry) => (
                       <div key={entry.id} className="flex items-start gap-2 text-sm">
-                        <Badge variant={decisionVariant(entry.decision)}>{entry.decision}</Badge>
+                        <Badge variant={decisionVariant(entry.decision)}>
+                          {t(`status.${entry.decision}` as MessageKey)}
+                        </Badge>
                         <div className="min-w-0">
                           <p className="font-medium">{entry.userName}</p>
                           {entry.note && <p className="text-muted-foreground">{entry.note}</p>}
@@ -331,25 +342,29 @@ export function TaskDetail({
 
                 {isTerminal ? (
                   <p className="text-muted-foreground text-sm">
-                    Resolved: {task.decision ?? '—'}
+                    {t('taskDetail.resolved', {
+                      decision: task.decision
+                        ? t(`status.${task.decision}` as MessageKey)
+                        : '—',
+                    })}
                     {task.decisionNote ? ` — ${task.decisionNote}` : ''}
                   </p>
                 ) : canDecide ? (
                   <div className="space-y-3">
                     <div className="space-y-2">
-                      <Label htmlFor="decision-note">Note (optional)</Label>
+                      <Label htmlFor="decision-note">{t('taskDetail.noteOptional')}</Label>
                       <Textarea
                         id="decision-note"
                         value={decisionNote}
                         onChange={(event) => setDecisionNote(event.target.value)}
                         disabled={isPending}
-                        placeholder="Reason for your decision"
+                        placeholder={t('taskDetail.notePlaceholder')}
                       />
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <Button onClick={() => decide('APPROVED')} disabled={isPending}>
                         {isPending ? <Loader2Icon className="animate-spin" /> : <CheckCircle2Icon />}
-                        Approve
+                        {t('taskDetail.approve')}
                       </Button>
                       <Button
                         variant="outline"
@@ -357,7 +372,7 @@ export function TaskDetail({
                         disabled={isPending}
                       >
                         <RotateCcwIcon />
-                        Request changes
+                        {t('taskDetail.requestChanges')}
                       </Button>
                       <Button
                         variant="outline"
@@ -366,14 +381,12 @@ export function TaskDetail({
                         disabled={isPending}
                       >
                         <XIcon />
-                        Reject
+                        {t('taskDetail.reject')}
                       </Button>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-sm">
-                    You are not eligible to decide this approval.
-                  </p>
+                  <p className="text-muted-foreground text-sm">{t('taskDetail.notEligible')}</p>
                 )}
               </div>
             )}
@@ -382,25 +395,25 @@ export function TaskDetail({
               {task.kind === 'TASK' && task.status === 'PENDING' && !task.assigneeId && (
                 <Button onClick={claim} disabled={isPending}>
                   {isPending ? <Loader2Icon className="animate-spin" /> : <HandIcon />}
-                  Claim task
+                  {t('taskDetail.claim')}
                 </Button>
               )}
               {task.kind === 'TASK' && task.status === 'CLAIMED' && isAssignee && (
                 <Button
-                  onClick={() => transition('IN_PROGRESS', 'Task started')}
+                  onClick={() => transition('IN_PROGRESS', t('taskDetail.started'))}
                   disabled={isPending}
                 >
                   <PlayIcon />
-                  Start working
+                  {t('taskDetail.startWorking')}
                 </Button>
               )}
               {task.kind === 'TASK' && task.status === 'IN_PROGRESS' && isAssignee && (
                 <Button
-                  onClick={() => transition('DONE', 'Task completed')}
+                  onClick={() => transition('DONE', t('toast.taskCompleted'))}
                   disabled={isPending}
                 >
                   <CheckCircle2Icon />
-                  Complete
+                  {t('taskDetail.complete')}
                 </Button>
               )}
               {task.kind === 'TASK' &&
@@ -408,11 +421,11 @@ export function TaskDetail({
                 isAssignee && (
                   <Button
                     variant="outline"
-                    onClick={() => transition('PENDING', 'Task released')}
+                    onClick={() => transition('PENDING', t('taskDetail.released'))}
                     disabled={isPending}
                   >
                     <RotateCcwIcon />
-                    Release
+                    {t('taskDetail.release')}
                   </Button>
                 )}
               {canManage && !isTerminal && (
@@ -423,13 +436,13 @@ export function TaskDetail({
                   disabled={isPending}
                 >
                   <XIcon />
-                  Cancel
+                  {t('taskDetail.cancel')}
                 </Button>
               )}
               {task.status === 'DONE' && (canManage || isAssignee) && (
                 <Button variant="outline" onClick={reopen} disabled={isPending}>
                   <RotateCcwIcon />
-                  Reopen
+                  {t('taskDetail.reopen')}
                 </Button>
               )}
             </div>
@@ -438,11 +451,11 @@ export function TaskDetail({
 
         <Card>
           <CardHeader>
-            <CardTitle>Comments</CardTitle>
+            <CardTitle>{t('taskDetail.comments')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {comments.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No comments yet.</p>
+              <p className="text-muted-foreground text-sm">{t('taskDetail.noComments')}</p>
             ) : (
               <div className="space-y-4">
                 {comments.map((item) => (
@@ -465,18 +478,18 @@ export function TaskDetail({
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="comment">Add a comment</Label>
+              <Label htmlFor="comment">{t('taskDetail.addComment')}</Label>
               <Textarea
                 id="comment"
                 value={comment}
                 onChange={(event) => setComment(event.target.value)}
-                placeholder="Write an update..."
+                placeholder={t('taskDetail.commentPlaceholder')}
                 disabled={isPending}
               />
               <div className="flex justify-end">
                 <Button onClick={submitComment} disabled={isPending || !comment.trim()} size="sm">
                   {isPending ? <Loader2Icon className="animate-spin" /> : <SendIcon />}
-                  Comment
+                  {t('taskDetail.comment')}
                 </Button>
               </div>
             </div>
@@ -487,19 +500,19 @@ export function TaskDetail({
       <aside className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Attributes</CardTitle>
+            <CardTitle>{t('taskDetail.attributes')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {task.kind === 'TASK' && (
               <div className="space-y-2">
-                <Label htmlFor="task-assignee">Assignee</Label>
+                <Label htmlFor="task-assignee">{t('table.assignee')}</Label>
                 {canManage ? (
                   <Select value={task.assigneeId ?? 'none'} onValueChange={assign} disabled={isPending}>
                     <SelectTrigger id="task-assignee" className="w-full">
-                      <SelectValue placeholder="Unassigned" />
+                      <SelectValue placeholder={t('table.unassigned')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">Unassigned</SelectItem>
+                      <SelectItem value="none">{t('table.unassigned')}</SelectItem>
                       {members.map((member) => (
                         <SelectItem key={member.userId} value={member.userId}>
                           {member.user.name}
@@ -509,14 +522,15 @@ export function TaskDetail({
                   </Select>
                 ) : (
                   <p className="text-sm">
-                    {members.find((m) => m.userId === task.assigneeId)?.user.name ?? 'Unassigned'}
+                    {members.find((m) => m.userId === task.assigneeId)?.user.name ??
+                      t('table.unassigned')}
                   </p>
                 )}
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="task-priority">Priority</Label>
+              <Label htmlFor="task-priority">{t('table.priority')}</Label>
               <Select
                 value={priority}
                 onValueChange={(value) => setPriority(value as TaskPriority)}
@@ -536,7 +550,7 @@ export function TaskDetail({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="due-date">Due date</Label>
+              <Label htmlFor="due-date">{t('taskDetail.dueDate')}</Label>
               <Input
                 id="due-date"
                 type="date"
@@ -547,27 +561,27 @@ export function TaskDetail({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="task-tags">Tags</Label>
+              <Label htmlFor="task-tags">{t('taskDetail.tags')}</Label>
               <Input
                 id="task-tags"
                 value={tags}
                 autoComplete="off"
-                placeholder="urgent, finance"
+                placeholder={t('taskDetail.tagsPlaceholder')}
                 onChange={(event) => setTags(event.target.value)}
                 disabled={!canAct || isPending}
               />
-              <p className="text-muted-foreground text-xs">Comma separated.</p>
+              <p className="text-muted-foreground text-xs">{t('taskDetail.commaSeparated')}</p>
             </div>
 
             {task.siblings.length > 0 && (
               <div className="space-y-2">
-                <Label htmlFor="task-blocked-by">Blocked by</Label>
+                <Label htmlFor="task-blocked-by">{t('taskDetail.blockedBy')}</Label>
                 <Select value={blockedBy} onValueChange={setBlockedBy} disabled={!canAct || isPending}>
                   <SelectTrigger id="task-blocked-by" className="w-full">
-                    <SelectValue placeholder="Nothing" />
+                    <SelectValue placeholder={t('taskDetail.nothing')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Nothing</SelectItem>
+                    <SelectItem value="none">{t('taskDetail.nothing')}</SelectItem>
                     {task.siblings.map((sibling) => (
                       <SelectItem key={sibling.id} value={sibling.id}>
                         {sibling.name}
@@ -577,7 +591,7 @@ export function TaskDetail({
                 </Select>
                 {task.blockedBy && task.blockedBy.status !== 'DONE' && (
                   <p className="text-destructive text-xs">
-                    Waiting on “{task.blockedBy.name}” before this task can be claimed.
+                    {t('taskDetail.waitingOn', { name: task.blockedBy.name })}
                   </p>
                 )}
               </div>
@@ -585,7 +599,7 @@ export function TaskDetail({
 
             {members.length > 1 && (
               <div className="space-y-2">
-                <Label>Observers</Label>
+                <Label>{t('taskDetail.observers')}</Label>
                 <div className="border-border max-h-32 space-y-1 overflow-y-auto rounded-md border p-2">
                   {members
                     .filter((member) => member.userId !== task.assigneeId)
@@ -615,17 +629,17 @@ export function TaskDetail({
               disabled={!canAct || isPending}
               variant="outline"
             >
-              Save attributes
+              {t('taskDetail.saveAttributes')}
             </Button>
 
             <Separator />
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Priority</span>
+              <span className="text-muted-foreground">{t('table.priority')}</span>
               <TaskPriorityBadge priority={task.priority} />
             </div>
             {task.requiredRole && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Required role</span>
+                <span className="text-muted-foreground">{t('taskDetail.requiredRole')}</span>
                 <span className="font-medium">{task.requiredRole}+</span>
               </div>
             )}
@@ -634,19 +648,19 @@ export function TaskDetail({
 
         <Card>
           <CardHeader>
-            <CardTitle>Activity</CardTitle>
+            <CardTitle>{t('taskDetail.activity')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {activities.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No activity yet.</p>
+              <p className="text-muted-foreground text-sm">{t('taskDetail.noActivity')}</p>
             ) : (
               activities.map((item) => (
                 <div key={item.id} className="flex gap-3 text-sm">
                   <div className="bg-primary mt-1.5 size-2 shrink-0 rounded-full" />
                   <div className="min-w-0">
                     <p>
-                      <span className="font-medium">{item.actor?.name ?? 'System'}</span>{' '}
-                      <span className="text-muted-foreground">{ACTIVITY_LABEL[item.type]}</span>
+                      <span className="font-medium">{item.actor?.name ?? t('app.system')}</span>{' '}
+                      <span className="text-muted-foreground">{t(ACTIVITY_KEY[item.type])}</span>
                       {item.type === 'STATUS_CHANGED' && item.fromValue && item.toValue && (
                         <span className="text-muted-foreground">
                           {' '}
@@ -668,21 +682,19 @@ export function TaskDetail({
       <AlertDialog open={confirmCancel} onOpenChange={setConfirmCancel}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel this task?</AlertDialogTitle>
-            <AlertDialogDescription>
-              The task will be marked as cancelled and cannot be reopened.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t('taskDetail.cancelConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('taskDetail.cancelConfirmBody')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep task</AlertDialogCancel>
+            <AlertDialogCancel>{t('taskDetail.keepTask')}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-white hover:bg-destructive/90"
               onClick={() => {
                 setConfirmCancel(false)
-                transition('CANCELLED', 'Task cancelled')
+                transition('CANCELLED', t('toast.taskCancelled'))
               }}
             >
-              Cancel task
+              {t('taskDetail.cancelTask')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -710,6 +722,7 @@ function TaskFormField({
   onChange: (value: unknown) => void
   disabled: boolean
 }) {
+  const t = useT()
   const id = `field-${field.key}`
   const label = (
     <>
@@ -748,7 +761,7 @@ function TaskFormField({
           disabled={disabled}
         >
           <SelectTrigger id={id} className="w-full">
-            <SelectValue placeholder="Select…" />
+            <SelectValue placeholder={t('taskDetail.selectPlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {(field.options ?? []).map((option) => (
