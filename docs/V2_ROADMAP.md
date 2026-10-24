@@ -1,5 +1,11 @@
 # Relay V2 — Roadmap
 
+> **Historical document.** The V2 roadmap is complete. Its stages are summarised
+> in [docs/IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) and
+> [CHANGELOG.md](../CHANGELOG.md); open items live in
+> [docs/KNOWN_LIMITATIONS.md](./KNOWN_LIMITATIONS.md).
+
+
 Derived from `V2_AUDIT.md`. Each stage is shippable on its own, verified, and
 committed separately. Binding constraints: **one DB**, **serverless only**, **no
 mandatory S3**, **no mass dependency upgrade**.

@@ -33,13 +33,19 @@ Legend: 🔴 security-relevant residual · 🟠 functional gap · 🔵 operation
 
 ## Functional gaps
 
-- 🟠 **Deep dashboard surfaces are English-only.** The i18n foundation, the
-  entire public site, the docs, the API reference, the app chrome (navigation,
-  sidebar, account menu), authentication and task status/priority labels are
-  available in English and Russian. Longer feature panels that are not yet
-  translated: the workflow builder, task detail form labels, organization
-  settings panels, the webhooks/automations panels and the invitations panel.
-  They are marked here rather than claimed as done.
+- 🟠 **Deeper localization nuance.** The whole user-facing interface — the
+  marketing site, documentation, API reference, authentication, the dashboard,
+  the workflow builder, task detail, the organization/settings/webhooks/
+  automations/API-key panels, invitations, analytics, search, notifications,
+  empty states, confirmations and toasts — is available in English and Russian
+  (836 message keys, parity enforced by the type system and `npm run i18n:check`).
+  What is intentionally **not** translated: technical identifiers (API scopes,
+  webhook event names, trigger/action ids, condition operators and field-type
+  values, timezone ids, HTTP codes, URLs, code fragments). Server-generated error
+  messages are not localized at the source; instead `useAction` maps the
+  `ActionResult` code to a translated message, so the user never sees a raw
+  server string — but this means a specific server validation message (e.g. a
+  permission detail) is shown as a generic, translated one.
 - 🟠 **Workflow execution is linear.** Steps run in order with conditional skips
   and task dependencies. There is no parallel branch, no join/gateway and no
   BPMN execution semantics.

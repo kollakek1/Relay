@@ -16,12 +16,23 @@ import { MESSAGES, findUntranslatedKeys } from '../shared/i18n/translate'
 
 type Node = string | { [key: string]: Node }
 
+/** A plural node is treated as one key (its CLDR categories are not keys). */
+function isPluralNode(node: unknown): node is Record<string, string> {
+  if (!node || typeof node !== 'object') return false
+  const record = node as Record<string, unknown>
+  return typeof record.other === 'string' && ('one' in record || 'few' in record || 'many' in record)
+}
+
 function collect(node: unknown, prefix: string, out: Map<string, string>): void {
   if (typeof node === 'string') {
     out.set(prefix, node)
     return
   }
   if (node && typeof node === 'object') {
+    if (isPluralNode(node)) {
+      out.set(prefix, JSON.stringify(node))
+      return
+    }
     for (const [child, value] of Object.entries(node as Record<string, Node>)) {
       collect(value, prefix ? `${prefix}.${child}` : child, out)
     }

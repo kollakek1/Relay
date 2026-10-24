@@ -1,5 +1,11 @@
 # Relay — MVP Audit
 
+> **Historical document.** This is the audit that kicked off the MVP build.
+> It describes the repository at an early commit and is kept for context.
+> For the current state see [CHANGELOG.md](../CHANGELOG.md),
+> [docs/KNOWN_LIMITATIONS.md](./KNOWN_LIMITATIONS.md) and [README.md](../README.md).
+
+
 _Date: 2026-10-24 · Branch: `main` · Baseline commit: `bf8e978`_
 
 ## 1. Executive summary

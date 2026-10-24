@@ -1,0 +1,101 @@
+name: Bug report
+description: Something in Relay is not working as documented.
+title: '[Bug]: '
+labels: ['bug', 'needs triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug.
+
+        **Do not report security vulnerabilities here.** Please follow
+        [SECURITY.md](https://github.com/kollakek1/Relay/blob/main/SECURITY.md)
+        and use private reporting instead.
+
+        Before you continue, please check
+        [docs/KNOWN_LIMITATIONS.md](https://github.com/kollakek1/Relay/blob/main/docs/KNOWN_LIMITATIONS.md)
+        — the behaviour you are seeing may already be a documented trade-off.
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight checklist
+      options:
+        - label: I have searched existing issues for the same problem.
+          required: true
+        - label: I am not reporting a security vulnerability (those go through SECURITY.md).
+          required: true
+        - label: I checked docs/KNOWN_LIMITATIONS.md.
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear and concise description of the bug, including any error message.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps so someone else can reproduce it reliably.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Relay version or commit
+      description: A release tag, or the output of `git rev-parse --short HEAD`.
+      placeholder: 'v0.2.0 or 6e4aab6'
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      placeholder: 'node --version'
+    validations:
+      required: true
+  - type: input
+    id: postgres
+    attributes:
+      label: PostgreSQL version
+      placeholder: 'psql --version'
+    validations:
+      required: true
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: How are you running Relay?
+      options:
+        - Local development (`npm run dev`)
+        - Production build (`npm run build` + `npm start`)
+        - Serverless platform (Vercel, etc.)
+        - Docker / container
+        - Other (explain below)
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Server logs (JSON lines) or browser console output. Remove any secrets.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else?
+      description: Screenshots, the state of your data, related configuration (with secrets removed).
+    validations:
+      required: false

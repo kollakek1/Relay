@@ -1,0 +1,67 @@
+name: Feature request
+description: Suggest a capability or an improvement for Relay.
+title: '[Feature]: '
+labels: ['enhancement', 'needs triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Relay aims to stay a focused workflow engine. Please explain the problem
+        first — a well-described problem is far more useful than a prescribed
+        solution. Check the roadmap in
+        [docs/KNOWN_LIMITATIONS.md](https://github.com/kollakek1/Relay/blob/main/docs/KNOWN_LIMITATIONS.md)
+        and the issue list before opening a new request.
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight checklist
+      options:
+        - label: I have searched existing issues and the roadmap for this request.
+          required: true
+        - label: This is a request for Relay itself, not for the deployment I run.
+          required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the situation and who is affected. Avoid jumping straight to a solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: If you have one in mind, describe it. It is fine to leave this open.
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any workarounds you use today, or other approaches you weighed.
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area does this touch?
+      options:
+        - Workflow design / builder
+        - Workflow execution / tasks / approvals
+        - Automations / jobs / outbox / webhooks
+        - Organizations / roles / invitations
+        - Public API / SDK
+        - Analytics / search / export
+        - UI / UX / accessibility / i18n
+        - Documentation
+        - Deployment / operations
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Mockups, links, related issues, or constraints we should know about.
+    validations:
+      required: false

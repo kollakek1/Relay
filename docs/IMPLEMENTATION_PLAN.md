@@ -54,17 +54,27 @@ Legend: ✅ done & verified · 🚧 in progress · ⬜ not started
 - [x] Locale-aware date/number/percent/duration/relative formatting.
 - [x] `npm run i18n:check` (parity, empties, plurals, untranslated report).
 
-## Phase D — Localization coverage ✅(partial, documented)
+## Phase D — Localization coverage ✅ complete
 
 - [x] Public marketing site fully localized (EN/RU).
 - [x] Documentation pages and API reference fully localized, including OpenAPI
       `x-i18n` descriptions.
 - [x] App chrome: sidebar navigation, account menu/logout, dashboard headings and
       empty states, authentication, task status/priority labels.
+- [x] **Every dashboard surface**: workflow list/builder/version history,
+      templates, task pool/tasks/filters/table, task detail (form, approvals,
+      decisions, comments, activity), team/members, invitations, organization
+      settings, API keys, webhooks, automations, analytics, search,
+      notifications, invitations page and toasts.
+- [x] Server error messages localized by `ActionResult` code in `useAction`; Zod
+      schema factories localize client validation messages.
+- [x] CLDR pluralization (`one`/`few`/`many`/`other`) selected with
+      `Intl.PluralRules`.
 - [x] SEO metadata localized; `<html lang>` follows the active locale.
-- [ ] ⬜ Deeper dashboard feature panels (workflow builder, task-detail form
-      labels, settings/webhooks/automations panels, invitations) remain
-      English-only — recorded in `docs/KNOWN_LIMITATIONS.md`.
+- [x] 836 keys with type-enforced parity; `npm run i18n:check` in CI.
+- [x] Intentionally untranslated: API scopes, webhook event names, trigger/action
+      ids, condition operators, field-type values, timezone ids, HTTP codes, URLs
+      and code fragments (recorded in `docs/KNOWN_LIMITATIONS.md`).
 
 ## Phase E — Public site & UX ✅
 
@@ -98,3 +108,24 @@ Legend: ✅ done & verified · 🚧 in progress · ⬜ not started
       reference, 404) plus full workflow lifecycle.
 - [x] README, roadmap and limitations updated.
 - [x] Final report written in `docs/PRODUCTION_HARDENING.md`.
+
+## Phase H — Open-source launch ✅
+
+- [x] LICENSE (MIT), CONTRIBUTING, CODE_OF_CONDUCT, root SECURITY policy.
+- [x] `.github/ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml`,
+      `.github/PULL_REQUEST_TEMPLATE.md`, `.github/CODEOWNERS`.
+- [x] README rewritten as the project home page (badges, TOC, features, real
+      screenshots, architecture, quickstart, self-hosting, docs index, API,
+      testing, contributing, security, status).
+- [x] `CHANGELOG.md` (Keep a Changelog) and `docs/RELEASE.md`.
+- [x] Version `0.2.0`; OpenAPI `info.version`/license aligned.
+- [x] `npm run docs:check` (relative link + anchor validation) in CI.
+- [x] `npm run screenshots` regenerates the README images from a real instance.
+- [x] CI hardened: least privilege, concurrency, `workflow_dispatch`,
+      docs-link check, failure-only artifacts, and the Playwright job runs on
+      PRs and `main` (no longer permanently disabled).
+- [x] Historical audit/roadmap docs annotated so they cannot mislead.
+- [ ] ⬜ GitHub-side steps that require API/web access not available in this
+      environment: repository description and topics, branch protection ruleset,
+      and publishing the GitHub Release. Exact steps are in the final report and
+      `docs/RELEASE.md`.

@@ -1,183 +1,327 @@
 <div align="center">
-    <img src="https://raw.githubusercontent.com/kollakek1/Relay/refs/heads/main/public/banner.png">
-<br />
-
-<h1>⚡ RELAY</h1>
-
-<p>
-    <b>The open-source workflow engine for modern teams.</b>
-</p>
-
-<p>
-    <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
-    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-    <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" />
-    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
-</p>
+  <img src="https://raw.githubusercontent.com/kollakek1/Relay/refs/heads/main/public/banner.png" alt="Relay" />
 </div>
+
+<h1 align="center">Relay</h1>
+
+<p align="center">
+  <b>The open-source workflow engine for teams that run on process.</b><br />
+  Design a workflow, publish an immutable version, run instances and move tasks
+  through a shared pool — with roles, approvals, SLA reminders, a REST API and
+  signed webhooks. Self-hosted on your own PostgreSQL.
+</p>
+
+<p align="center">
+  <a href="https://github.com/kollakek1/Relay/actions/workflows/ci.yml">
+    <img src="https://github.com/kollakek1/Relay/actions/workflows/ci.yml/badge.svg" alt="CI status" />
+  </a>
+  <a href="https://github.com/kollakek1/Relay/releases">
+    <img src="https://img.shields.io/github/v/release/kollakek1/Relay?include_prereleases&sort=semver" alt="Latest release" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/kollakek1/Relay" alt="License" />
+  </a>
+  <img src="https://img.shields.io/badge/node-%E2%89%A520-339933?logo=node.js&logoColor=white" alt="Node.js 20+" />
+  <a href="CONTRIBUTING.md">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome" />
+  </a>
+</p>
 
 ---
 
-## 🚀 Overview
+## Table of contents
 
-**Relay** is a workflow engine that moves work through strictly defined
-pipelines. You design a workflow, publish a versioned definition, run process
-instances and let tasks flow through a shared pool — with tenant isolation and
-role-based access enforced on the server.
+- [What Relay is](#what-relay-is)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Architecture](#architecture)
+- [Tech stack](#tech-stack)
+- [Quickstart](#quickstart)
+- [Local development](#local-development)
+- [Self-hosting and configuration](#self-hosting-and-configuration)
+- [Project structure](#project-structure)
+- [Documentation](#documentation)
+- [Public API](#public-api)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
+- [Project status and known limitations](#project-status-and-known-limitations)
 
-## ✨ Features (MVP)
+## What Relay is
 
-- 🏗 **Workflow builder** — draft, edit, reorder and validate linear workflows.
-- 🔀 **Conditions & forms** — per-step form fields (validated server-side) and
-  run conditions that skip steps based on values collected by earlier steps.
-- ✅ **Approvals** — approval steps with explicit **any/all** decision modes,
-  approve / request-changes / reject, a decision log, and notifications.
-- 🚀 **Publishing & versioning** — publishing freezes an immutable version;
-  running instances never change when you edit the draft.
-- ▶️ **Process instances** — start a workflow and generate a task per step,
-  released sequentially.
-- 📦 **Task pool** — claim unassigned tasks with an **atomic** claim (no two
-  people ever get the same task).
-- 🔐 **Organizations & roles** — `OWNER` / `ADMIN` / `MEMBER`, enforced
-  server-side on every mutation; strict tenant isolation.
-- ✉️ **Invitations & multiple workspaces** — invite by email (hashed, single-use,
-  expiring links), switch between workspaces, transfer ownership, admin audit log.
-- 💬 **Comments & activity** — discussion plus an append-only history of status
-  and assignment changes.
-- 🔔 **In-app notifications** — assignment, comment, completion, invitation and
-  SLA (overdue / due-soon) events with an unread count.
-- 📊 **Dashboard & analytics** — real KPIs, process throughput, cycle time and
-  step bottlenecks.
-- 🔎 **Global search & CSV export** — tenant- and permission-scoped.
-- 🧩 **Templates & version diff** — start from ready-made processes, compare
-  published versions and restore a draft from any version.
-- 🔌 **Public API & webhooks** — scoped hashed API keys against `/api/v1`, and
-  HMAC-signed webhooks delivered through a transactional outbox with retries.
-- ⏱ **Serverless automation** — idempotent, cron-triggered SLA scan and outbox
-  drain; no worker.
-- 🛡 **Hardened** — DB-backed rate limiting, structured redacting logs, audit
-  trail, SSRF-guarded outbound requests, safe CSV exports.
-- 🌗 **shadcn/ui design system** — light/dark themes, responsive, accessible.
-- 🌍 **English & Русский** — the interface, docs and API reference are bilingual,
-  with a remembered language preference.
-- 📖 **Documentation & API reference** — guides under `/docs`, an interactive
-  `/api-reference` and a machine-readable OpenAPI 3.1 spec validated in CI.
+Relay is a **self-hosted workflow engine**. You describe a process as an ordered
+set of steps; Relay turns each run into real tasks with owners, due dates,
+approvals and an audit trail. It is deliberately small in surface area and strict
+about correctness: authorization, tenant isolation and concurrency are enforced
+in the database and the server layer, not in the browser.
 
-## 🛠 Tech Stack
+Typical uses: onboarding and offboarding, content and contract review,
+request/approval pipelines, and any internal process where work must move through
+defined steps without a spreadsheet for a database.
 
-- **Framework:** Next.js 16 (App Router, Server Actions)
-- **Language:** TypeScript (strict)
-- **Database:** PostgreSQL + Prisma 7 (`@prisma/adapter-pg`)
-- **Auth:** Better Auth 1.7 (email + password)
-- **UI:** Tailwind CSS v4 + shadcn/ui + Lucide
-- **Validation:** Zod 4 · **Tests:** Vitest 5
+## Features
 
-## 🏁 Quick Start
-
-1. **Clone & install**
-   ```bash
-   git clone https://github.com/kollakek1/relay.git
-   cd relay
-   npm install
-   ```
-2. **Configure the environment** — copy `.env.example` to `.env` and fill it in
-   (`DATABASE_URL`, `BASE_URL`, `BETTER_AUTH_SECRET`). Set `ROOT_EMAIL` and a
-   strong `ROOT_PASSWORD` only for the first seed run.
-3. **Generate the Prisma client, apply migrations & seed**
-   ```bash
-   npm run db:generate   # also runs automatically on `npm install`
-   npm run db:deploy
-   npm run db:seed
-   ```
-   The seed refuses missing/weak/placeholder passwords and never prints the
-   password. Demo content is opt-in via `SEED_DEMO_DATA=true`.
-4. **Run**
-   ```bash
-   npm run dev
-   ```
-   Open http://localhost:3000 and sign in with the administrator you seeded (or
-   create a new account).
-
-## 🔧 Scripts
-
-| Script | Purpose |
+| | |
 | --- | --- |
-| `npm run dev` | Start the dev server |
-| `npm run build` / `npm start` | Production build / serve |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm test` | Vitest (unit + integration) |
-| `npm run test:e2e` | Playwright browser smoke test (needs `E2E=1`, a DB and a running server) |
-| `npm run db:migrate` | Create/apply a migration (dev) |
-| `npm run db:deploy` | Apply migrations (CI/prod) |
-| `npm run db:validate` | Validate the Prisma schema |
-| `npm run db:status` | Show migration state |
-| `npm run db:seed` | Seed the first administrator (+ optional demo data) |
-| `npm run db:generate` | Regenerate the Prisma client (also on `npm install`) |
-| `npm run api:check` | Validate the OpenAPI 3.1 spec |
-| `npm run i18n:check` | Verify RU/EN translation completeness |
+| **Workflow design** | Ordered steps, each a task or an approval. Per-step form fields, required role, due-in-days, and skip conditions based on values collected earlier. |
+| **Publishing and versions** | Publishing freezes an immutable snapshot. Running instances never change when you keep editing the draft; you can diff and restore versions. |
+| **Shared task pool** | Unassigned work is claimed with a single atomic update — two people can never hold the same task. |
+| **Approvals** | `ANY` (first decision wins) and `ALL` (every eligible approver decides) modes, with approve / request-changes / reject and a decision log. |
+| **Organizations and roles** | `OWNER > ADMIN > MEMBER`, enforced server-side on every mutation. Multiple workspaces, ownership transfer, admin audit log. |
+| **Invitations** | Invite by email with hashed, single-use, expiring links. Atomic acceptance. |
+| **Collaboration** | Comments, watchers, tags, task dependencies, reopening, and an append-only activity trail. |
+| **Notifications** | Assignment, comments, approvals, invitations and SLA reminders, with an unread count. |
+| **Automation rules** | React to domain events: `notify_role`, `add_tag`, `set_priority`, `create_task`. Idempotent per rule and event. |
+| **Reliable eventing** | A transactional outbox fans events out to HMAC-signed webhooks with retries, leases, a dead-letter state and admin requeue. |
+| **Public API** | Scoped, hashed API keys against `/api/v1`, with pagination, uniform errors and per-key rate limits. |
+| **Analytics** | Throughput, completion and overdue rates, cycle time and step bottlenecks — isolated per workflow. |
+| **Search and export** | Tenant-scoped global search, and bounded CSV export that neutralises spreadsheet formula injection. |
+| **English and Русский** | A typed dictionary i18n system with a remembered preference across the site, the app and the docs. |
+| **Hardened** | Database-backed rate limiting, structured redacting logs, an audit trail, an SSRF guard for outbound requests, and no default credentials. |
 
-## ⏱ Scheduled jobs (serverless)
+## Screenshots
 
-Relay has no long-running worker. Periodic work runs as a **bounded, idempotent,
-secret-protected endpoint** that any cron/scheduler can hit:
+<!-- The screenshots below are captured from a local instance with the seeded
+     demo workspace (`docs/assets/screens/`). Regenerate with
+     `npm run screenshots`. -->
 
-```bash
-# every hour (platform scheduler, GitHub Actions cron, cron-job.org, …)
-curl -X POST https://your-app/api/jobs/sla-scan \
-  -H "Authorization: Bearer $CRON_SECRET"
+| Workflow builder | Task pool |
+| --- | --- |
+| ![Workflow builder](docs/assets/screens/workflow-builder.png) | ![Task pool](docs/assets/screens/task-pool.png) |
 
-# every minute — webhook fan-out, deliveries and automation retries
-curl -X POST https://your-app/api/jobs/drain \
-  -H "Authorization: Bearer $CRON_SECRET"
+| Analytics | API reference |
+| --- | --- |
+| ![Analytics](docs/assets/screens/analytics.png) | ![API reference](docs/assets/screens/api-reference.png) |
+
+| Landing page (English) | Landing page (Russian) |
+| --- | --- |
+| ![Landing page in English](docs/assets/screens/landing-en.png) | ![Landing page in Russian](docs/assets/screens/landing-ru.png) |
+
+## Architecture
+
+Relay is a single Next.js application backed by one PostgreSQL database, with no
+long-running worker.
+
+```
+Browser  ──▶  Next.js (App Router)  ──▶  Service layer (authz + tenant scope)  ──▶  PostgreSQL
+                     │                                                                    ▲
+                     ├─ Server Actions / Route Handlers                                    │
+                     │                                                                    │
+                     └─ POST /api/jobs/*  ──▶  Transactional outbox ──▶  Webhooks ────────┘
+                          (cron-triggered,     (events written with the
+                           bounded, idempotent) mutation, claimed with a lease)
 ```
 
-`POST /api/jobs/sla-scan` scans for overdue / due-within-24h tasks and creates
-notifications, then prunes expired rate-limit counters.
-`POST /api/jobs/drain` fans out new outbox events to webhook endpoints, retries
-due deliveries and re-runs failed automation rules. Both are:
+- **Layers** — `app/` (routes) → `features/<domain>/{schemas,server,actions,components}`.
+  Only `features/<domain>/server` talks to Prisma, and every query is scoped by
+  `organizationId`.
+- **Authorization** — the active workspace is read from a cookie but always
+  re-validated against a real membership. Roles are re-derived from the database
+  on every request; a foreign identifier resolves to *not found*, never to
+  another tenant's data.
+- **Execution** — publishing freezes a version; instances reference it; tasks are
+  released step by step and claimed atomically.
+- **Background work** — domain events are written to a transactional outbox in
+  the same transaction as the mutation. A bounded, secret-protected job claims
+  work with `SELECT … FOR UPDATE SKIP LOCKED` plus a lease, retries with backoff,
+  and dead-letters what is exhausted. Delivery is **at-least-once**.
 
-- **secret-protected** — `Authorization: Bearer <CRON_SECRET>` only. The secret
-  is never accepted from the query string, and is compared in constant time.
-- **idempotent** (bounded windows; a task is never double-notified),
-- **crash-safe** — outbox rows and deliveries are claimed with a lease using
-  `SELECT … FOR UPDATE SKIP LOCKED`, so parallel or interrupted runs never
-  double-process work; exhausted rows are dead-lettered and can be requeued.
-- **bounded** (fixed batch sizes, no unbounded loops),
-- **observable** via the `job_run` table and the admin diagnostics.
+Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-Without `CRON_SECRET` configured the endpoints return `503` — they never pretend
-to have run. Only `POST` is wired up (`GET` returns 405). See
-`docs/ARCHITECTURE.md` and `docs/THREAT_MODEL.md`.
+## Tech stack
 
-## 📁 Project Structure
+- **Framework:** Next.js 16 (App Router, Server Actions), React 19
+- **Language:** TypeScript (strict)
+- **Database:** PostgreSQL 14+ with Prisma 7 (`@prisma/adapter-pg`)
+- **Auth:** Better Auth (email + password)
+- **UI:** Tailwind CSS v4, shadcn/ui, Lucide
+- **Validation:** Zod · **Tests:** Vitest 5, Playwright
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
-`features/<domain>/` (schemas · server services · actions · components),
-`shared/components/ui/` (shadcn primitives), `prisma/` (schema, migrations, seed).
+## Quickstart
 
-## 📚 Documentation
+Requirements: **Node.js 20+** and **PostgreSQL 14+**. Nothing else is mandatory —
+email, cron and outbound webhooks degrade gracefully when unconfigured.
 
-- [Production hardening](docs/PRODUCTION_HARDENING.md) · [Implementation plan](docs/IMPLEMENTATION_PLAN.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md)
-- [Architecture](docs/ARCHITECTURE.md) · [Security model](docs/SECURITY.md) · [Threat model](docs/THREAT_MODEL.md)
-- [Testing guide](docs/TESTING.md) · [Incident response](docs/INCIDENT_RESPONSE.md) · [Dependency audit](docs/DEPENDENCY_AUDIT.md)
-- [MVP audit](docs/MVP_AUDIT.md) · [Roadmap](docs/MVP_ROADMAP.md) · [V2 roadmap](docs/V2_ROADMAP.md)
-- Guides: [quickstart](docs/guides/QUICKSTART.md) · [deployment](docs/guides/DEPLOYMENT.md) · [configuration](docs/guides/CONFIGURATION.md) · [workflows](docs/guides/WORKFLOWS.md) · [automations](docs/guides/AUTOMATIONS.md) · [integrations](docs/guides/INTEGRATIONS.md)
-- API: [OpenAPI 3.1](docs/api/openapi.json) · interactive reference at `/api-reference` · download at `/api/openapi`
-- Interface & docs: English and Русский (switch in the header / sidebar)
+```bash
+git clone https://github.com/kollakek1/Relay
+cd Relay
+npm install                # also generates the Prisma client
 
-## 🚦 Scope
+cp .env.example .env       # set DATABASE_URL and BETTER_AUTH_SECRET
 
-**Implemented (V1 + V2):** workflow → publish/version → run → tasks → atomic pool
-→ comments → activity → notifications → real dashboard → roles & tenant
-isolation → invitations & multi-workspace → audit log → analytics → global search
-→ CSV export → rate limiting → reliability-hardened outbox & automation retries
-→ public API & signed webhooks → English/Russian interface → docs & API
-reference → Playwright smoke test (opt-in) → CI.
+npm run db:deploy          # apply migrations
+ROOT_EMAIL=you@example.com ROOT_PASSWORD='a-strong-unique-password' npm run db:seed
+npm run dev                # http://localhost:3000
+```
 
-**Not implemented yet (documented in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md)):**
-full BPMN (parallel branches/gateways), attachments (no storage), external chat
-integrations, billing, AI provider, and translation of the deeper dashboard
-feature panels (the chrome, auth and the whole public site/docs are bilingual).
+Then sign in and: create a workflow → add steps → **Publish** → **Start
+instance** → claim the task from the **Task pool** → complete it.
 
-<div align="center"> Developed with ❤️ by <b>kollakek</b> </div>
+The seed refuses a missing, short or placeholder password and never prints it.
+Set `SEED_DEMO_DATA=true` to also create a small demo workspace.
+
+Full walkthrough: [`docs/guides/QUICKSTART.md`](docs/guides/QUICKSTART.md).
+
+## Local development
+
+```bash
+npm run dev          # dev server
+npm run lint         # ESLint
+npm run typecheck    # tsc --noEmit
+npm test             # Vitest (needs DATABASE_URL)
+npm run test:e2e     # Playwright smoke test (E2E=1, needs a DB + server)
+npm run db:generate  # regenerate the Prisma client
+npm run db:migrate   # create + apply a migration
+npm run db:validate  # validate the Prisma schema
+npm run api:check    # OpenAPI spec matches the implemented routes
+npm run i18n:check   # RU/EN translation completeness
+```
+
+The generated Prisma client is **not** committed; `npm install` and
+`npm run build` generate it from `prisma/schema`. Integration tests create and
+delete their own rows — point them at a dedicated test database, never at data
+you care about.
+
+## Self-hosting and configuration
+
+Production:
+
+```bash
+npm ci
+npx prisma migrate deploy   # never `db push`, never reset
+npm run build
+npm run start
+```
+
+Required environment:
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | yes | PostgreSQL connection string. |
+| `BASE_URL` | yes | Public origin (auth and invitation links). |
+| `BETTER_AUTH_SECRET` | production | Session signing secret (`openssl rand -base64 32`). |
+| `CRON_SECRET` | recommended | Bearer secret for `/api/jobs/*`; without it the jobs return `503`. |
+| `RESEND_API_KEY` / `EMAIL_FROM` | optional | Send invitation emails. |
+| `ROOT_EMAIL` / `ROOT_PASSWORD` | seed only | Bootstrap the first administrator. |
+| `SEED_DEMO_DATA` | optional | Create a demo workspace. |
+| `OUTBOUND_ALLOWED_PORTS` | optional | Ports allowed for webhook delivery. |
+
+Scheduled work (there is no worker):
+
+```bash
+curl -X POST https://your-host/api/jobs/drain    -H "Authorization: Bearer $CRON_SECRET"  # every minute
+curl -X POST https://your-host/api/jobs/sla-scan -H "Authorization: Bearer $CRON_SECRET"  # every hour
+```
+
+The secret is accepted **only** in the `Authorization` header and only over
+`POST`; it is never taken from the query string.
+
+See [`docs/guides/CONFIGURATION.md`](docs/guides/CONFIGURATION.md) and
+[`docs/guides/DEPLOYMENT.md`](docs/guides/DEPLOYMENT.md) (includes HTTPS,
+backups, upgrades and serverless notes).
+
+## Project structure
+
+```
+app/                      routes (public site, dashboard, /api)
+  (main)/                 public marketing site, docs and API reference
+  dashboard/              authenticated application
+  api/                    auth, export, jobs, /api/v1, /api/openapi
+features/<domain>/        schemas · server services · actions · components
+shared/
+  components/ui/          shadcn primitives
+  components/site/        public-site components
+  i18n/                   typed translations, locale resolution, formatting
+  server/                 authorization, errors, logging, rate limiting, retry, SSRF
+prisma/                   schema fragments, migrations, seed
+tests/                    Vitest unit + integration suites
+e2e/                      Playwright smoke test
+docs/                     guides, architecture, security, API spec
+```
+
+## Documentation
+
+- **Quickstart** — [`docs/guides/QUICKSTART.md`](docs/guides/QUICKSTART.md)
+- **Deployment** — [`docs/guides/DEPLOYMENT.md`](docs/guides/DEPLOYMENT.md)
+- **Configuration** — [`docs/guides/CONFIGURATION.md`](docs/guides/CONFIGURATION.md)
+- **Workflows** — [`docs/guides/WORKFLOWS.md`](docs/guides/WORKFLOWS.md)
+- **Automations and jobs** — [`docs/guides/AUTOMATIONS.md`](docs/guides/AUTOMATIONS.md)
+- **Integrations (API & webhooks)** — [`docs/guides/INTEGRATIONS.md`](docs/guides/INTEGRATIONS.md)
+- **Architecture** — [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- **Security model** — [`docs/SECURITY.md`](docs/SECURITY.md) · [Threat model](docs/THREAT_MODEL.md)
+- **Testing** — [`docs/TESTING.md`](docs/TESTING.md) · **Incident response** — [`docs/INCIDENT_RESPONSE.md`](docs/INCIDENT_RESPONSE.md)
+- **Known limitations** — [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md)
+- **Changelog** — [`CHANGELOG.md`](CHANGELOG.md)
+
+The same guides (in English and Russian) are served by the app at `/docs`, with
+an interactive reference at `/api-reference`.
+
+## Public API
+
+A versioned JSON API under `/api/v1`, authenticated with a scoped API key
+(`Authorization: Bearer rk_…`). Keys are stored only as SHA-256 hashes and act
+with the current role of the account that created them.
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `GET` | `/api/v1/workflows` | `workflows:read` |
+| `POST` | `/api/v1/workflows/{id}/run` | `instances:write` |
+| `GET` | `/api/v1/instances` | `instances:read` |
+| `GET` | `/api/v1/tasks` | `tasks:read` |
+| `GET` | `/api/v1/tasks/{id}` | `tasks:read` |
+| `POST` | `/api/v1/tasks/{id}/claim` | `tasks:write` |
+
+The OpenAPI 3.1 document is served at **`/api/openapi`** (source:
+[`docs/api/openapi.json`](docs/api/openapi.json)) and is validated against the
+route files in CI, so it cannot drift. A CI check fails if a documented path has
+no handler or an implemented route is undocumented.
+
+## Testing
+
+```bash
+npm test                          # unit + integration (23 files)
+E2E=1 npm run test:e2e            # browser smoke test (needs a DB + server)
+```
+
+Coverage includes authorization and tenant isolation, the state machine, atomic
+claims under concurrency, invitation single-use, rate limiting, CSV injection,
+SSRF classification and DNS rebinding, outbox leases/retries/dead-letter,
+automation idempotency, analytics isolation, and the seed's credential policy.
+CI runs lint, types, Prisma validation and migrations, the full test suite, the
+OpenAPI and i18n checks, a production build, and the Playwright smoke test.
+
+## Contributing
+
+Contributions are welcome — see [`CONTRIBUTING.md`](CONTRIBUTING.md) for setup,
+the checks you must run, and the conventions. Please read the
+[Code of Conduct](CODE_OF_CONDUCT.md) first.
+
+## Security
+
+Do not open a public issue for a security problem. See
+[`SECURITY.md`](SECURITY.md) for private reporting and scope. The controls that
+exist today, and the residual risks Relay explicitly accepts, are documented in
+[`docs/SECURITY.md`](docs/SECURITY.md) and
+[`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md).
+
+## License
+
+[MIT](LICENSE) © kollakek1
+
+## Project status and known limitations
+
+Relay is **pre-1.0**: the workflow engine, API and i18n are complete and tested,
+but the database schema and the public API may still change between minor
+releases. There is no hosted offering — you run your own instance.
+
+Read [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md) before deploying.
+Highlights: delivery is at-least-once (deduplicate on `x-relay-delivery`); a
+residual DNS-rebinding TOCTOU window remains in the SSRF guard; rate limiting is
+fixed-window; email verification is disabled; workflow execution is linear (no
+parallel branches or BPMN gateways); and some deeper dashboard panels are
+English-only.
+
+<div align="center">
+  <sub>Built with Next.js, PostgreSQL, Prisma and Better Auth.</sub>
+</div>

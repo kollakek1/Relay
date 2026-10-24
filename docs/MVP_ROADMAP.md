@@ -1,5 +1,10 @@
 # Relay — MVP Roadmap
 
+> **Historical document.** The MVP roadmap is complete; its checkboxes reflect
+> the plan as it was executed, not the current status. See
+> [CHANGELOG.md](../CHANGELOG.md) and [docs/KNOWN_LIMITATIONS.md](./KNOWN_LIMITATIONS.md).
+
+
 _Owner: engineering · Status tracking: checkboxes updated as stages land._
 
 ## Goal

@@ -1,0 +1,15 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/kollakek1/Relay/security/advisories/new
+    about: Report a vulnerability privately. Never open a public issue for a security problem.
+  - name: Documentation
+    url: https://github.com/kollakek1/Relay/tree/main/docs
+    about: Guides, architecture, security model, deployment and API reference.
+  - name: Known limitations
+    url: https://github.com/kollakek1/Relay/blob/main/docs/KNOWN_LIMITATIONS.md
+    about: Check whether the behaviour you are about to report is already a documented trade-off.
+  - name: Contributing guide
+    url: https://github.com/kollakek1/Relay/blob/main/CONTRIBUTING.md
+    about: How to set up the project, run the checks, and open a pull request.

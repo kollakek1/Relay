@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Button } from '@/shared/components/ui/button'
 import {
   Card,
@@ -20,8 +20,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import {
   LoginFormData,
   RegisterFormData,
-  loginSchema,
-  registerSchema,
+  createLoginSchema,
+  createRegisterSchema,
 } from '@/features/auth/schemas/authSchema'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { toast } from 'sonner'
@@ -32,13 +32,18 @@ export function AuthCard() {
   const { login, register: registerUser } = useAuth()
   const [passwordHidden, setPasswordHidden] = useState(true)
 
+  // Rebuild the resolvers when the locale changes so validation messages follow
+  // the active language (the provider memoizes `t` per locale).
+  const loginResolver = useMemo(() => zodResolver(createLoginSchema(t)), [t])
+  const registerResolver = useMemo(() => zodResolver(createRegisterSchema(t)), [t])
+
   const loginForm = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: loginResolver,
     defaultValues: { email: '', password: '', rememberMe: true },
   })
 
   const registerForm = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+    resolver: registerResolver,
     defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
   })
 

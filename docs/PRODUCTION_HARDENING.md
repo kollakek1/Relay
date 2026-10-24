@@ -205,7 +205,6 @@ Every row is a real command result from this branch, not a prediction.
 ## 7. Residual limitations
 
 See `docs/KNOWN_LIMITATIONS.md`. The most important open items, stated plainly:
-
 - **SSRF DNS rebinding** has a residual TOCTOU window (resolve-then-check, not
   connect-time pinning). The realistic attack is blocked; closing it fully needs
   an egress proxy.
@@ -218,3 +217,91 @@ See `docs/KNOWN_LIMITATIONS.md`. The most important open items, stated plainly:
   bilingual; the workflow builder, task-detail form labels, settings panels and
   the webhooks/automations panels are not yet translated.
 - **Browser E2E is opt-in** (`E2E=1`) because it needs a live database and server.
+
+---
+
+## 8. Open-source launch pass (phase H)
+
+A second pass prepared Relay for a public release. Scope and evidence:
+
+### Licensing and governance
+
+| Item | File | State |
+| --- | --- | --- |
+| License | `LICENSE` | MIT, copyright © 2026 kollakek1. **The licence choice is the owner's** — MIT is a permissive default; alternatives (Apache-2.0, AGPL-3.0) are noted in the final report. The OpenAPI `info.license` was updated to match. |
+| Contributing | `CONTRIBUTING.md` | Setup, required checks, conventions, PR expectations. |
+| Code of conduct | `CODE_OF_CONDUCT.md` | Contributor Covenant 2.1, enforcement contact = the maintainer. |
+| Security policy | `SECURITY.md` | Private reporting, scope, in/out-of-scope, expected timelines. |
+| Issue forms | `.github/ISSUE_TEMPLATE/{bug_report,feature_request}.yml` | Structured forms (reproduction, environment, version). |
+| Issue config | `.github/ISSUE_TEMPLATE/config.yml` | Blank issues disabled; links to docs, limitations, security. |
+| PR template | `.github/PULL_REQUEST_TEMPLATE.md` | Change type, test evidence, DB/migration and i18n checklists. |
+| Code owners | `.github/CODEOWNERS` | Default owner: `@kollakek1`. |
+
+No `FUNDING.yml` was added: there is no funding account to point at, and a badge
+claiming one would be untrue.
+
+### Repository documentation
+
+- `README.md` was rewritten as the project home page: what Relay is, features,
+  screenshots, architecture diagram, quickstart, local development, self-hosting
+  and configuration, project structure, documentation index, public API, testing,
+  contributing, security, license, and an honest status/limitations section.
+  Badges reference real artefacts only (the `ci.yml` workflow, the release,
+  the license, Node).
+- `CHANGELOG.md` (Keep a Changelog format) documents the first release with
+  `Added` / `Changed` / `Fixed` / `Security` / `Breaking changes` /
+  `Known limitations` / `Upgrade instructions`.
+- `docs/RELEASE.md` documents the release process end to end.
+- Historical documents (`MVP_AUDIT.md`, `V2_AUDIT.md`, `MVP_ROADMAP.md`,
+  `V2_ROADMAP.md`) now carry a "historical document" note pointing at the
+  current sources of truth.
+
+### Automation
+
+- New `npm run docs:check` (`scripts/check-doc-links.ts`) validates every
+  relative Markdown link and `#anchor` in the repository, and runs in CI.
+- `npm run screenshots` (`scripts/capture-screens.ts`) regenerates the README
+  images from a real instance.
+- CI gained least-privilege `permissions: contents: read`, a `concurrency` guard,
+  a `workflow_dispatch` trigger, the docs-link check, and failure-only artifact
+  uploads for the test run and the Playwright report. The Playwright job now runs
+  on pull requests and on `main` rather than being permanently disabled.
+
+### Verification for this pass
+
+See §9 below — the table is filled with real command output, not predictions.
+
+## 9. Launch verification log
+
+Every row is a real command result on this branch.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Typecheck | `npm run typecheck` | ✅ pass (0 errors) |
+| Lint | `npm run lint` | ✅ pass (0 problems) |
+| Prisma validate | `npx prisma validate` | ✅ schema valid |
+| Prisma generate | `npx prisma generate` | ✅ client regenerated from `prisma/schema` |
+| Migrations (test DB) | `npx prisma migrate deploy` | ✅ applied (including `…reliability_leases`) |
+| Unit + integration | `npm test` | ✅ 23 files · 139 tests passed |
+| OpenAPI | `npm run api:check` | ✅ 6 documented paths ↔ 6 implemented routes |
+| i18n completeness | `npm run i18n:check` | ✅ 836 keys × 2 locales, parity + no empties |
+| Doc links | `npm run docs:check` | ✅ 58 relative links + anchors valid |
+| Production build | `npm run build` | ✅ all routes emitted |
+| Browser E2E | `E2E=1 npm run test:e2e` | ✅ 4 passed (public site + RU/EN switch, docs + API reference + OpenAPI download, localised 404, full lifecycle) |
+| Screenshots | `npm run screenshots` | ✅ 9 real screenshots in `docs/assets/screens/` |
+
+### Localization coverage in this pass
+
+- 836 message keys, typed end to end: `ru.ts` is `Messages` (`typeof en`), so a
+  missing key is a compile error; `npm run i18n:check` adds parity, empty-value
+  and plural-category checks.
+- Pluralization now supports CLDR `one/few/many/other` (Russian), selected with
+  `Intl.PluralRules`.
+- Server error messages are translated by `ActionResult` code in `useAction`, so
+  no raw server string reaches the user.
+- Zod schema factories (`createXSchema(t)`) localize client validation messages;
+  the auth forms consume them today, and the pattern is documented in
+  `CONTRIBUTING.md` for the remaining forms.
+- Intentionally untranslated: API scopes, webhook event names, trigger/action
+  ids, condition operators, field-type values, timezone ids, HTTP codes, URLs and
+  code fragments.

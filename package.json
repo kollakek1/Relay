@@ -1,6 +1,6 @@
 {
   "name": "relay",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -22,7 +22,9 @@
     "db:status": "prisma migrate status",
     "db:seed": "prisma db seed",
     "api:check": "tsx scripts/check-openapi.ts",
-    "i18n:check": "tsx scripts/check-i18n.ts"
+    "i18n:check": "tsx scripts/check-i18n.ts",
+    "docs:check": "tsx scripts/check-doc-links.ts",
+    "screenshots": "tsx scripts/capture-screens.ts"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

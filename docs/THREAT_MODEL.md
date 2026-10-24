@@ -68,7 +68,7 @@ Browser (untrusted)  ──▶  Next.js Server Actions / Route Handlers (trusted
 | R5 | Distributed rate limiting fairness | fixed window (not sliding); acceptable for abuse control, upgradeable |
 | R6 | Dependency CVEs in dev tooling | tracked in `DEPENDENCY_AUDIT.md` |
 | R7 | TLS semantics of `sslmode=require` | `pg` currently treats it as `verify-full`; pin `sslmode=verify-full` explicitly in production |
-| R8 | Translated dashboard surfaces | app chrome, auth and the full public site/docs are EN+RU; deeper feature panels remain English-only (see `docs/KNOWN_LIMITATIONS.md`) |
+| R8 | Translated dashboard surfaces | **Resolved.** The whole user-facing UI, the public site, docs and API reference are EN+RU (836 keys, parity enforced in CI). Technical identifiers stay untranslated by design; server errors are mapped to translated messages by code. See `docs/KNOWN_LIMITATIONS.md`. |
 
 ## 5. Assumptions
 

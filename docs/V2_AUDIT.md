@@ -1,5 +1,11 @@
 # Relay V2 — Audit
 
+> **Historical document.** This is the V2 audit that drove the second stage;
+> many of the issues it lists have since been fixed. For the current state see
+> [docs/PRODUCTION_HARDENING.md](./PRODUCTION_HARDENING.md) and
+> [docs/KNOWN_LIMITATIONS.md](./KNOWN_LIMITATIONS.md).
+
+
 _Date: 2026-10-24 · Branch `main` · Base commit `bb2254c` · Working tree clean._
 
 ## 1. Method
