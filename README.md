@@ -5,7 +5,7 @@
 <h1>⚡ RELAY</h1>
 
 <p>
-    <b>The Enterprise-Grade Workflow Engine for Modern Teams.</b>
+    <b>The open-source workflow engine for modern teams.</b>
 </p>
 
 <p>
@@ -20,44 +20,95 @@
 
 ## 🚀 Overview
 
-**Relay** is a high-performance, open-source workflow engine designed to handle complex business logic with ease. Unlike standard task trackers, Relay focuses on the **flow**—moving tasks through strictly defined pipelines, ensuring that the right people do the right work at the right time.
+**Relay** is a workflow engine that moves work through strictly defined
+pipelines. You design a workflow, publish a versioned definition, run process
+instances and let tasks flow through a shared pool — with tenant isolation and
+role-based access enforced on the server.
 
-## ✨ Key Features
+## ✨ Features (MVP)
 
-- 🏗 **Dynamic Workflow Builder:** Create custom pipelines with as many stages as your business needs.
-- 🔐 **Role-Based Access (RBAC):** Bind specific stages to specific roles (Designers, Developers, Managers).
-- 📦 **The Task Pool:** "Claim" system where eligible team members pick up tasks from a shared queue.
-- ⚡ **Electric Glass UI:** A stunning, high-performance dark-mode interface built with `shadcn/ui`.
-- 🤖 **Telegram Integration:** Get real-time notifications when a task lands in your department's pool.
+- 🏗 **Workflow builder** — draft, edit, reorder and validate linear workflows.
+- 🚀 **Publishing & versioning** — publishing freezes an immutable version;
+  running instances never change when you edit the draft.
+- ▶️ **Process instances** — start a workflow and generate a task per step,
+  released sequentially.
+- 📦 **Task pool** — claim unassigned tasks with an **atomic** claim (no two
+  people ever get the same task).
+- 🔐 **Organizations & roles** — `OWNER` / `ADMIN` / `MEMBER`, enforced
+  server-side on every mutation; strict tenant isolation.
+- 💬 **Comments & activity** — discussion plus an append-only history of status
+  and assignment changes.
+- 🔔 **In-app notifications** — assignment, comment and completion events with an
+  unread count.
+- 📊 **Dashboard** — real KPIs (my tasks, pool, completed today, active
+  instances, overdue) and recent activity.
+- 🌗 **shadcn/ui design system** — light/dark themes, responsive, accessible.
 
 ## 🛠 Tech Stack
 
-- **Framework:** Next.js 14 (App Router)
-- **Language:** TypeScript (Strict)
-- **Database:** PostgreSQL + Prisma ORM
-- **Auth:** Better-Auth (SSO & Credentials)
-- **UI:** Tailwind CSS + Radix UI + Lucide Icons
+- **Framework:** Next.js 16 (App Router, Server Actions)
+- **Language:** TypeScript (strict)
+- **Database:** PostgreSQL + Prisma 7 (`@prisma/adapter-pg`)
+- **Auth:** Better Auth 1.7 (email + password)
+- **UI:** Tailwind CSS v4 + shadcn/ui + Lucide
+- **Validation:** Zod 4 · **Tests:** Vitest 5
 
 ## 🏁 Quick Start
 
-1. **Clone the repository:**
+1. **Clone & install**
    ```bash
    git clone https://github.com/kollakek1/relay.git
+   cd relay
+   npm install
    ```
-2. **Install dependencies:**
+2. **Configure the environment** — copy `.env.example` to `.env` and fill it in
+   (`DATABASE_URL`, `BASE_URL`, `BETTER_AUTH_SECRET`).
+3. **Apply migrations & seed**
    ```bash
-   npm i
+   npm run db:deploy
+   npm run db:seed
    ```
-3. **Setup Environment:**
-   Create a `.env` file and add your `DATABASE_URL` and `BASE_URL`.
-4. **Initialize Database & Seed Root:**
-   ```bash
-   npx prisma db push
-   npx prisma db seed
-   ```
-5. **Run the engine:**
+4. **Run**
    ```bash
    npm run dev
    ```
+   Open http://localhost:3000, create an account (or use the seeded
+   `admin@relay.com` / `rootroot`).
+
+## 🔧 Scripts
+
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` / `npm start` | Production build / serve |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Vitest (unit + integration) |
+| `npm run db:migrate` | Create/apply a migration (dev) |
+| `npm run db:deploy` | Apply migrations (CI/prod) |
+| `npm run db:seed` | Seed the root admin + demo data |
+| `npm run db:generate` | Regenerate the Prisma client |
+
+## 📁 Project Structure
+
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
+`features/<domain>/` (schemas · server services · actions · components),
+`shared/components/ui/` (shadcn primitives), `prisma/` (schema, migrations, seed).
+
+## 📚 Documentation
+
+- [MVP audit](docs/MVP_AUDIT.md) · [Roadmap](docs/MVP_ROADMAP.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Security model](docs/SECURITY.md)
+- [Testing guide](docs/TESTING.md)
+- [Dependency audit](docs/DEPENDENCY_AUDIT.md)
+
+## 🚦 MVP scope
+
+Implemented: workflow → publish/version → run → tasks → atomic pool → comments →
+activity → notifications → real dashboard → roles & tenant isolation → tests.
+
+Out of scope (by design): full BPMN graph editing, background job
+infrastructure, external integrations (Telegram), billing, advanced analytics.
 
 <div align="center"> Developed with ❤️ by <b>kollakek</b> </div>

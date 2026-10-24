@@ -94,17 +94,22 @@ AI process generation.
 
 ## Definition of Done (MVP)
 
-- [ ] Audit + roadmap committed.
-- [ ] Dependencies on latest stable; lockfile current; breaking changes fixed.
-- [ ] Happy path works end-to-end.
-- [ ] Publish + versioning correct; active instances protected.
-- [ ] Task Pool atomic under concurrency (tested).
-- [ ] Roles + org isolation enforced server-side (tested).
-- [ ] Comments, activity, notifications use real data.
-- [ ] Dashboard/search/filters use real data.
-- [ ] New & changed UI follows shadcn/ui.
-- [ ] No known critical runtime vulnerabilities.
-- [ ] Critical scenarios covered by tests.
-- [ ] `tsc`, `eslint`, tests, production build verified.
-- [ ] Docs match code; no secrets committed.
-- [ ] One commit per completed stage.
+- [x] Audit + roadmap committed.
+- [x] Dependencies on latest stable; lockfile current; breaking changes fixed.
+- [x] Happy path works end-to-end (create → publish → run → claim → complete).
+- [x] Publish + versioning correct; active instances protected (tested).
+- [x] Task Pool atomic under concurrency (tested).
+- [x] Roles + org isolation enforced server-side (tested).
+- [x] Comments, activity, notifications use real data (tested).
+- [x] Dashboard/search/filters use real data.
+- [x] New & changed UI follows shadcn/ui.
+- [x] No known critical runtime vulnerabilities (0 critical in `npm audit`).
+- [x] Critical scenarios covered by tests (28 tests, 6 files).
+- [x] `tsc`, `eslint`, tests, production build verified.
+- [x] Docs match code; no secrets committed.
+- [x] One commit per completed stage.
+
+## Status: MVP complete
+
+All stages A–J landed. Remaining (non-blocking) items are tracked in
+`docs/SECURITY.md` §7 and `docs/DEPENDENCY_AUDIT.md` §5.
