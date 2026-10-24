@@ -36,6 +36,7 @@ import {
   assignTaskAction,
   claimTaskAction,
   decideTaskAction,
+  reopenTaskAction,
   transitionTaskAction,
   updateTaskAction,
 } from '@/features/task/actions'
@@ -88,6 +89,10 @@ export interface TaskDetailData {
   }>
   fields: WorkflowFormField[]
   formValues: Record<string, unknown> | null
+  tags: string[]
+  observerIds: string[]
+  blockedBy: { id: string; name: string; status: string } | null
+  siblings: Array<{ id: string; name: string }>
   instance: {
     id: string
     workflow: { id: string; name: string } | null
@@ -151,6 +156,9 @@ export function TaskDetail({
   const [formValues, setFormValues] = useState<Record<string, unknown>>(
     () => (task.formValues as Record<string, unknown> | null) ?? {}
   )
+  const [tags, setTags] = useState(task.tags.join(', '))
+  const [observers, setObservers] = useState<string[]>(task.observerIds)
+  const [blockedBy, setBlockedBy] = useState<string>(task.blockedBy?.id ?? 'none')
 
   const isAssignee = task.assigneeId === currentUserId
   const canAct = isAssignee || canManage
@@ -185,9 +193,18 @@ export function TaskDetail({
           taskId: task.id,
           priority,
           dueAt: dueAt ? new Date(dueAt) : null,
+          tags: tags
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+          observerIds: observers,
+          blockedByTaskId: blockedBy === 'none' ? null : blockedBy,
         }),
       { success: 'Task updated', onSuccess: refresh }
     )
+
+  const reopen = () =>
+    run(() => reopenTaskAction({ taskId: task.id }), { success: 'Task reopened', onSuccess: refresh })
 
   const [decisionNote, setDecisionNote] = useState('')
 
@@ -251,6 +268,16 @@ export function TaskDetail({
                 {isTerminal && task.formValues && (
                   <p className="text-muted-foreground text-xs">Submitted values are shown above.</p>
                 )}
+              </div>
+            )}
+
+            {task.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {task.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
             )}
 
@@ -397,6 +424,12 @@ export function TaskDetail({
                   Cancel
                 </Button>
               )}
+              {task.status === 'DONE' && (canManage || isAssignee) && (
+                <Button variant="outline" onClick={reopen} disabled={isPending}>
+                  <RotateCcwIcon />
+                  Reopen
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -510,6 +543,69 @@ export function TaskDetail({
                 disabled={!canAct || isPending}
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="task-tags">Tags</Label>
+              <Input
+                id="task-tags"
+                value={tags}
+                autoComplete="off"
+                placeholder="urgent, finance"
+                onChange={(event) => setTags(event.target.value)}
+                disabled={!canAct || isPending}
+              />
+              <p className="text-muted-foreground text-xs">Comma separated.</p>
+            </div>
+
+            {task.siblings.length > 0 && (
+              <div className="space-y-2">
+                <Label htmlFor="task-blocked-by">Blocked by</Label>
+                <Select value={blockedBy} onValueChange={setBlockedBy} disabled={!canAct || isPending}>
+                  <SelectTrigger id="task-blocked-by" className="w-full">
+                    <SelectValue placeholder="Nothing" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Nothing</SelectItem>
+                    {task.siblings.map((sibling) => (
+                      <SelectItem key={sibling.id} value={sibling.id}>
+                        {sibling.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {task.blockedBy && task.blockedBy.status !== 'DONE' && (
+                  <p className="text-destructive text-xs">
+                    Waiting on “{task.blockedBy.name}” before this task can be claimed.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {members.length > 1 && (
+              <div className="space-y-2">
+                <Label>Observers</Label>
+                <div className="border-border max-h-32 space-y-1 overflow-y-auto rounded-md border p-2">
+                  {members
+                    .filter((member) => member.userId !== task.assigneeId)
+                    .map((member) => (
+                      <label key={member.userId} className="flex items-center gap-2 text-sm">
+                        <Checkbox
+                          checked={observers.includes(member.userId)}
+                          disabled={!canAct || isPending}
+                          onCheckedChange={(checked) =>
+                            setObservers((prev) =>
+                              checked === true
+                                ? [...prev, member.userId]
+                                : prev.filter((id) => id !== member.userId)
+                            )
+                          }
+                        />
+                        {member.user.name}
+                      </label>
+                    ))}
+                </div>
+              </div>
+            )}
 
             <Button
               className="w-full"

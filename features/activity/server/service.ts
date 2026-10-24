@@ -28,7 +28,7 @@ export async function addComment(ctx: Context, input: CreateCommentInput) {
 
   const task = await prisma.task.findFirst({
     where: { id: input.taskId, organizationId: ctx.organizationId },
-    select: { id: true, name: true, assigneeId: true },
+    select: { id: true, name: true, assigneeId: true, observerIds: true },
   })
   if (!task) throw notFound('Task not found')
 
@@ -48,6 +48,20 @@ export async function addComment(ctx: Context, input: CreateCommentInput) {
         type: 'TASK_COMMENTED',
         title: `New comment on "${task.name}"`,
         body: input.body.slice(0, 120),
+        link: `/dashboard/tasks/${task.id}`,
+      })
+    }
+
+    const observers = task.observerIds.filter(
+      (userId) => userId !== ctx.userId && userId !== task.assigneeId
+    )
+    for (const userId of observers) {
+      await notify(tx, {
+        organizationId: ctx.organizationId,
+        userId,
+        type: 'TASK_COMMENTED',
+        title: `New comment on a task you observe`,
+        body: `${task.name}: ${input.body.slice(0, 100)}`,
         link: `/dashboard/tasks/${task.id}`,
       })
     }

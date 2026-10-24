@@ -49,6 +49,7 @@ export type TaskMinAggregateOutputType = {
   decision: $Enums.ApprovalDecision | null
   decisionNote: string | null
   requiredRole: $Enums.OrgRole | null
+  blockedByTaskId: string | null
   assigneeId: string | null
   createdById: string | null
   dueAt: Date | null
@@ -73,6 +74,7 @@ export type TaskMaxAggregateOutputType = {
   decision: $Enums.ApprovalDecision | null
   decisionNote: string | null
   requiredRole: $Enums.OrgRole | null
+  blockedByTaskId: string | null
   assigneeId: string | null
   createdById: string | null
   dueAt: Date | null
@@ -100,6 +102,8 @@ export type TaskCountAggregateOutputType = {
   fields: number
   formValues: number
   tags: number
+  observerIds: number
+  blockedByTaskId: number
   assigneeId: number
   createdById: number
   dueAt: number
@@ -136,6 +140,7 @@ export type TaskMinAggregateInputType = {
   decision?: true
   decisionNote?: true
   requiredRole?: true
+  blockedByTaskId?: true
   assigneeId?: true
   createdById?: true
   dueAt?: true
@@ -160,6 +165,7 @@ export type TaskMaxAggregateInputType = {
   decision?: true
   decisionNote?: true
   requiredRole?: true
+  blockedByTaskId?: true
   assigneeId?: true
   createdById?: true
   dueAt?: true
@@ -187,6 +193,8 @@ export type TaskCountAggregateInputType = {
   fields?: true
   formValues?: true
   tags?: true
+  observerIds?: true
+  blockedByTaskId?: true
   assigneeId?: true
   createdById?: true
   dueAt?: true
@@ -301,6 +309,8 @@ export type TaskGroupByOutputType = {
   fields: runtime.JsonValue | null
   formValues: runtime.JsonValue | null
   tags: string[]
+  observerIds: string[]
+  blockedByTaskId: string | null
   assigneeId: string | null
   createdById: string
   dueAt: Date | null
@@ -351,6 +361,8 @@ export type TaskWhereInput = {
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
   tags?: Prisma.StringNullableListFilter<"Task">
+  observerIds?: Prisma.StringNullableListFilter<"Task">
+  blockedByTaskId?: Prisma.StringNullableFilter<"Task"> | string | null
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdById?: Prisma.StringFilter<"Task"> | string
   dueAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
@@ -362,6 +374,8 @@ export type TaskWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Task"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   instance?: Prisma.XOR<Prisma.ProcessInstanceScalarRelationFilter, Prisma.ProcessInstanceWhereInput>
+  blockedBy?: Prisma.XOR<Prisma.TaskNullableScalarRelationFilter, Prisma.TaskWhereInput> | null
+  blocks?: Prisma.TaskListRelationFilter
   assignee?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   activities?: Prisma.TaskActivityListRelationFilter
@@ -385,6 +399,8 @@ export type TaskOrderByWithRelationInput = {
   fields?: Prisma.SortOrderInput | Prisma.SortOrder
   formValues?: Prisma.SortOrderInput | Prisma.SortOrder
   tags?: Prisma.SortOrder
+  observerIds?: Prisma.SortOrder
+  blockedByTaskId?: Prisma.SortOrderInput | Prisma.SortOrder
   assigneeId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   dueAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -396,6 +412,8 @@ export type TaskOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
   instance?: Prisma.ProcessInstanceOrderByWithRelationInput
+  blockedBy?: Prisma.TaskOrderByWithRelationInput
+  blocks?: Prisma.TaskOrderByRelationAggregateInput
   assignee?: Prisma.UserOrderByWithRelationInput
   createdBy?: Prisma.UserOrderByWithRelationInput
   activities?: Prisma.TaskActivityOrderByRelationAggregateInput
@@ -422,6 +440,8 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
   tags?: Prisma.StringNullableListFilter<"Task">
+  observerIds?: Prisma.StringNullableListFilter<"Task">
+  blockedByTaskId?: Prisma.StringNullableFilter<"Task"> | string | null
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdById?: Prisma.StringFilter<"Task"> | string
   dueAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
@@ -433,6 +453,8 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Task"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   instance?: Prisma.XOR<Prisma.ProcessInstanceScalarRelationFilter, Prisma.ProcessInstanceWhereInput>
+  blockedBy?: Prisma.XOR<Prisma.TaskNullableScalarRelationFilter, Prisma.TaskWhereInput> | null
+  blocks?: Prisma.TaskListRelationFilter
   assignee?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   activities?: Prisma.TaskActivityListRelationFilter
@@ -456,6 +478,8 @@ export type TaskOrderByWithAggregationInput = {
   fields?: Prisma.SortOrderInput | Prisma.SortOrder
   formValues?: Prisma.SortOrderInput | Prisma.SortOrder
   tags?: Prisma.SortOrder
+  observerIds?: Prisma.SortOrder
+  blockedByTaskId?: Prisma.SortOrderInput | Prisma.SortOrder
   assigneeId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   dueAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -491,6 +515,8 @@ export type TaskScalarWhereWithAggregatesInput = {
   fields?: Prisma.JsonNullableWithAggregatesFilter<"Task">
   formValues?: Prisma.JsonNullableWithAggregatesFilter<"Task">
   tags?: Prisma.StringNullableListFilter<"Task">
+  observerIds?: Prisma.StringNullableListFilter<"Task">
+  blockedByTaskId?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   assigneeId?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   createdById?: Prisma.StringWithAggregatesFilter<"Task"> | string
   dueAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
@@ -516,6 +542,7 @@ export type TaskCreateInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -525,6 +552,8 @@ export type TaskCreateInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
   instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
@@ -548,6 +577,8 @@ export type TaskUncheckedCreateInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -557,6 +588,7 @@ export type TaskUncheckedCreateInput = {
   claimVersion?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
@@ -576,6 +608,7 @@ export type TaskUpdateInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -585,6 +618,8 @@ export type TaskUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
   instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
@@ -608,6 +643,8 @@ export type TaskUncheckedUpdateInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -617,6 +654,7 @@ export type TaskUncheckedUpdateInput = {
   claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
@@ -638,6 +676,8 @@ export type TaskCreateManyInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -663,6 +703,7 @@ export type TaskUpdateManyMutationInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -688,6 +729,8 @@ export type TaskUncheckedUpdateManyInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -709,6 +752,11 @@ export type TaskOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type TaskNullableScalarRelationFilter = {
+  is?: Prisma.TaskWhereInput | null
+  isNot?: Prisma.TaskWhereInput | null
+}
+
 export type TaskCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
@@ -725,6 +773,8 @@ export type TaskCountOrderByAggregateInput = {
   fields?: Prisma.SortOrder
   formValues?: Prisma.SortOrder
   tags?: Prisma.SortOrder
+  observerIds?: Prisma.SortOrder
+  blockedByTaskId?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   dueAt?: Prisma.SortOrder
@@ -754,6 +804,7 @@ export type TaskMaxOrderByAggregateInput = {
   decision?: Prisma.SortOrder
   decisionNote?: Prisma.SortOrder
   requiredRole?: Prisma.SortOrder
+  blockedByTaskId?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   dueAt?: Prisma.SortOrder
@@ -778,6 +829,7 @@ export type TaskMinOrderByAggregateInput = {
   decision?: Prisma.SortOrder
   decisionNote?: Prisma.SortOrder
   requiredRole?: Prisma.SortOrder
+  blockedByTaskId?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   dueAt?: Prisma.SortOrder
@@ -971,6 +1023,30 @@ export type TaskCreatetagsInput = {
   set: string[]
 }
 
+export type TaskCreateobserverIdsInput = {
+  set: string[]
+}
+
+export type TaskCreateNestedOneWithoutBlocksInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutBlocksInput, Prisma.TaskUncheckedCreateWithoutBlocksInput>
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutBlocksInput
+  connect?: Prisma.TaskWhereUniqueInput
+}
+
+export type TaskCreateNestedManyWithoutBlockedByInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutBlockedByInput, Prisma.TaskUncheckedCreateWithoutBlockedByInput> | Prisma.TaskCreateWithoutBlockedByInput[] | Prisma.TaskUncheckedCreateWithoutBlockedByInput[]
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutBlockedByInput | Prisma.TaskCreateOrConnectWithoutBlockedByInput[]
+  createMany?: Prisma.TaskCreateManyBlockedByInputEnvelope
+  connect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+}
+
+export type TaskUncheckedCreateNestedManyWithoutBlockedByInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutBlockedByInput, Prisma.TaskUncheckedCreateWithoutBlockedByInput> | Prisma.TaskCreateWithoutBlockedByInput[] | Prisma.TaskUncheckedCreateWithoutBlockedByInput[]
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutBlockedByInput | Prisma.TaskCreateOrConnectWithoutBlockedByInput[]
+  createMany?: Prisma.TaskCreateManyBlockedByInputEnvelope
+  connect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+}
+
 export type EnumTaskStatusFieldUpdateOperationsInput = {
   set?: $Enums.TaskStatus
 }
@@ -986,6 +1062,49 @@ export type NullableEnumApprovalDecisionFieldUpdateOperationsInput = {
 export type TaskUpdatetagsInput = {
   set?: string[]
   push?: string | string[]
+}
+
+export type TaskUpdateobserverIdsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type TaskUpdateOneWithoutBlocksNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutBlocksInput, Prisma.TaskUncheckedCreateWithoutBlocksInput>
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutBlocksInput
+  upsert?: Prisma.TaskUpsertWithoutBlocksInput
+  disconnect?: Prisma.TaskWhereInput | boolean
+  delete?: Prisma.TaskWhereInput | boolean
+  connect?: Prisma.TaskWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TaskUpdateToOneWithWhereWithoutBlocksInput, Prisma.TaskUpdateWithoutBlocksInput>, Prisma.TaskUncheckedUpdateWithoutBlocksInput>
+}
+
+export type TaskUpdateManyWithoutBlockedByNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutBlockedByInput, Prisma.TaskUncheckedCreateWithoutBlockedByInput> | Prisma.TaskCreateWithoutBlockedByInput[] | Prisma.TaskUncheckedCreateWithoutBlockedByInput[]
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutBlockedByInput | Prisma.TaskCreateOrConnectWithoutBlockedByInput[]
+  upsert?: Prisma.TaskUpsertWithWhereUniqueWithoutBlockedByInput | Prisma.TaskUpsertWithWhereUniqueWithoutBlockedByInput[]
+  createMany?: Prisma.TaskCreateManyBlockedByInputEnvelope
+  set?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  disconnect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  delete?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  connect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  update?: Prisma.TaskUpdateWithWhereUniqueWithoutBlockedByInput | Prisma.TaskUpdateWithWhereUniqueWithoutBlockedByInput[]
+  updateMany?: Prisma.TaskUpdateManyWithWhereWithoutBlockedByInput | Prisma.TaskUpdateManyWithWhereWithoutBlockedByInput[]
+  deleteMany?: Prisma.TaskScalarWhereInput | Prisma.TaskScalarWhereInput[]
+}
+
+export type TaskUncheckedUpdateManyWithoutBlockedByNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutBlockedByInput, Prisma.TaskUncheckedCreateWithoutBlockedByInput> | Prisma.TaskCreateWithoutBlockedByInput[] | Prisma.TaskUncheckedCreateWithoutBlockedByInput[]
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutBlockedByInput | Prisma.TaskCreateOrConnectWithoutBlockedByInput[]
+  upsert?: Prisma.TaskUpsertWithWhereUniqueWithoutBlockedByInput | Prisma.TaskUpsertWithWhereUniqueWithoutBlockedByInput[]
+  createMany?: Prisma.TaskCreateManyBlockedByInputEnvelope
+  set?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  disconnect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  delete?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  connect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  update?: Prisma.TaskUpdateWithWhereUniqueWithoutBlockedByInput | Prisma.TaskUpdateWithWhereUniqueWithoutBlockedByInput[]
+  updateMany?: Prisma.TaskUpdateManyWithWhereWithoutBlockedByInput | Prisma.TaskUpdateManyWithWhereWithoutBlockedByInput[]
+  deleteMany?: Prisma.TaskScalarWhereInput | Prisma.TaskScalarWhereInput[]
 }
 
 export type TaskCreateNestedOneWithoutDecisionsInput = {
@@ -1044,6 +1163,7 @@ export type TaskCreateWithoutOrganizationInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1052,6 +1172,8 @@ export type TaskCreateWithoutOrganizationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
@@ -1074,6 +1196,8 @@ export type TaskUncheckedCreateWithoutOrganizationInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1083,6 +1207,7 @@ export type TaskUncheckedCreateWithoutOrganizationInput = {
   claimVersion?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
@@ -1133,6 +1258,8 @@ export type TaskScalarWhereInput = {
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
   tags?: Prisma.StringNullableListFilter<"Task">
+  observerIds?: Prisma.StringNullableListFilter<"Task">
+  blockedByTaskId?: Prisma.StringNullableFilter<"Task"> | string | null
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdById?: Prisma.StringFilter<"Task"> | string
   dueAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
@@ -1158,6 +1285,7 @@ export type TaskCreateWithoutAssigneeInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1167,6 +1295,8 @@ export type TaskCreateWithoutAssigneeInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
   instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
@@ -1189,6 +1319,8 @@ export type TaskUncheckedCreateWithoutAssigneeInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   createdById: string
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
@@ -1197,6 +1329,7 @@ export type TaskUncheckedCreateWithoutAssigneeInput = {
   claimVersion?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
@@ -1226,6 +1359,7 @@ export type TaskCreateWithoutCreatedByInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1235,6 +1369,8 @@ export type TaskCreateWithoutCreatedByInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
   instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
@@ -1257,6 +1393,8 @@ export type TaskUncheckedCreateWithoutCreatedByInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
@@ -1265,6 +1403,7 @@ export type TaskUncheckedCreateWithoutCreatedByInput = {
   claimVersion?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
@@ -1326,6 +1465,7 @@ export type TaskCreateWithoutInstanceInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1334,6 +1474,8 @@ export type TaskCreateWithoutInstanceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
@@ -1356,6 +1498,8 @@ export type TaskUncheckedCreateWithoutInstanceInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1365,6 +1509,7 @@ export type TaskUncheckedCreateWithoutInstanceInput = {
   claimVersion?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
@@ -1396,6 +1541,240 @@ export type TaskUpdateManyWithWhereWithoutInstanceInput = {
   data: Prisma.XOR<Prisma.TaskUpdateManyMutationInput, Prisma.TaskUncheckedUpdateManyWithoutInstanceInput>
 }
 
+export type TaskCreateWithoutBlocksInput = {
+  id?: string
+  stepOrder: number
+  name: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
+  requiredRole?: $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  dueAt?: Date | string | null
+  claimedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelReason?: string | null
+  claimVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
+  instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
+  createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
+  activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
+}
+
+export type TaskUncheckedCreateWithoutBlocksInput = {
+  id?: string
+  organizationId: string
+  instanceId: string
+  stepOrder: number
+  name: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
+  requiredRole?: $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
+  assigneeId?: string | null
+  createdById: string
+  dueAt?: Date | string | null
+  claimedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelReason?: string | null
+  claimVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type TaskCreateOrConnectWithoutBlocksInput = {
+  where: Prisma.TaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaskCreateWithoutBlocksInput, Prisma.TaskUncheckedCreateWithoutBlocksInput>
+}
+
+export type TaskCreateWithoutBlockedByInput = {
+  id?: string
+  stepOrder: number
+  name: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
+  requiredRole?: $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  dueAt?: Date | string | null
+  claimedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelReason?: string | null
+  claimVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
+  instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
+  assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
+  createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
+  activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
+}
+
+export type TaskUncheckedCreateWithoutBlockedByInput = {
+  id?: string
+  organizationId: string
+  instanceId: string
+  stepOrder: number
+  name: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
+  requiredRole?: $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  assigneeId?: string | null
+  createdById: string
+  dueAt?: Date | string | null
+  claimedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelReason?: string | null
+  claimVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
+  activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type TaskCreateOrConnectWithoutBlockedByInput = {
+  where: Prisma.TaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaskCreateWithoutBlockedByInput, Prisma.TaskUncheckedCreateWithoutBlockedByInput>
+}
+
+export type TaskCreateManyBlockedByInputEnvelope = {
+  data: Prisma.TaskCreateManyBlockedByInput | Prisma.TaskCreateManyBlockedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type TaskUpsertWithoutBlocksInput = {
+  update: Prisma.XOR<Prisma.TaskUpdateWithoutBlocksInput, Prisma.TaskUncheckedUpdateWithoutBlocksInput>
+  create: Prisma.XOR<Prisma.TaskCreateWithoutBlocksInput, Prisma.TaskUncheckedCreateWithoutBlocksInput>
+  where?: Prisma.TaskWhereInput
+}
+
+export type TaskUpdateToOneWithWhereWithoutBlocksInput = {
+  where?: Prisma.TaskWhereInput
+  data: Prisma.XOR<Prisma.TaskUpdateWithoutBlocksInput, Prisma.TaskUncheckedUpdateWithoutBlocksInput>
+}
+
+export type TaskUpdateWithoutBlocksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stepOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
+  instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
+  activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskUncheckedUpdateWithoutBlocksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  instanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  stepOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskUpsertWithWhereUniqueWithoutBlockedByInput = {
+  where: Prisma.TaskWhereUniqueInput
+  update: Prisma.XOR<Prisma.TaskUpdateWithoutBlockedByInput, Prisma.TaskUncheckedUpdateWithoutBlockedByInput>
+  create: Prisma.XOR<Prisma.TaskCreateWithoutBlockedByInput, Prisma.TaskUncheckedCreateWithoutBlockedByInput>
+}
+
+export type TaskUpdateWithWhereUniqueWithoutBlockedByInput = {
+  where: Prisma.TaskWhereUniqueInput
+  data: Prisma.XOR<Prisma.TaskUpdateWithoutBlockedByInput, Prisma.TaskUncheckedUpdateWithoutBlockedByInput>
+}
+
+export type TaskUpdateManyWithWhereWithoutBlockedByInput = {
+  where: Prisma.TaskScalarWhereInput
+  data: Prisma.XOR<Prisma.TaskUpdateManyMutationInput, Prisma.TaskUncheckedUpdateManyWithoutBlockedByInput>
+}
+
 export type TaskCreateWithoutDecisionsInput = {
   id?: string
   stepOrder: number
@@ -1410,6 +1789,7 @@ export type TaskCreateWithoutDecisionsInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1419,6 +1799,8 @@ export type TaskCreateWithoutDecisionsInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
   instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
@@ -1441,6 +1823,8 @@ export type TaskUncheckedCreateWithoutDecisionsInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1450,6 +1834,7 @@ export type TaskUncheckedCreateWithoutDecisionsInput = {
   claimVersion?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
 }
@@ -1484,6 +1869,7 @@ export type TaskUpdateWithoutDecisionsInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1493,6 +1879,8 @@ export type TaskUpdateWithoutDecisionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
   instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
@@ -1515,6 +1903,8 @@ export type TaskUncheckedUpdateWithoutDecisionsInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1524,6 +1914,7 @@ export type TaskUncheckedUpdateWithoutDecisionsInput = {
   claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
 }
@@ -1542,6 +1933,7 @@ export type TaskCreateWithoutActivitiesInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1551,6 +1943,8 @@ export type TaskCreateWithoutActivitiesInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
   instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
@@ -1573,6 +1967,8 @@ export type TaskUncheckedCreateWithoutActivitiesInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1582,6 +1978,7 @@ export type TaskUncheckedCreateWithoutActivitiesInput = {
   claimVersion?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
@@ -1616,6 +2013,7 @@ export type TaskUpdateWithoutActivitiesInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1625,6 +2023,8 @@ export type TaskUpdateWithoutActivitiesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
   instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
@@ -1647,6 +2047,8 @@ export type TaskUncheckedUpdateWithoutActivitiesInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1656,6 +2058,7 @@ export type TaskUncheckedUpdateWithoutActivitiesInput = {
   claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
@@ -1674,6 +2077,7 @@ export type TaskCreateWithoutCommentsInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1683,6 +2087,8 @@ export type TaskCreateWithoutCommentsInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
   instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  blockedBy?: Prisma.TaskCreateNestedOneWithoutBlocksInput
+  blocks?: Prisma.TaskCreateNestedManyWithoutBlockedByInput
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
@@ -1705,6 +2111,8 @@ export type TaskUncheckedCreateWithoutCommentsInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1714,6 +2122,7 @@ export type TaskUncheckedCreateWithoutCommentsInput = {
   claimVersion?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  blocks?: Prisma.TaskUncheckedCreateNestedManyWithoutBlockedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
@@ -1748,6 +2157,7 @@ export type TaskUpdateWithoutCommentsInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1757,6 +2167,8 @@ export type TaskUpdateWithoutCommentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
   instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
@@ -1779,6 +2191,8 @@ export type TaskUncheckedUpdateWithoutCommentsInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1788,6 +2202,7 @@ export type TaskUncheckedUpdateWithoutCommentsInput = {
   claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
@@ -1807,6 +2222,8 @@ export type TaskCreateManyOrganizationInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -1832,6 +2249,7 @@ export type TaskUpdateWithoutOrganizationInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1840,6 +2258,8 @@ export type TaskUpdateWithoutOrganizationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
@@ -1862,6 +2282,8 @@ export type TaskUncheckedUpdateWithoutOrganizationInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1871,6 +2293,7 @@ export type TaskUncheckedUpdateWithoutOrganizationInput = {
   claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
@@ -1891,6 +2314,8 @@ export type TaskUncheckedUpdateManyWithoutOrganizationInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1918,6 +2343,8 @@ export type TaskCreateManyAssigneeInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   createdById: string
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
@@ -1944,6 +2371,8 @@ export type TaskCreateManyCreatedByInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   dueAt?: Date | string | null
   claimedAt?: Date | string | null
@@ -1968,6 +2397,7 @@ export type TaskUpdateWithoutAssigneeInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1977,6 +2407,8 @@ export type TaskUpdateWithoutAssigneeInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
   instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
@@ -1999,6 +2431,8 @@ export type TaskUncheckedUpdateWithoutAssigneeInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2007,6 +2441,7 @@ export type TaskUncheckedUpdateWithoutAssigneeInput = {
   claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
@@ -2028,6 +2463,8 @@ export type TaskUncheckedUpdateManyWithoutAssigneeInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2052,6 +2489,7 @@ export type TaskUpdateWithoutCreatedByInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2061,6 +2499,8 @@ export type TaskUpdateWithoutCreatedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
   instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
@@ -2083,6 +2523,8 @@ export type TaskUncheckedUpdateWithoutCreatedByInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2091,6 +2533,7 @@ export type TaskUncheckedUpdateWithoutCreatedByInput = {
   claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
@@ -2112,6 +2555,8 @@ export type TaskUncheckedUpdateManyWithoutCreatedByInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2137,6 +2582,8 @@ export type TaskCreateManyInstanceInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  blockedByTaskId?: string | null
   assigneeId?: string | null
   createdById: string
   dueAt?: Date | string | null
@@ -2162,6 +2609,7 @@ export type TaskUpdateWithoutInstanceInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2170,6 +2618,8 @@ export type TaskUpdateWithoutInstanceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
+  blockedBy?: Prisma.TaskUpdateOneWithoutBlocksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
@@ -2192,6 +2642,8 @@ export type TaskUncheckedUpdateWithoutInstanceInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2201,6 +2653,7 @@ export type TaskUncheckedUpdateWithoutInstanceInput = {
   claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
   decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
@@ -2221,6 +2674,128 @@ export type TaskUncheckedUpdateManyWithoutInstanceInput = {
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  blockedByTaskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type TaskCreateManyBlockedByInput = {
+  id?: string
+  organizationId: string
+  instanceId: string
+  stepOrder: number
+  name: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
+  requiredRole?: $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskCreatetagsInput | string[]
+  observerIds?: Prisma.TaskCreateobserverIdsInput | string[]
+  assigneeId?: string | null
+  createdById: string
+  dueAt?: Date | string | null
+  claimedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelReason?: string | null
+  claimVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type TaskUpdateWithoutBlockedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stepOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
+  instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  blocks?: Prisma.TaskUpdateManyWithoutBlockedByNestedInput
+  assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
+  activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskUncheckedUpdateWithoutBlockedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  instanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  stepOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
+  assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  blocks?: Prisma.TaskUncheckedUpdateManyWithoutBlockedByNestedInput
+  activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskUncheckedUpdateManyWithoutBlockedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  instanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  stepOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  tags?: Prisma.TaskUpdatetagsInput | string[]
+  observerIds?: Prisma.TaskUpdateobserverIdsInput | string[]
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2238,12 +2813,14 @@ export type TaskUncheckedUpdateManyWithoutInstanceInput = {
  */
 
 export type TaskCountOutputType = {
+  blocks: number
   activities: number
   comments: number
   decisions: number
 }
 
 export type TaskCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  blocks?: boolean | TaskCountOutputTypeCountBlocksArgs
   activities?: boolean | TaskCountOutputTypeCountActivitiesArgs
   comments?: boolean | TaskCountOutputTypeCountCommentsArgs
   decisions?: boolean | TaskCountOutputTypeCountDecisionsArgs
@@ -2257,6 +2834,13 @@ export type TaskCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the TaskCountOutputType
    */
   select?: Prisma.TaskCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * TaskCountOutputType without action
+ */
+export type TaskCountOutputTypeCountBlocksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaskWhereInput
 }
 
 /**
@@ -2297,6 +2881,8 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   fields?: boolean
   formValues?: boolean
   tags?: boolean
+  observerIds?: boolean
+  blockedByTaskId?: boolean
   assigneeId?: boolean
   createdById?: boolean
   dueAt?: boolean
@@ -2308,6 +2894,8 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   instance?: boolean | Prisma.ProcessInstanceDefaultArgs<ExtArgs>
+  blockedBy?: boolean | Prisma.Task$blockedByArgs<ExtArgs>
+  blocks?: boolean | Prisma.Task$blocksArgs<ExtArgs>
   assignee?: boolean | Prisma.Task$assigneeArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   activities?: boolean | Prisma.Task$activitiesArgs<ExtArgs>
@@ -2332,6 +2920,8 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   fields?: boolean
   formValues?: boolean
   tags?: boolean
+  observerIds?: boolean
+  blockedByTaskId?: boolean
   assigneeId?: boolean
   createdById?: boolean
   dueAt?: boolean
@@ -2343,6 +2933,7 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   instance?: boolean | Prisma.ProcessInstanceDefaultArgs<ExtArgs>
+  blockedBy?: boolean | Prisma.Task$blockedByArgs<ExtArgs>
   assignee?: boolean | Prisma.Task$assigneeArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["task"]>
@@ -2363,6 +2954,8 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   fields?: boolean
   formValues?: boolean
   tags?: boolean
+  observerIds?: boolean
+  blockedByTaskId?: boolean
   assigneeId?: boolean
   createdById?: boolean
   dueAt?: boolean
@@ -2374,6 +2967,7 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   instance?: boolean | Prisma.ProcessInstanceDefaultArgs<ExtArgs>
+  blockedBy?: boolean | Prisma.Task$blockedByArgs<ExtArgs>
   assignee?: boolean | Prisma.Task$assigneeArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["task"]>
@@ -2394,6 +2988,8 @@ export type TaskSelectScalar = {
   fields?: boolean
   formValues?: boolean
   tags?: boolean
+  observerIds?: boolean
+  blockedByTaskId?: boolean
   assigneeId?: boolean
   createdById?: boolean
   dueAt?: boolean
@@ -2405,10 +3001,12 @@ export type TaskSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "instanceId" | "stepOrder" | "name" | "description" | "status" | "priority" | "kind" | "decision" | "decisionNote" | "requiredRole" | "fields" | "formValues" | "tags" | "assigneeId" | "createdById" | "dueAt" | "claimedAt" | "completedAt" | "cancelReason" | "claimVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "instanceId" | "stepOrder" | "name" | "description" | "status" | "priority" | "kind" | "decision" | "decisionNote" | "requiredRole" | "fields" | "formValues" | "tags" | "observerIds" | "blockedByTaskId" | "assigneeId" | "createdById" | "dueAt" | "claimedAt" | "completedAt" | "cancelReason" | "claimVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
 export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   instance?: boolean | Prisma.ProcessInstanceDefaultArgs<ExtArgs>
+  blockedBy?: boolean | Prisma.Task$blockedByArgs<ExtArgs>
+  blocks?: boolean | Prisma.Task$blocksArgs<ExtArgs>
   assignee?: boolean | Prisma.Task$assigneeArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   activities?: boolean | Prisma.Task$activitiesArgs<ExtArgs>
@@ -2419,12 +3017,14 @@ export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type TaskIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   instance?: boolean | Prisma.ProcessInstanceDefaultArgs<ExtArgs>
+  blockedBy?: boolean | Prisma.Task$blockedByArgs<ExtArgs>
   assignee?: boolean | Prisma.Task$assigneeArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type TaskIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   instance?: boolean | Prisma.ProcessInstanceDefaultArgs<ExtArgs>
+  blockedBy?: boolean | Prisma.Task$blockedByArgs<ExtArgs>
   assignee?: boolean | Prisma.Task$assigneeArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -2434,6 +3034,8 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
     instance: Prisma.$ProcessInstancePayload<ExtArgs>
+    blockedBy: Prisma.$TaskPayload<ExtArgs> | null
+    blocks: Prisma.$TaskPayload<ExtArgs>[]
     assignee: Prisma.$UserPayload<ExtArgs> | null
     createdBy: Prisma.$UserPayload<ExtArgs>
     activities: Prisma.$TaskActivityPayload<ExtArgs>[]
@@ -2471,6 +3073,14 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
      * Free-form labels for filtering and reporting.
      */
     tags: string[]
+    /**
+     * Users who receive updates about this task without being the assignee.
+     */
+    observerIds: string[]
+    /**
+     * Another task that must be DONE before this one can be claimed.
+     */
+    blockedByTaskId: string | null
     assigneeId: string | null
     createdById: string
     dueAt: Date | null
@@ -2882,6 +3492,8 @@ export interface Prisma__TaskClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   instance<T extends Prisma.ProcessInstanceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProcessInstanceDefaultArgs<ExtArgs>>): Prisma.Prisma__ProcessInstanceClient<runtime.Types.Result.GetResult<Prisma.$ProcessInstancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  blockedBy<T extends Prisma.Task$blockedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$blockedByArgs<ExtArgs>>): Prisma.Prisma__TaskClient<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  blocks<T extends Prisma.Task$blocksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$blocksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignee<T extends Prisma.Task$assigneeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$assigneeArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   activities<T extends Prisma.Task$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2931,6 +3543,8 @@ export interface TaskFieldRefs {
   readonly fields: Prisma.FieldRef<"Task", 'Json'>
   readonly formValues: Prisma.FieldRef<"Task", 'Json'>
   readonly tags: Prisma.FieldRef<"Task", 'String[]'>
+  readonly observerIds: Prisma.FieldRef<"Task", 'String[]'>
+  readonly blockedByTaskId: Prisma.FieldRef<"Task", 'String'>
   readonly assigneeId: Prisma.FieldRef<"Task", 'String'>
   readonly createdById: Prisma.FieldRef<"Task", 'String'>
   readonly dueAt: Prisma.FieldRef<"Task", 'DateTime'>
@@ -3338,6 +3952,49 @@ export type TaskDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Tasks to delete.
    */
   limit?: number
+}
+
+/**
+ * Task.blockedBy
+ */
+export type Task$blockedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Task
+   */
+  select?: Prisma.TaskSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Task
+   */
+  omit?: Prisma.TaskOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskInclude<ExtArgs> | null
+  where?: Prisma.TaskWhereInput
+}
+
+/**
+ * Task.blocks
+ */
+export type Task$blocksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Task
+   */
+  select?: Prisma.TaskSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Task
+   */
+  omit?: Prisma.TaskOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskInclude<ExtArgs> | null
+  where?: Prisma.TaskWhereInput
+  orderBy?: Prisma.TaskOrderByWithRelationInput | Prisma.TaskOrderByWithRelationInput[]
+  cursor?: Prisma.TaskWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TaskScalarFieldEnum | Prisma.TaskScalarFieldEnum[]
 }
 
 /**

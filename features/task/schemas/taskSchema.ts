@@ -25,6 +25,14 @@ export const updateTaskSchema = z.object({
   taskId: z.string().min(1),
   priority: taskPrioritySchema.optional(),
   dueAt: z.coerce.date().nullable().optional(),
+  tags: z.array(z.string().trim().min(1).max(40)).max(20).optional(),
+  observerIds: z.array(z.string().min(1)).max(50).optional(),
+  blockedByTaskId: z.string().min(1).nullable().optional(),
+})
+
+export const reopenTaskSchema = z.object({
+  taskId: z.string().min(1),
+  reason: z.string().trim().max(500).optional(),
 })
 
 export const decideTaskSchema = z.object({

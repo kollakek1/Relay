@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { requireContext } from '@/shared/server/auth-context'
 import { canManageWorkflows, hasOrgRole } from '@/shared/server/permissions'
-import { getTask } from '@/features/task/server/service'
+import { getTask, listSiblingTasks } from '@/features/task/server/service'
 import { listMembers } from '@/features/organization/server/service'
 import { AppError } from '@/shared/server/errors'
 import { PageHeader } from '@/shared/components/page-header'
@@ -21,6 +21,10 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   }
 
   const members = await listMembers(ctx)
+  const siblings = await listSiblingTasks(ctx, task.instanceId, task.id)
+  const blockedBy = task.blockedByTaskId
+    ? siblings.find((sibling) => sibling.id === task.blockedByTaskId) ?? null
+    : null
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
@@ -40,6 +44,10 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           kind: task.kind,
           fields: normalizeFields(task.fields),
           formValues: (task.formValues as Record<string, unknown> | null) ?? null,
+          tags: task.tags,
+          observerIds: task.observerIds,
+          blockedBy,
+          siblings: siblings.map((sibling) => ({ id: sibling.id, name: sibling.name })),
           decision: task.decision,
           decisionNote: task.decisionNote,
           approvalMode:

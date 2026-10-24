@@ -382,6 +382,8 @@ export const TaskScalarFieldEnum = {
   fields: 'fields',
   formValues: 'formValues',
   tags: 'tags',
+  observerIds: 'observerIds',
+  blockedByTaskId: 'blockedByTaskId',
   assigneeId: 'assigneeId',
   createdById: 'createdById',
   dueAt: 'dueAt',

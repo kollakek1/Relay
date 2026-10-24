@@ -179,6 +179,12 @@ model Task {
   formValues     Json?
   /// Free-form labels for filtering and reporting.
   tags           String[]     @default([])
+  /// Users who receive updates about this task without being the assignee.
+  observerIds    String[]     @default([])
+  /// Another task that must be DONE before this one can be claimed.
+  blockedByTaskId String?
+  blockedBy      Task?        @relation("TaskDependency", fields: [blockedByTaskId], references: [id], onDelete: SetNull)
+  blocks         Task[]       @relation("TaskDependency")
   assigneeId     String?
   assignee       User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   createdById    String

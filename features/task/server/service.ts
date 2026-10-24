@@ -152,12 +152,22 @@ export async function claimTask(ctx: Context, taskId: string) {
   return prisma.$transaction(async (tx) => {
     const task = await tx.task.findFirst({
       where: { id: taskId, organizationId: ctx.organizationId },
-      select: { id: true, status: true, assigneeId: true, requiredRole: true, name: true, kind: true },
+      select: { id: true, status: true, assigneeId: true, requiredRole: true, name: true, kind: true, blockedByTaskId: true },
     })
     if (!task) throw notFound('Task not found')
 
     if (task.kind === 'APPROVAL') {
       throw invalid('Approval steps are decided, not claimed')
+    }
+
+    if (task.blockedByTaskId) {
+      const blocker = await prisma.task.findFirst({
+        where: { id: task.blockedByTaskId, organizationId: ctx.organizationId },
+        select: { status: true, name: true },
+      })
+      if (blocker && blocker.status !== 'DONE') {
+        throw conflict(`Blocked by "${blocker.name}", which is not done yet`)
+      }
     }
 
     if (task.requiredRole && !hasOrgRole(ctx.role, task.requiredRole)) {
@@ -257,6 +267,21 @@ export async function updateTask(ctx: Context, input: UpdateTaskInput) {
   const data: Prisma.TaskUncheckedUpdateInput = {}
   if (input.priority !== undefined) data.priority = input.priority as TaskPriority
   if (input.dueAt !== undefined) data.dueAt = input.dueAt
+  if (input.tags !== undefined) data.tags = input.tags
+  if (input.observerIds !== undefined) data.observerIds = input.observerIds
+  if (input.blockedByTaskId !== undefined) {
+    if (input.blockedByTaskId === null) {
+      data.blockedByTaskId = null
+    } else {
+      if (input.blockedByTaskId === task.id) throw invalid('A task cannot block itself')
+      const blocker = await prisma.task.findFirst({
+        where: { id: input.blockedByTaskId, organizationId: ctx.organizationId, instanceId: task.instanceId },
+        select: { id: true },
+      })
+      if (!blocker) throw invalid('The blocking task must belong to the same process instance')
+      data.blockedByTaskId = blocker.id
+    }
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.task.update({ where: { id: task.id }, data })
@@ -465,6 +490,73 @@ async function cancelInstance(
   await tx.processInstance.update({
     where: { id: instanceId },
     data: { status: 'CANCELLED', completedAt: new Date() },
+  })
+}
+
+export async function listSiblingTasks(ctx: Context, instanceId: string, excludeTaskId: string) {
+  return prisma.task.findMany({
+    where: { organizationId: ctx.organizationId, instanceId, id: { not: excludeTaskId } },
+    orderBy: { stepOrder: 'asc' },
+    select: { id: true, name: true, status: true },
+  })
+}
+
+export interface ReopenTaskInput {
+  taskId: string
+  reason?: string
+}
+
+/**
+ * Reopens a completed task for rework (the assignee or an administrator). If the
+ * instance had already completed, it returns to `RUNNING` so the process state
+ * stays consistent with its tasks.
+ */
+export async function reopenTask(ctx: Context, input: ReopenTaskInput) {
+  const task = await loadTask(ctx, input.taskId)
+  if (task.status !== 'DONE') throw invalid('Only completed tasks can be reopened')
+  if (!canManageWorkflows(ctx.role) && task.assigneeId !== ctx.userId) {
+    throw forbidden('Only the assignee or an administrator can reopen this task')
+  }
+
+  return prisma.$transaction(async (tx) => {
+    await tx.task.update({
+      where: { id: task.id },
+      data: {
+        status: 'IN_PROGRESS',
+        completedAt: null,
+        decision: null,
+        decisionNote: null,
+        cancelReason: null,
+        claimVersion: { increment: 1 },
+      },
+    })
+    await tx.taskActivity.create({
+      data: { taskId: task.id, actorId: ctx.userId, type: 'REOPENED', toValue: input.reason ?? null },
+    })
+
+    const instance = await tx.processInstance.findUnique({
+      where: { id: task.instanceId },
+      select: { status: true },
+    })
+    if (instance?.status === 'COMPLETED') {
+      await tx.processInstance.update({
+        where: { id: task.instanceId },
+        data: { status: 'RUNNING', completedAt: null },
+      })
+    }
+
+    if (task.assigneeId && task.assigneeId !== ctx.userId) {
+      await notify(tx, {
+        organizationId: ctx.organizationId,
+        userId: task.assigneeId,
+        type: 'TASK_ASSIGNED',
+        title: `Task "${task.name}" was reopened`,
+        body: input.reason ?? null,
+        link: `/dashboard/tasks/${task.id}`,
+      })
+    }
+
+    return tx.task.findUniqueOrThrow({ where: { id: task.id }, include: listInclude })
   })
 }
 
