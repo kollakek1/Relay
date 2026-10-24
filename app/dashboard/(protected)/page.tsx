@@ -1,159 +1,151 @@
-'use client'
-
-import React from 'react'
-import { useAuth } from '@/features/auth/hooks/useAuth'
-import { Card, CardContent, CardHeader } from '../../../shared/components/ui/card'
-import { Inbox, CheckCircle2, Clock, Users, ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { requireContext } from '@/shared/server/auth-context'
+import { getCurrentUser } from '@/shared/server/auth-context'
+import { getDashboard } from '@/features/dashboard/server/service'
+import { TaskStatusBadge } from '@/features/task/components/task-badges'
+import { PageHeader } from '@/shared/components/page-header'
+import { EmptyState } from '@/shared/components/empty-state'
+import { Card, CardContent, CardHeader } from '@/shared/components/ui/card'
+import { cn } from '@/shared/lib/utils'
+import { formatDate, formatRelativeTime, isOverdue } from '@/shared/lib/format'
+import {
+  AlertTriangleIcon,
+  ArrowRightIcon,
+  CheckCircle2Icon,
+  ClockIcon,
+  InboxIcon,
+  ListChecksIcon,
+} from 'lucide-react'
 
-const DashboardPage = () => {
-  const { user, isLoading, isInitialized } = useAuth()
+const ACTIVITY_TEXT: Record<string, string> = {
+  CREATED: 'created',
+  CLAIMED: 'claimed',
+  ASSIGNED: 'was assigned',
+  UNASSIGNED: 'was unassigned',
+  STATUS_CHANGED: 'changed status of',
+  DUE_CHANGED: 'changed the due date of',
+  COMMENTED: 'commented on',
+}
 
-  if (!isInitialized || isLoading) {
-    return (
-      <div className="flex h-[80vh] w-full items-center justify-center">
-        <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
-      </div>
-    )
-  }
+export default async function DashboardPage() {
+  const ctx = await requireContext()
+  const [user, data] = await Promise.all([getCurrentUser(), getDashboard(ctx)])
+  const { stats, myOpenTasks, recentActivity } = data
 
-  // TODO: Заменить на реальные данные из API/Prisma
-  const stats = {
-    myTasks: 3,
-    pendingClaim: 7,
-    completedToday: 2,
-    teamProgress: 14,
-  }
-
-  const myTasks = [
-    { id: '1', title: 'Design System Update', stage: 'In Progress', priority: 'high' },
-    { id: '2', title: 'API Documentation', stage: 'Review', priority: 'medium' },
-    { id: '3', title: 'Fix Auth Bug', stage: 'In Progress', priority: 'high' },
-  ]
-
-  const recentActivity = [
-    { id: '1', text: 'You moved "Design System Update" to In Progress', time: '5 min ago' },
-    { id: '2', text: 'Anna claimed "Homepage Redesign"', time: '12 min ago' },
-    { id: '3', text: 'New task "Mobile App" was created', time: '1 hour ago' },
-    { id: '4', text: 'Ivan completed "Database Migration"', time: '2 hours ago' },
+  const cards = [
+    { label: 'My tasks', value: stats.myTasks, icon: ListChecksIcon, href: '/dashboard/tasks?assignee=me' },
+    { label: 'Available in pool', value: stats.pendingPool, icon: InboxIcon, href: '/dashboard/pool' },
+    { label: 'Completed today', value: stats.completedToday, icon: CheckCircle2Icon, href: '/dashboard/tasks?assignee=me&status=DONE' },
+    { label: 'Active instances', value: stats.activeInstances, icon: ClockIcon, href: '/dashboard/instances' },
+    { label: 'Overdue', value: stats.overdue, icon: AlertTriangleIcon, href: '/dashboard/tasks?assignee=me' },
   ]
 
   return (
-    <main className="mx-auto w-full space-y-10 px-6 py-10 lg:p-8">
-      <header className="space-y-1">
-        <h1 className="text-foreground text-3xl font-bold tracking-tight lg:text-4xl">
-          Welcome back, {user?.name?.split(' ')[0] || 'User'}
-        </h1>
-        <p className="text-muted-foreground">
-          Here&apos;s what&apos;s happening with your tasks today.
-        </p>
-      </header>
+    <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
+      <PageHeader
+        title={`Welcome back, ${user?.name?.split(' ')[0] ?? 'there'}`}
+        description="Here is what is happening across your workspace."
+      />
 
-      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard
-          icon={<Inbox className="h-5 w-5" />}
-          label="My Tasks"
-          value={stats.myTasks}
-          color="text-primary"
-        />
-        <StatCard
-          icon={<Clock className="h-5 w-5" />}
-          label="Pending Claim"
-          value={stats.pendingClaim}
-          color="text-orange-500"
-        />
-        <StatCard
-          icon={<CheckCircle2 className="h-5 w-5" />}
-          label="Completed Today"
-          value={stats.completedToday}
-          color="text-emerald-500"
-        />
-        <StatCard
-          icon={<Users className="h-5 w-5" />}
-          label="Team This Week"
-          value={stats.teamProgress}
-          color="text-violet-500"
-        />
+      <section className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+        {cards.map((card) => (
+          <Link key={card.label} href={card.href}>
+            <Card className="hover:border-primary/40 h-full transition-colors">
+              <CardContent className="space-y-2">
+                <div className="text-muted-foreground flex items-center gap-2">
+                  <card.icon className="size-4" />
+                  <span className="text-sm">{card.label}</span>
+                </div>
+                <p className="text-foreground text-3xl font-bold">{card.value}</p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </section>
 
-      <div className="flex gap-8">
-        <Card className="border-border bg-card flex-2 rounded-xl border">
-          <CardHeader className="flex items-center justify-between">
-            <h2 className="text-foreground text-lg font-semibold">My Tasks</h2>
+      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <h2 className="text-lg font-semibold">My open tasks</h2>
             <Link
-              href="/dashboard/tasks"
+              href="/dashboard/tasks?assignee=me"
               className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
             >
-              View all <ArrowRight className="h-4 w-4" />
+              View all <ArrowRightIcon className="size-4" />
             </Link>
           </CardHeader>
-
           <CardContent className="space-y-3">
-            {myTasks.map((task) => (
-              <div
-                key={task.id}
-                className="border-border bg-background hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
-              >
-                <div className="space-y-1">
-                  <p className="text-foreground font-medium">{task.title}</p>
-                  <p className="text-muted-foreground text-sm">{task.stage}</p>
-                </div>
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium uppercase ${
-                    task.priority === 'high'
-                      ? 'bg-destructive/10 text-destructive'
-                      : 'bg-muted text-muted-foreground'
-                  } `}
+            {myOpenTasks.length === 0 ? (
+              <EmptyState
+                icon={ListChecksIcon}
+                title="No open tasks"
+                description="Claim a task from the pool to get started."
+                className="py-8"
+              />
+            ) : (
+              myOpenTasks.map((task) => (
+                <Link
+                  key={task.id}
+                  href={`/dashboard/tasks/${task.id}`}
+                  className="border-border bg-background hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
                 >
-                  {task.priority}
-                </span>
-              </div>
-            ))}
+                  <div className="space-y-1">
+                    <p className="font-medium">{task.name}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {task.instance.workflow?.name ?? 'Workflow'}
+                      {task.dueAt && (
+                        <span
+                          className={cn(
+                            'ml-2',
+                            isOverdue(task.dueAt) && 'text-destructive font-medium'
+                          )}
+                        >
+                          Due {formatDate(task.dueAt)}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <TaskStatusBadge status={task.status} />
+                </Link>
+              ))
+            )}
           </CardContent>
         </Card>
 
-        <Card className="max-h-min flex-1">
-          <CardHeader className="text-foreground text-lg font-semibold">Recent Activity</CardHeader>
-
+        <Card className="max-h-min">
+          <CardHeader>
+            <h2 className="text-lg font-semibold">Recent activity</h2>
+          </CardHeader>
           <CardContent className="space-y-4">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex gap-3">
-                <div className="bg-primary mt-1.5 h-2 w-2 shrink-0 rounded-full" />
-                <div className="space-y-1">
-                  <p className="text-foreground text-sm">{activity.text}</p>
-                  <p className="text-muted-foreground text-xs">{activity.time}</p>
+            {recentActivity.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No activity yet.</p>
+            ) : (
+              recentActivity.map((event) => (
+                <div key={event.id} className="flex gap-3">
+                  <div className="bg-primary mt-1.5 size-2 shrink-0 rounded-full" />
+                  <div className="min-w-0 space-y-1">
+                    <p className="text-sm">
+                      <span className="font-medium">{event.actor?.name ?? 'System'}</span>{' '}
+                      <span className="text-muted-foreground">
+                        {ACTIVITY_TEXT[event.type] ?? 'updated'}{' '}
+                      </span>
+                      <Link
+                        href={`/dashboard/tasks/${event.task.id}`}
+                        className="font-medium hover:underline"
+                      >
+                        {event.task.name}
+                      </Link>
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {formatRelativeTime(event.createdAt)}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </CardContent>
         </Card>
       </div>
     </main>
   )
 }
-
-const StatCard = ({
-  icon,
-  label,
-  value,
-  color,
-}: {
-  icon: React.ReactNode
-  label: string
-  value: number
-  color: string
-}) => {
-  return (
-    <Card>
-      <CardContent>
-        <div className={`mb-2 flex items-center gap-2 ${color}`}>
-          {icon}
-          <p className="text-muted-foreground text-sm">{label}</p>
-        </div>
-        <p className="text-foreground text-2xl font-bold">{value}</p>
-      </CardContent>
-    </Card>
-  )
-}
-
-export default DashboardPage
