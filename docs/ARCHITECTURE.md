@@ -148,6 +148,23 @@ See `.env.example` for the full list.
 | CSV export (bounded, permission-checked) | `features/export/server/service.ts`, `app/api/export/route.ts` |
 | SLA scan (idempotent, cron-triggered) | `features/sla/server/service.ts`, `app/api/jobs/sla-scan/route.ts` (+ `job_run`) |
 | Workflow execution engine (conditions, forms) | `features/workflow/server/engine.ts` + `service.ts` |
+| Approvals (ANY/ALL decisions) | `features/task/server/{service,approvals}.ts` (+ `task_decision`) |
+
+### Approval semantics (explicit)
+
+An `APPROVAL` step is **decided**, never claimed (it is excluded from the Task
+Pool). Eligible approvers are members whose role is at least the step's
+`assigneeRole` (`null` = every member).
+
+- `ANY` — the first decision resolves the step: `APPROVED` advances the
+  pipeline, `REJECTED` cancels the instance, `CHANGES_REQUESTED` reopens the step
+  for rework.
+- `ALL` — every eligible approver must decide; any `REJECTED` cancels the
+  instance immediately; the step is approved only when all eligible approvers
+  approved; `CHANGES_REQUESTED` keeps the step open.
+
+Every vote is stored in `task_decision` (one row per approver), the task records
+its final `decision`/`decisionNote`, and the instance starter is notified.
 
 ### Workflow execution model (V2)
 

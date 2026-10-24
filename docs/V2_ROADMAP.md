@@ -93,7 +93,7 @@ blocked by a missing external service is documented with the reason.
 | F — Serverless automation | 🟡 partial (SLA scan + idempotency + JobRun; generic trigger/action engine pending) |
 | I — DX & operations | 🟡 partial (CI added; E2E pending) |
 | D — Workflow Engine V2 | 🟡 partial (conditions, process forms, step kinds done; visual graph, templates, version diff pending) |
-| E — Tasks & approvals | ⛔ not started (approvals, multi-approver modes) |
+| E — Tasks & approvals | 🟡 partial (approval steps with ANY/ALL decisions, decision log, notifications done; task dependencies/tags/observers pending) |
 | G — API & webhooks | ⛔ not started |
 | J — Stabilization | ✅ done (full local verification + docs; report delivered) |
 

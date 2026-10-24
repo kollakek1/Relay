@@ -53,6 +53,8 @@ npm run db:seed     # optional: root admin + demo data
 | Rate limiting | `rate-limit.test.ts` | limit enforced, window reset, atomic under concurrency, pruning |
 | Invitations | `organizations.test.ts` | create/list/accept, wrong email, duplicate member, revoke, expiry, token rotation, role guards, audit |
 | Multiple organizations | `organizations.test.ts` | active-org resolution from a validated value, forged-value fallback, per-org isolation, settings perms, ownership transfer |
+| Workflow engine (conditions/forms) | `workflow-engine.test.ts`, `workflow-conditions-forms.test.ts` | condition operators, form validation/coercion, v1→v2 snapshot upgrade, skip vs activate, publish-time condition validation |
+| Approvals | `workflow-approvals.test.ts` | ANY approve/reject/request-changes, ALL requires all, rejection short-circuit, claim/progress guards, pool exclusion, approver notifications |
 
 ## Remote test database note
 
@@ -97,8 +99,21 @@ Verified against a running dev server + the seeded workspace:
 
 No runtime console errors were observed on any page.
 
-### Known DevTools note
+### Visual verification (V2)
 
+A browser pass (Chrome DevTools MCP) covered the rebuilt surfaces: workflow
+builder (step type, approval rule, form-field editor, run condition), task detail
+(process form + submitted values, approval panel, decision buttons), dashboard,
+analytics, search, team and the workspace switcher. Verified end-to-end that
+approving a step advances the pipeline and that a conditional step activates the
+following task.
+
+Artifacts found and fixed in that pass: analytics tables clipped at half width
+(now full-width stacked cards), a redundant disabled "Options" input in the
+form-field editor (now shown only for `select`), and a meaningless Assignee
+control on approval tasks (now hidden).
+
+### Known DevTools note
 Chrome's *Issues* panel reports *"A form field element should have an id or name
 attribute"* for Radix `Select` triggers (`role="combobox"` rendered as a button)
 even when the control has an `id`, an associated `<Label htmlFor>`, or an

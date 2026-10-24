@@ -30,6 +30,8 @@ role-based access enforced on the server.
 - 🏗 **Workflow builder** — draft, edit, reorder and validate linear workflows.
 - 🔀 **Conditions & forms** — per-step form fields (validated server-side) and
   run conditions that skip steps based on values collected by earlier steps.
+- ✅ **Approvals** — approval steps with explicit **any/all** decision modes,
+  approve / request-changes / reject, a decision log, and notifications.
 - 🚀 **Publishing & versioning** — publishing freezes an immutable version;
   running instances never change when you edit the draft.
 - ▶️ **Process instances** — start a workflow and generate a task per step,
@@ -141,8 +143,8 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
 isolation → invitations & multi-workspace → audit log → analytics → global search
 → CSV export → rate limiting → idempotent SLA automation → CI → tests.
 
-**Not implemented yet (documented in `docs/V2_ROADMAP.md`):** approvals &
-multi-approver modes, templates, version diff, public API & webhooks, browser E2E
+**Not implemented yet (documented in `docs/V2_ROADMAP.md`):** templates, version
+diff, task dependencies/tags/observers, public API & webhooks, browser E2E
 (Playwright), full BPMN, external integrations (Telegram), billing.
 
 <div align="center"> Developed with ❤️ by <b>kollakek</b> </div>
