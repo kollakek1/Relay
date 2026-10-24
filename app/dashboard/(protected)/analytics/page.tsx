@@ -60,7 +60,7 @@ export default async function AnalyticsPage() {
           description="Publish and run a workflow to start collecting metrics."
         />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6">
           <Card>
             <CardHeader>
               <h2 className="text-lg font-semibold">By workflow</h2>

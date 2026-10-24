@@ -454,28 +454,30 @@ export function TaskDetail({
             <CardTitle>Attributes</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="task-assignee">Assignee</Label>
-              {canManage ? (
-                <Select value={task.assigneeId ?? 'none'} onValueChange={assign} disabled={isPending}>
-                  <SelectTrigger id="task-assignee" className="w-full">
-                    <SelectValue placeholder="Unassigned" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Unassigned</SelectItem>
-                    {members.map((member) => (
-                      <SelectItem key={member.userId} value={member.userId}>
-                        {member.user.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <p className="text-sm">
-                  {members.find((m) => m.userId === task.assigneeId)?.user.name ?? 'Unassigned'}
-                </p>
-              )}
-            </div>
+            {task.kind === 'TASK' && (
+              <div className="space-y-2">
+                <Label htmlFor="task-assignee">Assignee</Label>
+                {canManage ? (
+                  <Select value={task.assigneeId ?? 'none'} onValueChange={assign} disabled={isPending}>
+                    <SelectTrigger id="task-assignee" className="w-full">
+                      <SelectValue placeholder="Unassigned" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Unassigned</SelectItem>
+                      {members.map((member) => (
+                        <SelectItem key={member.userId} value={member.userId}>
+                          {member.user.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <p className="text-sm">
+                    {members.find((m) => m.userId === task.assigneeId)?.user.name ?? 'Unassigned'}
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="task-priority">Priority</Label>

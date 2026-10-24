@@ -524,6 +524,7 @@ function StepFieldsEditor({
   disabled: boolean
 }) {
   const { fields, append, remove } = useFieldArray({ control, name: `steps.${index}.fields` })
+  const watchedFields = useWatch({ control, name: `steps.${index}.fields` })
 
   return (
     <div className="border-border space-y-3 rounded-md border border-dashed p-3">
@@ -543,62 +544,92 @@ function StepFieldsEditor({
         </p>
       )}
 
-      {fields.map((field, fieldIndex) => (
-        <div key={field.id} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-          <Input
-            aria-label="Field key"
-            placeholder="key (e.g. priority)"
-            disabled={disabled}
-            {...register(`steps.${index}.fields.${fieldIndex}.key`)}
-          />
-          <Input
-            aria-label="Field label"
-            placeholder="Label"
-            disabled={disabled}
-            {...register(`steps.${index}.fields.${fieldIndex}.label`)}
-          />
-          <div className="flex items-center gap-2">
-            <Controller
-              control={control}
-              name={`steps.${index}.fields.${fieldIndex}.type`}
-              render={({ field: cf }) => (
-                <Select value={cf.value} onValueChange={(v) => cf.onChange(v as FormFieldType)} disabled={disabled}>
-                  <SelectTrigger className="w-32" aria-label="Field type">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {FIELD_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+      {fields.map((field, fieldIndex) => {
+        const fieldType = watchedFields?.[fieldIndex]?.type ?? 'text'
+        return (
+          <div key={field.id} className="border-border/60 space-y-2 rounded-md border p-2">
+            <div className="grid gap-2 sm:grid-cols-[1fr_1fr_9rem_auto]">
+              <Input
+                id={`f-${index}-${fieldIndex}-key`}
+                aria-label="Field key"
+                placeholder="key (e.g. priority)"
+                disabled={disabled}
+                {...register(`steps.${index}.fields.${fieldIndex}.key`)}
+              />
+              <Input
+                id={`f-${index}-${fieldIndex}-label`}
+                aria-label="Field label"
+                placeholder="Label"
+                disabled={disabled}
+                {...register(`steps.${index}.fields.${fieldIndex}.label`)}
+              />
+              <Controller
+                control={control}
+                name={`steps.${index}.fields.${fieldIndex}.type`}
+                render={({ field: cf }) => (
+                  <Select
+                    value={cf.value}
+                    onValueChange={(value) => cf.onChange(value as FormFieldType)}
+                    disabled={disabled}
+                  >
+                    <SelectTrigger
+                      id={`f-${index}-${fieldIndex}-type`}
+                      className="w-full"
+                      aria-label="Field type"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FIELD_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                disabled={disabled}
+                onClick={() => remove(fieldIndex)}
+                aria-label="Remove field"
+              >
+                <Trash2Icon className="text-destructive" />
+              </Button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              {fieldType === 'select' && (
+                <Input
+                  id={`f-${index}-${fieldIndex}-options`}
+                  className="min-w-52 flex-1"
+                  aria-label="Field options"
+                  placeholder="Options (comma separated)"
+                  disabled={disabled}
+                  {...register(`steps.${index}.fields.${fieldIndex}.optionsText`)}
+                />
               )}
-            />
-            <Button type="button" variant="ghost" size="icon-sm" disabled={disabled} onClick={() => remove(fieldIndex)} aria-label="Remove field">
-              <Trash2Icon className="text-destructive" />
-            </Button>
+              <label className="flex items-center gap-2 text-sm">
+                <Controller
+                  control={control}
+                  name={`steps.${index}.fields.${fieldIndex}.required`}
+                  render={({ field: cf }) => (
+                    <Checkbox
+                      checked={cf.value}
+                      onCheckedChange={(value) => cf.onChange(value === true)}
+                      disabled={disabled}
+                    />
+                  )}
+                />
+                Required
+              </label>
+            </div>
           </div>
-          <Input
-            className="sm:col-span-2"
-            aria-label="Field options"
-            placeholder={field.type === 'select' ? 'Options (comma separated)' : 'Options (only for select)'}
-            disabled={disabled || field.type !== 'select'}
-            {...register(`steps.${index}.fields.${fieldIndex}.optionsText`)}
-          />
-          <label className="flex items-center gap-2 text-sm">
-            <Controller
-              control={control}
-              name={`steps.${index}.fields.${fieldIndex}.required`}
-              render={({ field: cf }) => (
-                <Checkbox checked={cf.value} onCheckedChange={(v) => cf.onChange(v === true)} disabled={disabled} />
-              )}
-            />
-            Required
-          </label>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
