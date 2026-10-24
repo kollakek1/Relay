@@ -8,8 +8,10 @@ import { ProfileForm } from '@/features/user/components/profile-form'
 import { OrganizationSettingsForm } from '@/features/organization/components/organization-settings-form'
 import { ApiKeysPanel } from '@/features/api/components/api-keys-panel'
 import { WebhooksPanel } from '@/features/webhooks/components/webhooks-panel'
+import { AutomationsPanel } from '@/features/automation/components/automations-panel'
 import { listApiKeys } from '@/features/api/server/keys'
 import { listDeliveries, listWebhookEndpoints } from '@/features/webhooks/server/service'
+import { listAutomationRules, listAutomationRuns } from '@/features/automation/server/service'
 import { formatDate } from '@/shared/lib/format'
 
 export default async function SettingsPage() {
@@ -17,9 +19,15 @@ export default async function SettingsPage() {
   const organization = ctx ? await getOrganization(ctx) : null
   const canManage = ctx ? canManageMembers(ctx.role) : false
 
-  const [apiKeys, endpoints, deliveries] = ctx && canManage
-    ? await Promise.all([listApiKeys(ctx), listWebhookEndpoints(ctx), listDeliveries(ctx, 20)])
-    : [[], [], []]
+  const [apiKeys, endpoints, deliveries, rules, automationRuns] = ctx && canManage
+    ? await Promise.all([
+        listApiKeys(ctx),
+        listWebhookEndpoints(ctx),
+        listDeliveries(ctx, 20),
+        listAutomationRules(ctx),
+        listAutomationRuns(ctx, 20),
+      ])
+    : [[], [], [], [], []]
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-8 px-4 py-8 lg:p-10">
@@ -131,6 +139,25 @@ export default async function SettingsPage() {
                 error: delivery.error,
                 createdAt: delivery.createdAt,
                 endpointUrl: delivery.endpoint.url,
+              }))}
+            />
+            <AutomationsPanel
+              canManage={canManage}
+              rules={rules.map((rule) => ({
+                id: rule.id,
+                name: rule.name,
+                enabled: rule.enabled,
+                trigger: rule.trigger,
+                action: rule.action,
+                lastRunAt: rule.lastRunAt,
+                runs: rule._count.runs,
+              }))}
+              runs={automationRuns.map((automationRun) => ({
+                id: automationRun.id,
+                ruleName: automationRun.rule.name,
+                status: automationRun.status,
+                detail: automationRun.detail,
+                createdAt: automationRun.createdAt,
               }))}
             />
           </CardContent>
