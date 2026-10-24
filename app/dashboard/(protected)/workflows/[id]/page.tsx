@@ -1,0 +1,55 @@
+import { notFound } from 'next/navigation'
+import { requireContext } from '@/shared/server/auth-context'
+import { canManageWorkflows, canWorkOnTasks } from '@/shared/server/permissions'
+import { getWorkflow } from '@/features/workflow/server/service'
+import { PageHeader } from '@/shared/components/page-header'
+import { WorkflowBuilder } from '@/features/workflow/components/workflow-builder'
+import { AppError } from '@/shared/server/errors'
+
+export default async function WorkflowDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const ctx = await requireContext()
+  const { id } = await params
+
+  let workflow
+  try {
+    workflow = await getWorkflow(ctx, id)
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'NOT_FOUND') notFound()
+    throw error
+  }
+
+  return (
+    <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
+      <PageHeader
+        title={workflow.name}
+        description="Edit the draft, publish versions and start process instances."
+      />
+      <WorkflowBuilder
+        workflow={{
+          id: workflow.id,
+          name: workflow.name,
+          description: workflow.description,
+          status: workflow.status,
+          steps: workflow.steps.map((step) => ({
+            name: step.name,
+            description: step.description ?? '',
+            assigneeRole: step.assigneeRole,
+            dueInDays: step.dueInDays,
+          })),
+          versions: workflow.versions.map((version) => ({
+            id: version.id,
+            version: version.version,
+            publishedAt: version.publishedAt,
+          })),
+          instanceCount: workflow._count.instances,
+        }}
+        canManage={canManageWorkflows(ctx.role)}
+        canRun={canWorkOnTasks(ctx.role)}
+      />
+    </main>
+  )
+}
