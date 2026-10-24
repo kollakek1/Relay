@@ -69,6 +69,7 @@ enum NotificationType {
   TASK_OVERDUE
   APPROVAL_REQUESTED
   APPROVAL_DECIDED
+  AUTOMATION_NOTIFICATION
 }
 
 model Workflow {

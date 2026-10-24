@@ -3,6 +3,7 @@ import type { Prisma } from '@/prisma/generated/prisma/client'
 import { prisma } from '@/shared/lib/prisma'
 import { logger } from '@/shared/server/logger'
 import { checkOutboundUrl } from '@/shared/server/ssrf'
+import { runAutomationsForEvent } from '@/features/automation/server/service'
 
 type Db = Prisma.TransactionClient | typeof prisma
 
@@ -105,6 +106,8 @@ export interface DrainResult {
   retried: number
   failed: number
   disabledEndpoints: number
+  automationsRun: number
+  automationsFailed: number
 }
 
 /**
@@ -122,7 +125,15 @@ export async function drainOutbox(
   const now = options.now ?? new Date()
   const limit = options.limit ?? 200
 
-  const result: DrainResult = { fannedOut: 0, delivered: 0, retried: 0, failed: 0, disabledEndpoints: 0 }
+  const result: DrainResult = {
+    fannedOut: 0,
+    delivered: 0,
+    retried: 0,
+    failed: 0,
+    disabledEndpoints: 0,
+    automationsRun: 0,
+    automationsFailed: 0,
+  }
 
   const events = await prisma.outboxEvent.findMany({
     where: { processedAt: null },
@@ -147,6 +158,23 @@ export async function drainOutbox(
       result.fannedOut += 1
     }
     await prisma.outboxEvent.update({ where: { id: event.id }, data: { processedAt: new Date() } })
+
+    // User-authored automation rules run from the same outbox event.
+    try {
+      const automation = await runAutomationsForEvent({
+        id: event.id,
+        organizationId: event.organizationId,
+        topic: event.topic,
+        payload: event.payload,
+      })
+      result.automationsRun += automation.succeeded
+      result.automationsFailed += automation.failed
+    } catch (error) {
+      logger.warn('automation_dispatch_failed', {
+        eventId: event.id,
+        message: error instanceof Error ? error.message : String(error),
+      })
+    }
   }
 
   const due = await prisma.webhookDelivery.findMany({

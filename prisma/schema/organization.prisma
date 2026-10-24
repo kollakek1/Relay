@@ -31,6 +31,7 @@ model Organization {
   webhooks      WebhookEndpoint[]
   outboxEvents  OutboxEvent[]
   templates     WorkflowTemplate[]
+  automationRules AutomationRule[]
 
   @@map("organization")
 }

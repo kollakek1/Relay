@@ -128,7 +128,8 @@ export const NotificationType = {
   TASK_DUE_SOON: 'TASK_DUE_SOON',
   TASK_OVERDUE: 'TASK_OVERDUE',
   APPROVAL_REQUESTED: 'APPROVAL_REQUESTED',
-  APPROVAL_DECIDED: 'APPROVAL_DECIDED'
+  APPROVAL_DECIDED: 'APPROVAL_DECIDED',
+  AUTOMATION_NOTIFICATION: 'AUTOMATION_NOTIFICATION'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

@@ -33,6 +33,17 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model AutomationRule
+ * A user-authored rule: when `trigger` (an outbox topic) fires, run `action`
+ * with `config`. Execution is idempotent per (rule, event) via AutomationRun.
+ */
+export type AutomationRule = Prisma.AutomationRuleModel
+/**
+ * Model AutomationRun
+ * One execution of a rule for one outbox event (unique → effectively-once).
+ */
+export type AutomationRun = Prisma.AutomationRunModel
+/**
  * Model ApiKey
  * A machine credential for the public API. Only the SHA-256 hash of the token
  * is stored; the raw value is shown once at creation.

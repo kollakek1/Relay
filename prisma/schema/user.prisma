@@ -23,6 +23,7 @@ model User {
   apiKeys            ApiKey[]          @relation("ApiKeyCreator")
   webhooks           WebhookEndpoint[] @relation("WebhookCreator")
   templatesCreated   WorkflowTemplate[] @relation("TemplateCreator")
+  automationRules    AutomationRule[]   @relation("AutomationCreator")
   notifications      Notification[]    @relation("NotificationRecipient")
   invitationsSent    Invitation[]      @relation("InvitationInviter")
   invitationsAccepted Invitation[]     @relation("InvitationAcceptor")

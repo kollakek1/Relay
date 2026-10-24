@@ -11,6 +11,8 @@
 export type * from './models/Session'
 export type * from './models/Account'
 export type * from './models/Verification'
+export type * from './models/AutomationRule'
+export type * from './models/AutomationRun'
 export type * from './models/ApiKey'
 export type * from './models/WebhookEndpoint'
 export type * from './models/WebhookDelivery'

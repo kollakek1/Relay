@@ -209,6 +209,7 @@ export type OrganizationWhereInput = {
   webhooks?: Prisma.WebhookEndpointListRelationFilter
   outboxEvents?: Prisma.OutboxEventListRelationFilter
   templates?: Prisma.WorkflowTemplateListRelationFilter
+  automationRules?: Prisma.AutomationRuleListRelationFilter
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -230,6 +231,7 @@ export type OrganizationOrderByWithRelationInput = {
   webhooks?: Prisma.WebhookEndpointOrderByRelationAggregateInput
   outboxEvents?: Prisma.OutboxEventOrderByRelationAggregateInput
   templates?: Prisma.WorkflowTemplateOrderByRelationAggregateInput
+  automationRules?: Prisma.AutomationRuleOrderByRelationAggregateInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -254,6 +256,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   webhooks?: Prisma.WebhookEndpointListRelationFilter
   outboxEvents?: Prisma.OutboxEventListRelationFilter
   templates?: Prisma.WorkflowTemplateListRelationFilter
+  automationRules?: Prisma.AutomationRuleListRelationFilter
 }, "id" | "slug">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -301,6 +304,7 @@ export type OrganizationCreateInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -322,6 +326,7 @@ export type OrganizationUncheckedCreateInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -343,6 +348,7 @@ export type OrganizationUpdateInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -364,6 +370,7 @@ export type OrganizationUncheckedUpdateInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -434,6 +441,20 @@ export type OrganizationMinOrderByAggregateInput = {
 export type OrganizationNullableScalarRelationFilter = {
   is?: Prisma.OrganizationWhereInput | null
   isNot?: Prisma.OrganizationWhereInput | null
+}
+
+export type OrganizationCreateNestedOneWithoutAutomationRulesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAutomationRulesInput, Prisma.OrganizationUncheckedCreateWithoutAutomationRulesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAutomationRulesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutAutomationRulesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAutomationRulesInput, Prisma.OrganizationUncheckedCreateWithoutAutomationRulesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAutomationRulesInput
+  upsert?: Prisma.OrganizationUpsertWithoutAutomationRulesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutAutomationRulesInput, Prisma.OrganizationUpdateWithoutAutomationRulesInput>, Prisma.OrganizationUncheckedUpdateWithoutAutomationRulesInput>
 }
 
 export type OrganizationCreateNestedOneWithoutApiKeysInput = {
@@ -592,6 +613,106 @@ export type OrganizationUpdateOneWithoutTemplatesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutTemplatesInput, Prisma.OrganizationUpdateWithoutTemplatesInput>, Prisma.OrganizationUncheckedUpdateWithoutTemplatesInput>
 }
 
+export type OrganizationCreateWithoutAutomationRulesInput = {
+  id?: string
+  name: string
+  slug: string
+  description?: string | null
+  timezone?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutOrganizationInput
+  workflows?: Prisma.WorkflowCreateNestedManyWithoutOrganizationInput
+  instances?: Prisma.ProcessInstanceCreateNestedManyWithoutOrganizationInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
+  webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutAutomationRulesInput = {
+  id?: string
+  name: string
+  slug: string
+  description?: string | null
+  timezone?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  workflows?: Prisma.WorkflowUncheckedCreateNestedManyWithoutOrganizationInput
+  instances?: Prisma.ProcessInstanceUncheckedCreateNestedManyWithoutOrganizationInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
+  webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutAutomationRulesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutAutomationRulesInput, Prisma.OrganizationUncheckedCreateWithoutAutomationRulesInput>
+}
+
+export type OrganizationUpsertWithoutAutomationRulesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutAutomationRulesInput, Prisma.OrganizationUncheckedUpdateWithoutAutomationRulesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutAutomationRulesInput, Prisma.OrganizationUncheckedCreateWithoutAutomationRulesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutAutomationRulesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutAutomationRulesInput, Prisma.OrganizationUncheckedUpdateWithoutAutomationRulesInput>
+}
+
+export type OrganizationUpdateWithoutAutomationRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutOrganizationNestedInput
+  workflows?: Prisma.WorkflowUpdateManyWithoutOrganizationNestedInput
+  instances?: Prisma.ProcessInstanceUpdateManyWithoutOrganizationNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
+  webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutAutomationRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  workflows?: Prisma.WorkflowUncheckedUpdateManyWithoutOrganizationNestedInput
+  instances?: Prisma.ProcessInstanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
 export type OrganizationCreateWithoutApiKeysInput = {
   id?: string
   name: string
@@ -610,6 +731,7 @@ export type OrganizationCreateWithoutApiKeysInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutApiKeysInput = {
@@ -630,6 +752,7 @@ export type OrganizationUncheckedCreateWithoutApiKeysInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutApiKeysInput = {
@@ -666,6 +789,7 @@ export type OrganizationUpdateWithoutApiKeysInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutApiKeysInput = {
@@ -686,6 +810,7 @@ export type OrganizationUncheckedUpdateWithoutApiKeysInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutWebhooksInput = {
@@ -706,6 +831,7 @@ export type OrganizationCreateWithoutWebhooksInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutWebhooksInput = {
@@ -726,6 +852,7 @@ export type OrganizationUncheckedCreateWithoutWebhooksInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutWebhooksInput = {
@@ -762,6 +889,7 @@ export type OrganizationUpdateWithoutWebhooksInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutWebhooksInput = {
@@ -782,6 +910,7 @@ export type OrganizationUncheckedUpdateWithoutWebhooksInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutOutboxEventsInput = {
@@ -802,6 +931,7 @@ export type OrganizationCreateWithoutOutboxEventsInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutOutboxEventsInput = {
@@ -822,6 +952,7 @@ export type OrganizationUncheckedCreateWithoutOutboxEventsInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutOutboxEventsInput = {
@@ -858,6 +989,7 @@ export type OrganizationUpdateWithoutOutboxEventsInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutOutboxEventsInput = {
@@ -878,6 +1010,7 @@ export type OrganizationUncheckedUpdateWithoutOutboxEventsInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutMembershipsInput = {
@@ -898,6 +1031,7 @@ export type OrganizationCreateWithoutMembershipsInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutMembershipsInput = {
@@ -918,6 +1052,7 @@ export type OrganizationUncheckedCreateWithoutMembershipsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutMembershipsInput = {
@@ -954,6 +1089,7 @@ export type OrganizationUpdateWithoutMembershipsInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
@@ -974,6 +1110,7 @@ export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutInvitationsInput = {
@@ -994,6 +1131,7 @@ export type OrganizationCreateWithoutInvitationsInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutInvitationsInput = {
@@ -1014,6 +1152,7 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutInvitationsInput = {
@@ -1050,6 +1189,7 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
@@ -1070,6 +1210,7 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutAuditLogsInput = {
@@ -1090,6 +1231,7 @@ export type OrganizationCreateWithoutAuditLogsInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
@@ -1110,6 +1252,7 @@ export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutAuditLogsInput = {
@@ -1146,6 +1289,7 @@ export type OrganizationUpdateWithoutAuditLogsInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
@@ -1166,6 +1310,7 @@ export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutWorkflowsInput = {
@@ -1186,6 +1331,7 @@ export type OrganizationCreateWithoutWorkflowsInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutWorkflowsInput = {
@@ -1206,6 +1352,7 @@ export type OrganizationUncheckedCreateWithoutWorkflowsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutWorkflowsInput = {
@@ -1242,6 +1389,7 @@ export type OrganizationUpdateWithoutWorkflowsInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutWorkflowsInput = {
@@ -1262,6 +1410,7 @@ export type OrganizationUncheckedUpdateWithoutWorkflowsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutInstancesInput = {
@@ -1282,6 +1431,7 @@ export type OrganizationCreateWithoutInstancesInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutInstancesInput = {
@@ -1302,6 +1452,7 @@ export type OrganizationUncheckedCreateWithoutInstancesInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutInstancesInput = {
@@ -1338,6 +1489,7 @@ export type OrganizationUpdateWithoutInstancesInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutInstancesInput = {
@@ -1358,6 +1510,7 @@ export type OrganizationUncheckedUpdateWithoutInstancesInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutTasksInput = {
@@ -1378,6 +1531,7 @@ export type OrganizationCreateWithoutTasksInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutTasksInput = {
@@ -1398,6 +1552,7 @@ export type OrganizationUncheckedCreateWithoutTasksInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutTasksInput = {
@@ -1434,6 +1589,7 @@ export type OrganizationUpdateWithoutTasksInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutTasksInput = {
@@ -1454,6 +1610,7 @@ export type OrganizationUncheckedUpdateWithoutTasksInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutNotificationsInput = {
@@ -1474,6 +1631,7 @@ export type OrganizationCreateWithoutNotificationsInput = {
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutNotificationsInput = {
@@ -1494,6 +1652,7 @@ export type OrganizationUncheckedCreateWithoutNotificationsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   templates?: Prisma.WorkflowTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutNotificationsInput = {
@@ -1530,6 +1689,7 @@ export type OrganizationUpdateWithoutNotificationsInput = {
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutNotificationsInput = {
@@ -1550,6 +1710,7 @@ export type OrganizationUncheckedUpdateWithoutNotificationsInput = {
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   templates?: Prisma.WorkflowTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutTemplatesInput = {
@@ -1570,6 +1731,7 @@ export type OrganizationCreateWithoutTemplatesInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
   webhooks?: Prisma.WebhookEndpointCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutTemplatesInput = {
@@ -1590,6 +1752,7 @@ export type OrganizationUncheckedCreateWithoutTemplatesInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
   webhooks?: Prisma.WebhookEndpointUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutTemplatesInput = {
@@ -1626,6 +1789,7 @@ export type OrganizationUpdateWithoutTemplatesInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
   webhooks?: Prisma.WebhookEndpointUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutTemplatesInput = {
@@ -1646,6 +1810,7 @@ export type OrganizationUncheckedUpdateWithoutTemplatesInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
   webhooks?: Prisma.WebhookEndpointUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 
@@ -1665,6 +1830,7 @@ export type OrganizationCountOutputType = {
   webhooks: number
   outboxEvents: number
   templates: number
+  automationRules: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1679,6 +1845,7 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   webhooks?: boolean | OrganizationCountOutputTypeCountWebhooksArgs
   outboxEvents?: boolean | OrganizationCountOutputTypeCountOutboxEventsArgs
   templates?: boolean | OrganizationCountOutputTypeCountTemplatesArgs
+  automationRules?: boolean | OrganizationCountOutputTypeCountAutomationRulesArgs
 }
 
 /**
@@ -1768,6 +1935,13 @@ export type OrganizationCountOutputTypeCountTemplatesArgs<ExtArgs extends runtim
   where?: Prisma.WorkflowTemplateWhereInput
 }
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountAutomationRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AutomationRuleWhereInput
+}
+
 
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1788,6 +1962,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   webhooks?: boolean | Prisma.Organization$webhooksArgs<ExtArgs>
   outboxEvents?: boolean | Prisma.Organization$outboxEventsArgs<ExtArgs>
   templates?: boolean | Prisma.Organization$templatesArgs<ExtArgs>
+  automationRules?: boolean | Prisma.Organization$automationRulesArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -1834,6 +2009,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   webhooks?: boolean | Prisma.Organization$webhooksArgs<ExtArgs>
   outboxEvents?: boolean | Prisma.Organization$outboxEventsArgs<ExtArgs>
   templates?: boolean | Prisma.Organization$templatesArgs<ExtArgs>
+  automationRules?: boolean | Prisma.Organization$automationRulesArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1853,6 +2029,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     webhooks: Prisma.$WebhookEndpointPayload<ExtArgs>[]
     outboxEvents: Prisma.$OutboxEventPayload<ExtArgs>[]
     templates: Prisma.$WorkflowTemplatePayload<ExtArgs>[]
+    automationRules: Prisma.$AutomationRulePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2267,6 +2444,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   webhooks<T extends Prisma.Organization$webhooksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$webhooksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outboxEvents<T extends Prisma.Organization$outboxEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$outboxEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutboxEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   templates<T extends Prisma.Organization$templatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$templatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkflowTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  automationRules<T extends Prisma.Organization$automationRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$automationRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2957,6 +3135,30 @@ export type Organization$templatesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.WorkflowTemplateScalarFieldEnum | Prisma.WorkflowTemplateScalarFieldEnum[]
+}
+
+/**
+ * Organization.automationRules
+ */
+export type Organization$automationRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AutomationRule
+   */
+  select?: Prisma.AutomationRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AutomationRule
+   */
+  omit?: Prisma.AutomationRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AutomationRuleInclude<ExtArgs> | null
+  where?: Prisma.AutomationRuleWhereInput
+  orderBy?: Prisma.AutomationRuleOrderByWithRelationInput | Prisma.AutomationRuleOrderByWithRelationInput[]
+  cursor?: Prisma.AutomationRuleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AutomationRuleScalarFieldEnum | Prisma.AutomationRuleScalarFieldEnum[]
 }
 
 /**
