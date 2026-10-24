@@ -40,10 +40,10 @@ shared/
   server/                  getContext/requireContext/requireRole, permissions, errors
   hooks/                   useAuth, useAction, useIsMobile
 prisma/
-  schema/                  base, auth, user, organization, workflow
-  migrations/              SQL migrations
-  generated/               generated Prisma client (committed)
-  seed.ts                  idempotent seed
+  schema/                  base, auth, user, organization, workflow, integration
+  migrations/              SQL migrations (tracked, reproducible)
+  generated/               generated Prisma client (NOT tracked — see below)
+  seed.ts / seed-lib.ts    idempotent seed + pure safety helpers
 tests/                     vitest unit + integration tests
 ```
 
@@ -129,9 +129,37 @@ TaskTable (client) → useAction → claimTaskAction ('use server')
 - `DATABASE_URL` — Postgres connection string (driver adapter).
 - `BASE_URL` — public origin (Better Auth).
 - `BETTER_AUTH_SECRET` — required in production.
+- `CRON_SECRET` — bearer secret for `/api/jobs/*` (optional; jobs return 503
+  without it). Never pass it in a URL.
+- `ROOT_EMAIL` / `ROOT_PASSWORD` — only used by `npm run db:seed` to bootstrap
+  the first administrator. No defaults; weak passwords are rejected.
 - Prisma CLI reads `prisma.config.ts`; the datasource URL comes from `.env`.
 
 See `.env.example` for the full list.
+
+## 8a. Database workflow (dev · CI · production)
+
+The generated Prisma client is **not** committed. `npm install` runs
+`prisma generate` via the `postinstall` script, and `npm run build` regenerates
+it first (`prebuild`). CI regenerates from a clean checkout and validates the
+schema before applying migrations.
+
+| Task | Command |
+| --- | --- |
+| Regenerate the client | `npm run db:generate` |
+| Validate the schema | `npm run db:validate` |
+| Create + apply a migration (development) | `npm run db:migrate` |
+| Apply migrations (CI/production) | `npm run db:deploy` |
+| Inspect migration state | `npm run db:status` |
+
+Rules:
+
+- Never run `prisma migrate reset` or `db push` against a shared/production
+  database. Use `db:deploy` there, which only applies pending migrations.
+- Test-only migration checks use a separate database (CI provisions a throwaway
+  Postgres service).
+- A clone needs: `npm install` → configure `.env` → `npm run db:deploy`.
+  No committed client is required.
 
 ## 9. V2 additions
 
@@ -152,7 +180,10 @@ See `.env.example` for the full list.
 | Templates & version diff | `features/workflow/server/{templates,versioning}.ts` (+ `workflow_template`) |
 | Public API (v1) | `app/api/v1/**`, `features/api/server/{handler,keys}.ts` (+ `api_key`) |
 | Webhooks + transactional outbox | `features/webhooks/server/{service,delivery}.ts` (+ `webhook_endpoint`, `webhook_delivery`, `outbox_event`) |
-| Outbound SSRF guard | `shared/server/ssrf.ts` |
+| Outbound SSRF guard (resolve-then-check, port policy, no redirects) | `shared/server/ssrf.ts` |
+| Retry/lease policy for the outbox, deliveries and automations | `shared/server/retry.ts` |
+| Cron bearer auth (timing-safe, never from the query string) | `shared/server/job-auth.ts` |
+| Safe CSV serialisation (formula-injection proof) | `features/export/server/csv.ts` |
 
 ### Public API and webhooks
 

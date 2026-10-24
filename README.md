@@ -77,18 +77,22 @@ role-based access enforced on the server.
    npm install
    ```
 2. **Configure the environment** — copy `.env.example` to `.env` and fill it in
-   (`DATABASE_URL`, `BASE_URL`, `BETTER_AUTH_SECRET`).
-3. **Apply migrations & seed**
+   (`DATABASE_URL`, `BASE_URL`, `BETTER_AUTH_SECRET`). Set `ROOT_EMAIL` and a
+   strong `ROOT_PASSWORD` only for the first seed run.
+3. **Generate the Prisma client, apply migrations & seed**
    ```bash
+   npm run db:generate   # also runs automatically on `npm install`
    npm run db:deploy
    npm run db:seed
    ```
+   The seed refuses missing/weak/placeholder passwords and never prints the
+   password. Demo content is opt-in via `SEED_DEMO_DATA=true`.
 4. **Run**
    ```bash
    npm run dev
    ```
-   Open http://localhost:3000, create an account (or use the seeded
-   `admin@relay.com` / `rootroot`).
+   Open http://localhost:3000 and sign in with the administrator you seeded (or
+   create a new account).
 
 ## 🔧 Scripts
 
@@ -99,10 +103,15 @@ role-based access enforced on the server.
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Vitest (unit + integration) |
+| `npm run test:e2e` | Playwright browser smoke test (needs `E2E=1`, a DB and a running server) |
 | `npm run db:migrate` | Create/apply a migration (dev) |
 | `npm run db:deploy` | Apply migrations (CI/prod) |
-| `npm run db:seed` | Seed the root admin + demo data |
-| `npm run db:generate` | Regenerate the Prisma client |
+| `npm run db:validate` | Validate the Prisma schema |
+| `npm run db:status` | Show migration state |
+| `npm run db:seed` | Seed the first administrator (+ optional demo data) |
+| `npm run db:generate` | Regenerate the Prisma client (also on `npm install`) |
+| `npm run api:check` | Validate the OpenAPI 3.1 spec |
+| `npm run i18n:check` | Verify RU/EN translation completeness |
 
 ## ⏱ Scheduled jobs (serverless)
 
@@ -113,19 +122,29 @@ secret-protected endpoint** that any cron/scheduler can hit:
 # every hour (platform scheduler, GitHub Actions cron, cron-job.org, …)
 curl -X POST https://your-app/api/jobs/sla-scan \
   -H "Authorization: Bearer $CRON_SECRET"
+
+# every minute — webhook fan-out, deliveries and automation retries
+curl -X POST https://your-app/api/jobs/drain \
+  -H "Authorization: Bearer $CRON_SECRET"
 ```
 
 `POST /api/jobs/sla-scan` scans for overdue / due-within-24h tasks and creates
-notifications, then prunes expired rate-limit counters. It is:
+notifications, then prunes expired rate-limit counters.
+`POST /api/jobs/drain` fans out new outbox events to webhook endpoints, retries
+due deliveries and re-runs failed automation rules. Both are:
 
-- **idempotent per hour** (repeated triggers are no-ops) and **per task per day**
-  (a task is never double-notified),
-- **bounded** (at most 500 tasks per run, no unbounded loops),
-- **safe to re-run** after a missed schedule,
-- **observable** via the `job_run` table.
+- **secret-protected** — `Authorization: Bearer <CRON_SECRET>` only. The secret
+  is never accepted from the query string, and is compared in constant time.
+- **idempotent** (bounded windows; a task is never double-notified),
+- **crash-safe** — outbox rows and deliveries are claimed with a lease using
+  `SELECT … FOR UPDATE SKIP LOCKED`, so parallel or interrupted runs never
+  double-process work; exhausted rows are dead-lettered and can be requeued.
+- **bounded** (fixed batch sizes, no unbounded loops),
+- **observable** via the `job_run` table and the admin diagnostics.
 
-Without `CRON_SECRET` configured the endpoint returns `503` — it never pretends
-to have run. See `docs/ARCHITECTURE.md` and `docs/THREAT_MODEL.md`.
+Without `CRON_SECRET` configured the endpoints return `503` — they never pretend
+to have run. Only `POST` is wired up (`GET` returns 405). See
+`docs/ARCHITECTURE.md` and `docs/THREAT_MODEL.md`.
 
 ## 📁 Project Structure
 
@@ -135,11 +154,12 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
 
 ## 📚 Documentation
 
-- [MVP audit](docs/MVP_AUDIT.md) · [Roadmap](docs/MVP_ROADMAP.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Security model](docs/SECURITY.md)
-- [Testing guide](docs/TESTING.md)
-- [Dependency audit](docs/DEPENDENCY_AUDIT.md)
+- [Production hardening](docs/PRODUCTION_HARDENING.md) · [Implementation plan](docs/IMPLEMENTATION_PLAN.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md)
+- [Architecture](docs/ARCHITECTURE.md) · [Security model](docs/SECURITY.md) · [Threat model](docs/THREAT_MODEL.md)
+- [Testing guide](docs/TESTING.md) · [Incident response](docs/INCIDENT_RESPONSE.md) · [Dependency audit](docs/DEPENDENCY_AUDIT.md)
+- [MVP audit](docs/MVP_AUDIT.md) · [Roadmap](docs/MVP_ROADMAP.md) · [V2 roadmap](docs/V2_ROADMAP.md)
+- Guides: [quickstart](docs/guides/QUICKSTART.md) · [deployment](docs/guides/DEPLOYMENT.md) · [configuration](docs/guides/CONFIGURATION.md) · [workflows](docs/guides/WORKFLOWS.md) · [automations](docs/guides/AUTOMATIONS.md) · [integrations](docs/guides/INTEGRATIONS.md)
+- API: [OpenAPI 3.1](docs/api/openapi.yaml) · interactive reference at `/api-reference`
 
 ## 🚦 Scope
 

@@ -4,18 +4,25 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "prisma generate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "format": "prettier --write .",
+    "postinstall": "prisma generate",
+    "prepare": "husky",
     "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
+    "db:status": "prisma migrate status",
     "db:seed": "prisma db seed",
-    "prepare": "husky"
+    "api:check": "tsx scripts/check-openapi.ts",
+    "i18n:check": "tsx scripts/check-i18n.ts"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

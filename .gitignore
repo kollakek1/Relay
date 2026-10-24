@@ -36,6 +36,10 @@ yarn-error.log*
 .env*
 !.env.example
 
+# prisma — generated client is rebuilt by `prisma generate` (see package.json
+# `postinstall`); only the schema, migrations and seed are tracked.
+/prisma/generated/
+
 # vercel
 .vercel
 
