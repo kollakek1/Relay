@@ -1,4 +1,4 @@
-import type { OrgRole, StepKind } from '@/prisma/generated/prisma/enums'
+import type { ApprovalMode, OrgRole, StepKind } from '@/prisma/generated/prisma/enums'
 
 export type FormFieldType = 'text' | 'textarea' | 'number' | 'date' | 'select' | 'checkbox'
 
@@ -27,6 +27,8 @@ export interface ProcessSnapshotStep {
   assigneeRole: OrgRole | null
   dueInDays: number | null
   kind: StepKind
+  /** Resolution mode for APPROVAL steps (`null` for plain tasks). */
+  approvalMode: ApprovalMode | null
   fields: WorkflowFormField[]
   /** `null` means "always run"; otherwise the step runs only if the condition holds. */
   condition: StepCondition | null
@@ -72,6 +74,7 @@ function toStep(raw: unknown, index: number): ProcessSnapshotStep {
     assigneeRole: (step.assigneeRole as OrgRole | null) ?? null,
     dueInDays: typeof step.dueInDays === 'number' ? step.dueInDays : null,
     kind: step.kind === 'APPROVAL' ? 'APPROVAL' : 'TASK',
+    approvalMode: step.approvalMode === 'ALL' ? 'ALL' : step.approvalMode === 'ANY' ? 'ANY' : null,
     fields: normalizeFields(step.fields),
     condition: toCondition(step.condition),
   }

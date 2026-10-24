@@ -14,6 +14,8 @@ export function buildStepSnapshot(steps: WorkflowStepInput[]): ProcessSnapshotSt
     assigneeRole: step.assigneeRole ?? null,
     dueInDays: step.dueInDays ?? null,
     kind: step.kind ?? 'TASK',
+    approvalMode:
+      step.kind === 'APPROVAL' ? (step.approvalMode ?? 'ANY') : null,
     fields: step.fields ?? [],
     condition: step.condition ?? null,
   }))

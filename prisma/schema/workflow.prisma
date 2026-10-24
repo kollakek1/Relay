@@ -26,11 +26,23 @@ enum TaskPriority {
   URGENT
 }
 
-/// Execution node kind. `TASK` is human work; `APPROVAL` is a decision step
-/// (decision semantics are added in a later stage).
+/// Execution node kind. `TASK` is human work; `APPROVAL` is a decision step.
 enum StepKind {
   TASK
   APPROVAL
+}
+
+/// How an approval step resolves when several people are eligible to decide.
+/// `ANY` — the first decision wins. `ALL` — every eligible approver must decide.
+enum ApprovalMode {
+  ANY
+  ALL
+}
+
+enum ApprovalDecision {
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
 }
 
 enum ActivityType {
@@ -41,6 +53,7 @@ enum ActivityType {
   STATUS_CHANGED
   DUE_CHANGED
   COMMENTED
+  DECIDED
 }
 
 enum NotificationType {
@@ -53,6 +66,8 @@ enum NotificationType {
   ORG_INVITATION
   TASK_DUE_SOON
   TASK_OVERDUE
+  APPROVAL_REQUESTED
+  APPROVAL_DECIDED
 }
 
 model Workflow {
@@ -85,6 +100,8 @@ model WorkflowStep {
   assigneeRole OrgRole?
   dueInDays    Int?
   kind         StepKind  @default(TASK)
+  /// Approval resolution mode; only meaningful for APPROVAL steps.
+  approvalMode ApprovalMode?
   /// Form field definitions (see WorkflowFormField in the engine).
   fields       Json?
   /// Optional skip condition evaluated against collected process variables.
@@ -150,6 +167,9 @@ model Task {
   status         TaskStatus   @default(PENDING)
   priority       TaskPriority @default(MEDIUM)
   kind           StepKind     @default(TASK)
+  /// Final decision for an APPROVAL task once resolved.
+  decision       ApprovalDecision?
+  decisionNote   String?
   /// Minimum organization role allowed to claim this task (from the step).
   requiredRole   OrgRole?
   /// Form field definitions captured from the step at instance start.
@@ -172,11 +192,30 @@ model Task {
 
   activities TaskActivity[]
   comments   Comment[]
+  decisions  TaskDecision[]
 
   @@index([organizationId, status, createdAt])
   @@index([assigneeId, status])
   @@index([instanceId])
   @@map("task")
+}
+
+/// A single actor's vote on an approval task. `ALL` mode is satisfied only when
+/// every eligible approver has a row here.
+model TaskDecision {
+  id        String           @id @default(cuid())
+  taskId    String
+  task      Task             @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User             @relation("TaskDecisionActor", fields: [userId], references: [id], onDelete: Cascade)
+  decision  ApprovalDecision
+  note      String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([taskId, userId])
+  @@index([taskId])
+  @@map("task_decision")
 }
 
 model TaskActivity {

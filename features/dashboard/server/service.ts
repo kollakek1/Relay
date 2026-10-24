@@ -62,7 +62,7 @@ export async function getDashboard(ctx: Context): Promise<DashboardData> {
         where: { organizationId: ctx.organizationId, assigneeId: ctx.userId, status: { in: ['CLAIMED', 'IN_PROGRESS'] } },
       }),
       prisma.task.count({
-        where: { organizationId: ctx.organizationId, status: 'PENDING', assigneeId: null },
+        where: { organizationId: ctx.organizationId, status: 'PENDING', assigneeId: null, kind: 'TASK' },
       }),
       prisma.task.count({
         where: {

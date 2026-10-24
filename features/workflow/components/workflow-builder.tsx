@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Controller, useFieldArray, useForm, type Control, type UseFormRegister } from 'react-hook-form'
+import { Controller, useFieldArray, useForm, useWatch, type Control, type UseFormRegister } from 'react-hook-form'
 import type { OrgRole, StepKind, WorkflowStatus } from '@/prisma/generated/prisma/enums'
 import { Badge } from '@/shared/components/ui/badge'
 import { Button } from '@/shared/components/ui/button'
@@ -68,6 +68,7 @@ interface BuilderFormStep {
   assigneeRole: OrgRole | null
   dueInDays: number | null
   kind: StepKind
+  approvalMode: 'ANY' | 'ALL' | null
   fields: BuilderFormField[]
   condition: BuilderCondition
 }
@@ -88,6 +89,7 @@ export interface BuilderWorkflow {
     assigneeRole: OrgRole | null
     dueInDays: number | null
     kind: StepKind
+    approvalMode: 'ANY' | 'ALL' | null
     fields: BuilderFormField[]
     condition: BuilderCondition
   }>
@@ -104,6 +106,7 @@ const emptyStep = (): BuilderFormStep => ({
   assigneeRole: null,
   dueInDays: null,
   kind: 'TASK',
+  approvalMode: null,
   fields: [],
   condition: { field: '', op: 'eq', valueText: '' },
 })
@@ -150,6 +153,7 @@ export function WorkflowBuilder({
   })
 
   const { fields, append, remove, move } = useFieldArray({ control, name: 'steps' })
+  const watchedSteps = useWatch({ control, name: 'steps' })
 
   const buildPayload = () => {
     const values = getValues()
@@ -163,6 +167,7 @@ export function WorkflowBuilder({
         assigneeRole: step.assigneeRole ?? null,
         dueInDays: step.dueInDays === null || Number.isNaN(step.dueInDays) ? null : step.dueInDays,
         kind: step.kind,
+        approvalMode: step.kind === 'APPROVAL' ? (step.approvalMode ?? 'ANY') : null,
         fields: step.fields
           .filter((field) => field.key.trim() && field.label.trim())
           .map((field) => ({
@@ -297,9 +302,32 @@ export function WorkflowBuilder({
                       )}
                     />
                   </div>
+                  {watchedSteps?.[index]?.kind === 'APPROVAL' && (
+                    <div className="space-y-2">
+                      <Label htmlFor={`step-approval-${index}`}>Approval rule</Label>
+                      <Controller
+                        control={control}
+                        name={`steps.${index}.approvalMode`}
+                        render={({ field: cf }) => (
+                          <Select
+                            value={cf.value ?? 'ANY'}
+                            onValueChange={(value) => cf.onChange(value)}
+                            disabled={!canManage}
+                          >
+                            <SelectTrigger id={`step-approval-${index}`} className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="ANY">Any approver</SelectItem>
+                              <SelectItem value="ALL">All approvers</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  )}
                   <div className="space-y-2">
-                    <Label htmlFor={`step-role-${index}`}>Required role to claim</Label>
-                    <Controller
+                    <Label htmlFor={`step-role-${index}`}>Required role to claim</Label>                    <Controller
                       control={control}
                       name={`steps.${index}.assigneeRole`}
                       render={({ field: cf }) => (

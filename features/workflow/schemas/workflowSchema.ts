@@ -41,6 +41,7 @@ export const workflowStepSchema = z.object({
   assigneeRole: z.enum(['OWNER', 'ADMIN', 'MEMBER']).nullable().optional(),
   dueInDays: z.number().int().min(0).max(365).nullable().optional(),
   kind: z.enum(['TASK', 'APPROVAL']).default('TASK'),
+  approvalMode: z.enum(['ANY', 'ALL']).nullable().optional(),
   fields: z.array(workflowFormFieldSchema).max(30).default([]),
   condition: stepConditionSchema.nullable().optional(),
 })

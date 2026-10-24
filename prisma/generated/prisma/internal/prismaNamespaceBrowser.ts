@@ -67,6 +67,7 @@ export const ModelName = {
   WorkflowVersion: 'WorkflowVersion',
   ProcessInstance: 'ProcessInstance',
   Task: 'Task',
+  TaskDecision: 'TaskDecision',
   TaskActivity: 'TaskActivity',
   Comment: 'Comment',
   Notification: 'Notification'
@@ -262,6 +263,7 @@ export const WorkflowStepScalarFieldEnum = {
   assigneeRole: 'assigneeRole',
   dueInDays: 'dueInDays',
   kind: 'kind',
+  approvalMode: 'approvalMode',
   fields: 'fields',
   condition: 'condition',
   createdAt: 'createdAt',
@@ -307,6 +309,8 @@ export const TaskScalarFieldEnum = {
   status: 'status',
   priority: 'priority',
   kind: 'kind',
+  decision: 'decision',
+  decisionNote: 'decisionNote',
   requiredRole: 'requiredRole',
   fields: 'fields',
   formValues: 'formValues',
@@ -322,6 +326,19 @@ export const TaskScalarFieldEnum = {
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const TaskDecisionScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  userId: 'userId',
+  decision: 'decision',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskDecisionScalarFieldEnum = (typeof TaskDecisionScalarFieldEnum)[keyof typeof TaskDecisionScalarFieldEnum]
 
 
 export const TaskActivityScalarFieldEnum = {

@@ -46,6 +46,8 @@ export type TaskMinAggregateOutputType = {
   status: $Enums.TaskStatus | null
   priority: $Enums.TaskPriority | null
   kind: $Enums.StepKind | null
+  decision: $Enums.ApprovalDecision | null
+  decisionNote: string | null
   requiredRole: $Enums.OrgRole | null
   assigneeId: string | null
   createdById: string | null
@@ -68,6 +70,8 @@ export type TaskMaxAggregateOutputType = {
   status: $Enums.TaskStatus | null
   priority: $Enums.TaskPriority | null
   kind: $Enums.StepKind | null
+  decision: $Enums.ApprovalDecision | null
+  decisionNote: string | null
   requiredRole: $Enums.OrgRole | null
   assigneeId: string | null
   createdById: string | null
@@ -90,6 +94,8 @@ export type TaskCountAggregateOutputType = {
   status: number
   priority: number
   kind: number
+  decision: number
+  decisionNote: number
   requiredRole: number
   fields: number
   formValues: number
@@ -126,6 +132,8 @@ export type TaskMinAggregateInputType = {
   status?: true
   priority?: true
   kind?: true
+  decision?: true
+  decisionNote?: true
   requiredRole?: true
   assigneeId?: true
   createdById?: true
@@ -148,6 +156,8 @@ export type TaskMaxAggregateInputType = {
   status?: true
   priority?: true
   kind?: true
+  decision?: true
+  decisionNote?: true
   requiredRole?: true
   assigneeId?: true
   createdById?: true
@@ -170,6 +180,8 @@ export type TaskCountAggregateInputType = {
   status?: true
   priority?: true
   kind?: true
+  decision?: true
+  decisionNote?: true
   requiredRole?: true
   fields?: true
   formValues?: true
@@ -281,6 +293,8 @@ export type TaskGroupByOutputType = {
   status: $Enums.TaskStatus
   priority: $Enums.TaskPriority
   kind: $Enums.StepKind
+  decision: $Enums.ApprovalDecision | null
+  decisionNote: string | null
   requiredRole: $Enums.OrgRole | null
   fields: runtime.JsonValue | null
   formValues: runtime.JsonValue | null
@@ -328,6 +342,8 @@ export type TaskWhereInput = {
   status?: Prisma.EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFilter<"Task"> | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFilter<"Task"> | $Enums.StepKind
+  decision?: Prisma.EnumApprovalDecisionNullableFilter<"Task"> | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.StringNullableFilter<"Task"> | string | null
   requiredRole?: Prisma.EnumOrgRoleNullableFilter<"Task"> | $Enums.OrgRole | null
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
@@ -346,6 +362,7 @@ export type TaskWhereInput = {
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   activities?: Prisma.TaskActivityListRelationFilter
   comments?: Prisma.CommentListRelationFilter
+  decisions?: Prisma.TaskDecisionListRelationFilter
 }
 
 export type TaskOrderByWithRelationInput = {
@@ -358,6 +375,8 @@ export type TaskOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   kind?: Prisma.SortOrder
+  decision?: Prisma.SortOrderInput | Prisma.SortOrder
+  decisionNote?: Prisma.SortOrderInput | Prisma.SortOrder
   requiredRole?: Prisma.SortOrderInput | Prisma.SortOrder
   fields?: Prisma.SortOrderInput | Prisma.SortOrder
   formValues?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -376,6 +395,7 @@ export type TaskOrderByWithRelationInput = {
   createdBy?: Prisma.UserOrderByWithRelationInput
   activities?: Prisma.TaskActivityOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
+  decisions?: Prisma.TaskDecisionOrderByRelationAggregateInput
 }
 
 export type TaskWhereUniqueInput = Prisma.AtLeast<{
@@ -391,6 +411,8 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFilter<"Task"> | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFilter<"Task"> | $Enums.StepKind
+  decision?: Prisma.EnumApprovalDecisionNullableFilter<"Task"> | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.StringNullableFilter<"Task"> | string | null
   requiredRole?: Prisma.EnumOrgRoleNullableFilter<"Task"> | $Enums.OrgRole | null
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
@@ -409,6 +431,7 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   activities?: Prisma.TaskActivityListRelationFilter
   comments?: Prisma.CommentListRelationFilter
+  decisions?: Prisma.TaskDecisionListRelationFilter
 }, "id">
 
 export type TaskOrderByWithAggregationInput = {
@@ -421,6 +444,8 @@ export type TaskOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   kind?: Prisma.SortOrder
+  decision?: Prisma.SortOrderInput | Prisma.SortOrder
+  decisionNote?: Prisma.SortOrderInput | Prisma.SortOrder
   requiredRole?: Prisma.SortOrderInput | Prisma.SortOrder
   fields?: Prisma.SortOrderInput | Prisma.SortOrder
   formValues?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -453,6 +478,8 @@ export type TaskScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumTaskStatusWithAggregatesFilter<"Task"> | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityWithAggregatesFilter<"Task"> | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindWithAggregatesFilter<"Task"> | $Enums.StepKind
+  decision?: Prisma.EnumApprovalDecisionNullableWithAggregatesFilter<"Task"> | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   requiredRole?: Prisma.EnumOrgRoleNullableWithAggregatesFilter<"Task"> | $Enums.OrgRole | null
   fields?: Prisma.JsonNullableWithAggregatesFilter<"Task">
   formValues?: Prisma.JsonNullableWithAggregatesFilter<"Task">
@@ -475,6 +502,8 @@ export type TaskCreateInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -491,6 +520,7 @@ export type TaskCreateInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateInput = {
@@ -503,6 +533,8 @@ export type TaskUncheckedCreateInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -517,6 +549,7 @@ export type TaskUncheckedCreateInput = {
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUpdateInput = {
@@ -527,6 +560,8 @@ export type TaskUpdateInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -543,6 +578,7 @@ export type TaskUpdateInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateInput = {
@@ -555,6 +591,8 @@ export type TaskUncheckedUpdateInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -569,6 +607,7 @@ export type TaskUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskCreateManyInput = {
@@ -581,6 +620,8 @@ export type TaskCreateManyInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -603,6 +644,8 @@ export type TaskUpdateManyMutationInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -625,6 +668,8 @@ export type TaskUncheckedUpdateManyInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -659,6 +704,8 @@ export type TaskCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   kind?: Prisma.SortOrder
+  decision?: Prisma.SortOrder
+  decisionNote?: Prisma.SortOrder
   requiredRole?: Prisma.SortOrder
   fields?: Prisma.SortOrder
   formValues?: Prisma.SortOrder
@@ -688,6 +735,8 @@ export type TaskMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   kind?: Prisma.SortOrder
+  decision?: Prisma.SortOrder
+  decisionNote?: Prisma.SortOrder
   requiredRole?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -710,6 +759,8 @@ export type TaskMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   kind?: Prisma.SortOrder
+  decision?: Prisma.SortOrder
+  decisionNote?: Prisma.SortOrder
   requiredRole?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -908,6 +959,24 @@ export type EnumTaskPriorityFieldUpdateOperationsInput = {
   set?: $Enums.TaskPriority
 }
 
+export type NullableEnumApprovalDecisionFieldUpdateOperationsInput = {
+  set?: $Enums.ApprovalDecision | null
+}
+
+export type TaskCreateNestedOneWithoutDecisionsInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutDecisionsInput, Prisma.TaskUncheckedCreateWithoutDecisionsInput>
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutDecisionsInput
+  connect?: Prisma.TaskWhereUniqueInput
+}
+
+export type TaskUpdateOneRequiredWithoutDecisionsNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutDecisionsInput, Prisma.TaskUncheckedCreateWithoutDecisionsInput>
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutDecisionsInput
+  upsert?: Prisma.TaskUpsertWithoutDecisionsInput
+  connect?: Prisma.TaskWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TaskUpdateToOneWithWhereWithoutDecisionsInput, Prisma.TaskUpdateWithoutDecisionsInput>, Prisma.TaskUncheckedUpdateWithoutDecisionsInput>
+}
+
 export type TaskCreateNestedOneWithoutActivitiesInput = {
   create?: Prisma.XOR<Prisma.TaskCreateWithoutActivitiesInput, Prisma.TaskUncheckedCreateWithoutActivitiesInput>
   connectOrCreate?: Prisma.TaskCreateOrConnectWithoutActivitiesInput
@@ -944,6 +1013,8 @@ export type TaskCreateWithoutOrganizationInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -959,6 +1030,7 @@ export type TaskCreateWithoutOrganizationInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutOrganizationInput = {
@@ -970,6 +1042,8 @@ export type TaskUncheckedCreateWithoutOrganizationInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -984,6 +1058,7 @@ export type TaskUncheckedCreateWithoutOrganizationInput = {
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutOrganizationInput = {
@@ -1025,6 +1100,8 @@ export type TaskScalarWhereInput = {
   status?: Prisma.EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFilter<"Task"> | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFilter<"Task"> | $Enums.StepKind
+  decision?: Prisma.EnumApprovalDecisionNullableFilter<"Task"> | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.StringNullableFilter<"Task"> | string | null
   requiredRole?: Prisma.EnumOrgRoleNullableFilter<"Task"> | $Enums.OrgRole | null
   fields?: Prisma.JsonNullableFilter<"Task">
   formValues?: Prisma.JsonNullableFilter<"Task">
@@ -1047,6 +1124,8 @@ export type TaskCreateWithoutAssigneeInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1062,6 +1141,7 @@ export type TaskCreateWithoutAssigneeInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutAssigneeInput = {
@@ -1074,6 +1154,8 @@ export type TaskUncheckedCreateWithoutAssigneeInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1087,6 +1169,7 @@ export type TaskUncheckedCreateWithoutAssigneeInput = {
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutAssigneeInput = {
@@ -1107,6 +1190,8 @@ export type TaskCreateWithoutCreatedByInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1122,6 +1207,7 @@ export type TaskCreateWithoutCreatedByInput = {
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutCreatedByInput = {
@@ -1134,6 +1220,8 @@ export type TaskUncheckedCreateWithoutCreatedByInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1147,6 +1235,7 @@ export type TaskUncheckedCreateWithoutCreatedByInput = {
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutCreatedByInput = {
@@ -1199,6 +1288,8 @@ export type TaskCreateWithoutInstanceInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1214,6 +1305,7 @@ export type TaskCreateWithoutInstanceInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutInstanceInput = {
@@ -1225,6 +1317,8 @@ export type TaskUncheckedCreateWithoutInstanceInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1239,6 +1333,7 @@ export type TaskUncheckedCreateWithoutInstanceInput = {
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutInstanceInput = {
@@ -1267,6 +1362,134 @@ export type TaskUpdateManyWithWhereWithoutInstanceInput = {
   data: Prisma.XOR<Prisma.TaskUpdateManyMutationInput, Prisma.TaskUncheckedUpdateManyWithoutInstanceInput>
 }
 
+export type TaskCreateWithoutDecisionsInput = {
+  id?: string
+  stepOrder: number
+  name: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
+  requiredRole?: $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dueAt?: Date | string | null
+  claimedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelReason?: string | null
+  claimVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutTasksInput
+  instance: Prisma.ProcessInstanceCreateNestedOneWithoutTasksInput
+  assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
+  createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
+  activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+}
+
+export type TaskUncheckedCreateWithoutDecisionsInput = {
+  id?: string
+  organizationId: string
+  instanceId: string
+  stepOrder: number
+  name: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
+  requiredRole?: $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assigneeId?: string | null
+  createdById: string
+  dueAt?: Date | string | null
+  claimedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelReason?: string | null
+  claimVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type TaskCreateOrConnectWithoutDecisionsInput = {
+  where: Prisma.TaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaskCreateWithoutDecisionsInput, Prisma.TaskUncheckedCreateWithoutDecisionsInput>
+}
+
+export type TaskUpsertWithoutDecisionsInput = {
+  update: Prisma.XOR<Prisma.TaskUpdateWithoutDecisionsInput, Prisma.TaskUncheckedUpdateWithoutDecisionsInput>
+  create: Prisma.XOR<Prisma.TaskCreateWithoutDecisionsInput, Prisma.TaskUncheckedCreateWithoutDecisionsInput>
+  where?: Prisma.TaskWhereInput
+}
+
+export type TaskUpdateToOneWithWhereWithoutDecisionsInput = {
+  where?: Prisma.TaskWhereInput
+  data: Prisma.XOR<Prisma.TaskUpdateWithoutDecisionsInput, Prisma.TaskUncheckedUpdateWithoutDecisionsInput>
+}
+
+export type TaskUpdateWithoutDecisionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stepOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTasksNestedInput
+  instance?: Prisma.ProcessInstanceUpdateOneRequiredWithoutTasksNestedInput
+  assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
+  activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskUncheckedUpdateWithoutDecisionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  instanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  stepOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
+  fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  claimVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+}
+
 export type TaskCreateWithoutActivitiesInput = {
   id?: string
   stepOrder: number
@@ -1275,6 +1498,8 @@ export type TaskCreateWithoutActivitiesInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1290,6 +1515,7 @@ export type TaskCreateWithoutActivitiesInput = {
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   comments?: Prisma.CommentCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutActivitiesInput = {
@@ -1302,6 +1528,8 @@ export type TaskUncheckedCreateWithoutActivitiesInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1315,6 +1543,7 @@ export type TaskUncheckedCreateWithoutActivitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutActivitiesInput = {
@@ -1341,6 +1570,8 @@ export type TaskUpdateWithoutActivitiesInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1356,6 +1587,7 @@ export type TaskUpdateWithoutActivitiesInput = {
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutActivitiesInput = {
@@ -1368,6 +1600,8 @@ export type TaskUncheckedUpdateWithoutActivitiesInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1381,6 +1615,7 @@ export type TaskUncheckedUpdateWithoutActivitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskCreateWithoutCommentsInput = {
@@ -1391,6 +1626,8 @@ export type TaskCreateWithoutCommentsInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1406,6 +1643,7 @@ export type TaskCreateWithoutCommentsInput = {
   assignee?: Prisma.UserCreateNestedOneWithoutTasksAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutTasksCreatedInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutCommentsInput = {
@@ -1418,6 +1656,8 @@ export type TaskUncheckedCreateWithoutCommentsInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1431,6 +1671,7 @@ export type TaskUncheckedCreateWithoutCommentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutCommentsInput = {
@@ -1457,6 +1698,8 @@ export type TaskUpdateWithoutCommentsInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1472,6 +1715,7 @@ export type TaskUpdateWithoutCommentsInput = {
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutCommentsInput = {
@@ -1484,6 +1728,8 @@ export type TaskUncheckedUpdateWithoutCommentsInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1497,6 +1743,7 @@ export type TaskUncheckedUpdateWithoutCommentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskCreateManyOrganizationInput = {
@@ -1508,6 +1755,8 @@ export type TaskCreateManyOrganizationInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1530,6 +1779,8 @@ export type TaskUpdateWithoutOrganizationInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1545,6 +1796,7 @@ export type TaskUpdateWithoutOrganizationInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutOrganizationInput = {
@@ -1556,6 +1808,8 @@ export type TaskUncheckedUpdateWithoutOrganizationInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1570,6 +1824,7 @@ export type TaskUncheckedUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateManyWithoutOrganizationInput = {
@@ -1581,6 +1836,8 @@ export type TaskUncheckedUpdateManyWithoutOrganizationInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1605,6 +1862,8 @@ export type TaskCreateManyAssigneeInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1628,6 +1887,8 @@ export type TaskCreateManyCreatedByInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1649,6 +1910,8 @@ export type TaskUpdateWithoutAssigneeInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1664,6 +1927,7 @@ export type TaskUpdateWithoutAssigneeInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutAssigneeInput = {
@@ -1676,6 +1940,8 @@ export type TaskUncheckedUpdateWithoutAssigneeInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1689,6 +1955,7 @@ export type TaskUncheckedUpdateWithoutAssigneeInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateManyWithoutAssigneeInput = {
@@ -1701,6 +1968,8 @@ export type TaskUncheckedUpdateManyWithoutAssigneeInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1722,6 +1991,8 @@ export type TaskUpdateWithoutCreatedByInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1737,6 +2008,7 @@ export type TaskUpdateWithoutCreatedByInput = {
   assignee?: Prisma.UserUpdateOneWithoutTasksAssignedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutCreatedByInput = {
@@ -1749,6 +2021,8 @@ export type TaskUncheckedUpdateWithoutCreatedByInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1762,6 +2036,7 @@ export type TaskUncheckedUpdateWithoutCreatedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateManyWithoutCreatedByInput = {
@@ -1774,6 +2049,8 @@ export type TaskUncheckedUpdateManyWithoutCreatedByInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1796,6 +2073,8 @@ export type TaskCreateManyInstanceInput = {
   status?: $Enums.TaskStatus
   priority?: $Enums.TaskPriority
   kind?: $Enums.StepKind
+  decision?: $Enums.ApprovalDecision | null
+  decisionNote?: string | null
   requiredRole?: $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1818,6 +2097,8 @@ export type TaskUpdateWithoutInstanceInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1833,6 +2114,7 @@ export type TaskUpdateWithoutInstanceInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutTasksCreatedNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutInstanceInput = {
@@ -1844,6 +2126,8 @@ export type TaskUncheckedUpdateWithoutInstanceInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1858,6 +2142,7 @@ export type TaskUncheckedUpdateWithoutInstanceInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutTaskNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateManyWithoutInstanceInput = {
@@ -1869,6 +2154,8 @@ export type TaskUncheckedUpdateManyWithoutInstanceInput = {
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
   priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  decision?: Prisma.NullableEnumApprovalDecisionFieldUpdateOperationsInput | $Enums.ApprovalDecision | null
+  decisionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   formValues?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1891,11 +2178,13 @@ export type TaskUncheckedUpdateManyWithoutInstanceInput = {
 export type TaskCountOutputType = {
   activities: number
   comments: number
+  decisions: number
 }
 
 export type TaskCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   activities?: boolean | TaskCountOutputTypeCountActivitiesArgs
   comments?: boolean | TaskCountOutputTypeCountCommentsArgs
+  decisions?: boolean | TaskCountOutputTypeCountDecisionsArgs
 }
 
 /**
@@ -1922,6 +2211,13 @@ export type TaskCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.CommentWhereInput
 }
 
+/**
+ * TaskCountOutputType without action
+ */
+export type TaskCountOutputTypeCountDecisionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaskDecisionWhereInput
+}
+
 
 export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1933,6 +2229,8 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   status?: boolean
   priority?: boolean
   kind?: boolean
+  decision?: boolean
+  decisionNote?: boolean
   requiredRole?: boolean
   fields?: boolean
   formValues?: boolean
@@ -1951,6 +2249,7 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   activities?: boolean | Prisma.Task$activitiesArgs<ExtArgs>
   comments?: boolean | Prisma.Task$commentsArgs<ExtArgs>
+  decisions?: boolean | Prisma.Task$decisionsArgs<ExtArgs>
   _count?: boolean | Prisma.TaskCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["task"]>
 
@@ -1964,6 +2263,8 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   status?: boolean
   priority?: boolean
   kind?: boolean
+  decision?: boolean
+  decisionNote?: boolean
   requiredRole?: boolean
   fields?: boolean
   formValues?: boolean
@@ -1992,6 +2293,8 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   status?: boolean
   priority?: boolean
   kind?: boolean
+  decision?: boolean
+  decisionNote?: boolean
   requiredRole?: boolean
   fields?: boolean
   formValues?: boolean
@@ -2020,6 +2323,8 @@ export type TaskSelectScalar = {
   status?: boolean
   priority?: boolean
   kind?: boolean
+  decision?: boolean
+  decisionNote?: boolean
   requiredRole?: boolean
   fields?: boolean
   formValues?: boolean
@@ -2034,7 +2339,7 @@ export type TaskSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "instanceId" | "stepOrder" | "name" | "description" | "status" | "priority" | "kind" | "requiredRole" | "fields" | "formValues" | "assigneeId" | "createdById" | "dueAt" | "claimedAt" | "completedAt" | "cancelReason" | "claimVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "instanceId" | "stepOrder" | "name" | "description" | "status" | "priority" | "kind" | "decision" | "decisionNote" | "requiredRole" | "fields" | "formValues" | "assigneeId" | "createdById" | "dueAt" | "claimedAt" | "completedAt" | "cancelReason" | "claimVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
 export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   instance?: boolean | Prisma.ProcessInstanceDefaultArgs<ExtArgs>
@@ -2042,6 +2347,7 @@ export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   activities?: boolean | Prisma.Task$activitiesArgs<ExtArgs>
   comments?: boolean | Prisma.Task$commentsArgs<ExtArgs>
+  decisions?: boolean | Prisma.Task$decisionsArgs<ExtArgs>
   _count?: boolean | Prisma.TaskCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TaskIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2066,6 +2372,7 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdBy: Prisma.$UserPayload<ExtArgs>
     activities: Prisma.$TaskActivityPayload<ExtArgs>[]
     comments: Prisma.$CommentPayload<ExtArgs>[]
+    decisions: Prisma.$TaskDecisionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2077,6 +2384,11 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     status: $Enums.TaskStatus
     priority: $Enums.TaskPriority
     kind: $Enums.StepKind
+    /**
+     * Final decision for an APPROVAL task once resolved.
+     */
+    decision: $Enums.ApprovalDecision | null
+    decisionNote: string | null
     /**
      * Minimum organization role allowed to claim this task (from the step).
      */
@@ -2504,6 +2816,7 @@ export interface Prisma__TaskClient<T, Null = never, ExtArgs extends runtime.Typ
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   activities<T extends Prisma.Task$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.Task$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  decisions<T extends Prisma.Task$decisionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$decisionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskDecisionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2542,6 +2855,8 @@ export interface TaskFieldRefs {
   readonly status: Prisma.FieldRef<"Task", 'TaskStatus'>
   readonly priority: Prisma.FieldRef<"Task", 'TaskPriority'>
   readonly kind: Prisma.FieldRef<"Task", 'StepKind'>
+  readonly decision: Prisma.FieldRef<"Task", 'ApprovalDecision'>
+  readonly decisionNote: Prisma.FieldRef<"Task", 'String'>
   readonly requiredRole: Prisma.FieldRef<"Task", 'OrgRole'>
   readonly fields: Prisma.FieldRef<"Task", 'Json'>
   readonly formValues: Prisma.FieldRef<"Task", 'Json'>
@@ -3019,6 +3334,30 @@ export type Task$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.CommentScalarFieldEnum | Prisma.CommentScalarFieldEnum[]
+}
+
+/**
+ * Task.decisions
+ */
+export type Task$decisionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TaskDecision
+   */
+  select?: Prisma.TaskDecisionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TaskDecision
+   */
+  omit?: Prisma.TaskDecisionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskDecisionInclude<ExtArgs> | null
+  where?: Prisma.TaskDecisionWhereInput
+  orderBy?: Prisma.TaskDecisionOrderByWithRelationInput | Prisma.TaskDecisionOrderByWithRelationInput[]
+  cursor?: Prisma.TaskDecisionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TaskDecisionScalarFieldEnum | Prisma.TaskDecisionScalarFieldEnum[]
 }
 
 /**

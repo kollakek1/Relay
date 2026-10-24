@@ -41,6 +41,7 @@ export default async function WorkflowDetailPage({
             assigneeRole: step.assigneeRole,
             dueInDays: step.dueInDays,
             kind: step.kind,
+            approvalMode: step.approvalMode,
             fields: (Array.isArray(step.fields) ? step.fields : []).map((field) => {
               const f = field as {
                 key?: string

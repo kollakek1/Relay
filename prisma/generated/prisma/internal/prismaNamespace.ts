@@ -413,6 +413,7 @@ export const ModelName = {
   WorkflowVersion: 'WorkflowVersion',
   ProcessInstance: 'ProcessInstance',
   Task: 'Task',
+  TaskDecision: 'TaskDecision',
   TaskActivity: 'TaskActivity',
   Comment: 'Comment',
   Notification: 'Notification'
@@ -431,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "session" | "account" | "verification" | "organization" | "membership" | "invitation" | "orgAuditLog" | "rateLimitBucket" | "idempotencyKey" | "jobRun" | "user" | "workflow" | "workflowStep" | "workflowVersion" | "processInstance" | "task" | "taskActivity" | "comment" | "notification"
+    modelProps: "session" | "account" | "verification" | "organization" | "membership" | "invitation" | "orgAuditLog" | "rateLimitBucket" | "idempotencyKey" | "jobRun" | "user" | "workflow" | "workflowStep" | "workflowVersion" | "processInstance" | "task" | "taskDecision" | "taskActivity" | "comment" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1619,6 +1620,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TaskDecision: {
+      payload: Prisma.$TaskDecisionPayload<ExtArgs>
+      fields: Prisma.TaskDecisionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TaskDecisionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TaskDecisionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>
+        }
+        findFirst: {
+          args: Prisma.TaskDecisionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TaskDecisionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>
+        }
+        findMany: {
+          args: Prisma.TaskDecisionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>[]
+        }
+        create: {
+          args: Prisma.TaskDecisionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>
+        }
+        createMany: {
+          args: Prisma.TaskDecisionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TaskDecisionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>[]
+        }
+        delete: {
+          args: Prisma.TaskDecisionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>
+        }
+        update: {
+          args: Prisma.TaskDecisionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>
+        }
+        deleteMany: {
+          args: Prisma.TaskDecisionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TaskDecisionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TaskDecisionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>[]
+        }
+        upsert: {
+          args: Prisma.TaskDecisionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskDecisionPayload>
+        }
+        aggregate: {
+          args: Prisma.TaskDecisionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTaskDecision>
+        }
+        groupBy: {
+          args: Prisma.TaskDecisionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TaskDecisionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TaskDecisionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TaskDecisionCountAggregateOutputType> | number
+        }
+      }
+    }
     TaskActivity: {
       payload: Prisma.$TaskActivityPayload<ExtArgs>
       fields: Prisma.TaskActivityFieldRefs
@@ -2054,6 +2129,7 @@ export const WorkflowStepScalarFieldEnum = {
   assigneeRole: 'assigneeRole',
   dueInDays: 'dueInDays',
   kind: 'kind',
+  approvalMode: 'approvalMode',
   fields: 'fields',
   condition: 'condition',
   createdAt: 'createdAt',
@@ -2099,6 +2175,8 @@ export const TaskScalarFieldEnum = {
   status: 'status',
   priority: 'priority',
   kind: 'kind',
+  decision: 'decision',
+  decisionNote: 'decisionNote',
   requiredRole: 'requiredRole',
   fields: 'fields',
   formValues: 'formValues',
@@ -2114,6 +2192,19 @@ export const TaskScalarFieldEnum = {
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const TaskDecisionScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  userId: 'userId',
+  decision: 'decision',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskDecisionScalarFieldEnum = (typeof TaskDecisionScalarFieldEnum)[keyof typeof TaskDecisionScalarFieldEnum]
 
 
 export const TaskActivityScalarFieldEnum = {
@@ -2344,6 +2435,20 @@ export type ListEnumStepKindFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
 
 
 /**
+ * Reference to a field of type 'ApprovalMode'
+ */
+export type EnumApprovalModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalMode'>
+    
+
+
+/**
+ * Reference to a field of type 'ApprovalMode[]'
+ */
+export type ListEnumApprovalModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalMode[]'>
+    
+
+
+/**
  * Reference to a field of type 'InstanceStatus'
  */
 export type EnumInstanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InstanceStatus'>
@@ -2382,6 +2487,20 @@ export type EnumTaskPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'TaskPriority[]'
  */
 export type ListEnumTaskPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskPriority[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ApprovalDecision'
+ */
+export type EnumApprovalDecisionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalDecision'>
+    
+
+
+/**
+ * Reference to a field of type 'ApprovalDecision[]'
+ */
+export type ListEnumApprovalDecisionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalDecision[]'>
     
 
 
@@ -2593,6 +2712,7 @@ export type GlobalOmitConfig = {
   workflowVersion?: Prisma.WorkflowVersionOmit
   processInstance?: Prisma.ProcessInstanceOmit
   task?: Prisma.TaskOmit
+  taskDecision?: Prisma.TaskDecisionOmit
   taskActivity?: Prisma.TaskActivityOmit
   comment?: Prisma.CommentOmit
   notification?: Prisma.NotificationOmit

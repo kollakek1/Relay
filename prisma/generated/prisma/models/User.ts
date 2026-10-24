@@ -220,6 +220,7 @@ export type UserWhereInput = {
   tasksCreated?: Prisma.TaskListRelationFilter
   activities?: Prisma.TaskActivityListRelationFilter
   comments?: Prisma.CommentListRelationFilter
+  decisions?: Prisma.TaskDecisionListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   invitationsSent?: Prisma.InvitationListRelationFilter
   invitationsAccepted?: Prisma.InvitationListRelationFilter
@@ -246,6 +247,7 @@ export type UserOrderByWithRelationInput = {
   tasksCreated?: Prisma.TaskOrderByRelationAggregateInput
   activities?: Prisma.TaskActivityOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
+  decisions?: Prisma.TaskDecisionOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   invitationsSent?: Prisma.InvitationOrderByRelationAggregateInput
   invitationsAccepted?: Prisma.InvitationOrderByRelationAggregateInput
@@ -275,6 +277,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   tasksCreated?: Prisma.TaskListRelationFilter
   activities?: Prisma.TaskActivityListRelationFilter
   comments?: Prisma.CommentListRelationFilter
+  decisions?: Prisma.TaskDecisionListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   invitationsSent?: Prisma.InvitationListRelationFilter
   invitationsAccepted?: Prisma.InvitationListRelationFilter
@@ -331,6 +334,7 @@ export type UserCreateInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -357,6 +361,7 @@ export type UserUncheckedCreateInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -383,6 +388,7 @@ export type UserUpdateInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -409,6 +415,7 @@ export type UserUncheckedUpdateInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -680,6 +687,20 @@ export type UserUpdateOneRequiredWithoutTasksCreatedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTasksCreatedInput, Prisma.UserUpdateWithoutTasksCreatedInput>, Prisma.UserUncheckedUpdateWithoutTasksCreatedInput>
 }
 
+export type UserCreateNestedOneWithoutDecisionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDecisionsInput, Prisma.UserUncheckedCreateWithoutDecisionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDecisionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDecisionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDecisionsInput, Prisma.UserUncheckedCreateWithoutDecisionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDecisionsInput
+  upsert?: Prisma.UserUpsertWithoutDecisionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDecisionsInput, Prisma.UserUpdateWithoutDecisionsInput>, Prisma.UserUncheckedUpdateWithoutDecisionsInput>
+}
+
 export type UserCreateNestedOneWithoutActivitiesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutActivitiesInput, Prisma.UserUncheckedCreateWithoutActivitiesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivitiesInput
@@ -743,6 +764,7 @@ export type UserCreateWithoutSessionsInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -768,6 +790,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -809,6 +832,7 @@ export type UserUpdateWithoutSessionsInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -834,6 +858,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -859,6 +884,7 @@ export type UserCreateWithoutAccountsInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -884,6 +910,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -925,6 +952,7 @@ export type UserUpdateWithoutAccountsInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -950,6 +978,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -975,6 +1004,7 @@ export type UserCreateWithoutMembershipsInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1000,6 +1030,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1041,6 +1072,7 @@ export type UserUpdateWithoutMembershipsInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1066,6 +1098,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1092,6 +1125,7 @@ export type UserCreateWithoutInvitationsSentInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
   auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutActorInput
@@ -1117,6 +1151,7 @@ export type UserUncheckedCreateWithoutInvitationsSentInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
   auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -1147,6 +1182,7 @@ export type UserCreateWithoutInvitationsAcceptedInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutActorInput
@@ -1172,6 +1208,7 @@ export type UserUncheckedCreateWithoutInvitationsAcceptedInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -1213,6 +1250,7 @@ export type UserUpdateWithoutInvitationsSentInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutActorNestedInput
@@ -1238,6 +1276,7 @@ export type UserUncheckedUpdateWithoutInvitationsSentInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1274,6 +1313,7 @@ export type UserUpdateWithoutInvitationsAcceptedInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutActorNestedInput
@@ -1299,6 +1339,7 @@ export type UserUncheckedUpdateWithoutInvitationsAcceptedInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1324,6 +1365,7 @@ export type UserCreateWithoutAuditLogsInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1349,6 +1391,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1390,6 +1433,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1415,6 +1459,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1439,6 +1484,7 @@ export type UserCreateWithoutWorkflowsCreatedInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1464,6 +1510,7 @@ export type UserUncheckedCreateWithoutWorkflowsCreatedInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1505,6 +1552,7 @@ export type UserUpdateWithoutWorkflowsCreatedInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1530,6 +1578,7 @@ export type UserUncheckedUpdateWithoutWorkflowsCreatedInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1555,6 +1604,7 @@ export type UserCreateWithoutVersionsPublishedInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1580,6 +1630,7 @@ export type UserUncheckedCreateWithoutVersionsPublishedInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1621,6 +1672,7 @@ export type UserUpdateWithoutVersionsPublishedInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1646,6 +1698,7 @@ export type UserUncheckedUpdateWithoutVersionsPublishedInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1671,6 +1724,7 @@ export type UserCreateWithoutInstancesStartedInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1696,6 +1750,7 @@ export type UserUncheckedCreateWithoutInstancesStartedInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1737,6 +1792,7 @@ export type UserUpdateWithoutInstancesStartedInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1762,6 +1818,7 @@ export type UserUncheckedUpdateWithoutInstancesStartedInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1787,6 +1844,7 @@ export type UserCreateWithoutTasksAssignedInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1812,6 +1870,7 @@ export type UserUncheckedCreateWithoutTasksAssignedInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1842,6 +1901,7 @@ export type UserCreateWithoutTasksCreatedInput = {
   tasksAssigned?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -1867,6 +1927,7 @@ export type UserUncheckedCreateWithoutTasksCreatedInput = {
   tasksAssigned?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -1908,6 +1969,7 @@ export type UserUpdateWithoutTasksAssignedInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1933,6 +1995,7 @@ export type UserUncheckedUpdateWithoutTasksAssignedInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -1969,6 +2032,7 @@ export type UserUpdateWithoutTasksCreatedInput = {
   tasksAssigned?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -1992,6 +2056,127 @@ export type UserUncheckedUpdateWithoutTasksCreatedInput = {
   versionsPublished?: Prisma.WorkflowVersionUncheckedUpdateManyWithoutPublishedByNestedInput
   instancesStarted?: Prisma.ProcessInstanceUncheckedUpdateManyWithoutStartedByNestedInput
   tasksAssigned?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
+  auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutDecisionsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.Role
+  permissions?: Prisma.UserCreatepermissionsInput | string[]
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  workflowsCreated?: Prisma.WorkflowCreateNestedManyWithoutCreatedByInput
+  versionsPublished?: Prisma.WorkflowVersionCreateNestedManyWithoutPublishedByInput
+  instancesStarted?: Prisma.ProcessInstanceCreateNestedManyWithoutStartedByInput
+  tasksAssigned?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
+  activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
+  invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
+  auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutDecisionsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.Role
+  permissions?: Prisma.UserCreatepermissionsInput | string[]
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  workflowsCreated?: Prisma.WorkflowUncheckedCreateNestedManyWithoutCreatedByInput
+  versionsPublished?: Prisma.WorkflowVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  instancesStarted?: Prisma.ProcessInstanceUncheckedCreateNestedManyWithoutStartedByInput
+  tasksAssigned?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
+  activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
+  auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutDecisionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDecisionsInput, Prisma.UserUncheckedCreateWithoutDecisionsInput>
+}
+
+export type UserUpsertWithoutDecisionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDecisionsInput, Prisma.UserUncheckedUpdateWithoutDecisionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDecisionsInput, Prisma.UserUncheckedCreateWithoutDecisionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDecisionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDecisionsInput, Prisma.UserUncheckedUpdateWithoutDecisionsInput>
+}
+
+export type UserUpdateWithoutDecisionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  permissions?: Prisma.UserUpdatepermissionsInput | string[]
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  workflowsCreated?: Prisma.WorkflowUpdateManyWithoutCreatedByNestedInput
+  versionsPublished?: Prisma.WorkflowVersionUpdateManyWithoutPublishedByNestedInput
+  instancesStarted?: Prisma.ProcessInstanceUpdateManyWithoutStartedByNestedInput
+  tasksAssigned?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
+  activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
+  invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
+  auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDecisionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  permissions?: Prisma.UserUpdatepermissionsInput | string[]
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  workflowsCreated?: Prisma.WorkflowUncheckedUpdateManyWithoutCreatedByNestedInput
+  versionsPublished?: Prisma.WorkflowVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  instancesStarted?: Prisma.ProcessInstanceUncheckedUpdateManyWithoutStartedByNestedInput
+  tasksAssigned?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2019,6 +2204,7 @@ export type UserCreateWithoutActivitiesInput = {
   tasksAssigned?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -2044,6 +2230,7 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   tasksAssigned?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2085,6 +2272,7 @@ export type UserUpdateWithoutActivitiesInput = {
   tasksAssigned?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2110,6 +2298,7 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   tasksAssigned?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2135,6 +2324,7 @@ export type UserCreateWithoutCommentsInput = {
   tasksAssigned?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
@@ -2160,6 +2350,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   tasksAssigned?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
@@ -2201,6 +2392,7 @@ export type UserUpdateWithoutCommentsInput = {
   tasksAssigned?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
@@ -2226,6 +2418,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   tasksAssigned?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
@@ -2252,6 +2445,7 @@ export type UserCreateWithoutNotificationsInput = {
   tasksCreated?: Prisma.TaskCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationCreateNestedManyWithoutAcceptedByInput
   auditLogs?: Prisma.OrgAuditLogCreateNestedManyWithoutActorInput
@@ -2277,6 +2471,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   tasksCreated?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatedByInput
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  decisions?: Prisma.TaskDecisionUncheckedCreateNestedManyWithoutUserInput
   invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   invitationsAccepted?: Prisma.InvitationUncheckedCreateNestedManyWithoutAcceptedByInput
   auditLogs?: Prisma.OrgAuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -2318,6 +2513,7 @@ export type UserUpdateWithoutNotificationsInput = {
   tasksCreated?: Prisma.TaskUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUpdateManyWithoutAcceptedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUpdateManyWithoutActorNestedInput
@@ -2343,6 +2539,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   tasksCreated?: Prisma.TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  decisions?: Prisma.TaskDecisionUncheckedUpdateManyWithoutUserNestedInput
   invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   invitationsAccepted?: Prisma.InvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
   auditLogs?: Prisma.OrgAuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -2364,6 +2561,7 @@ export type UserCountOutputType = {
   tasksCreated: number
   activities: number
   comments: number
+  decisions: number
   notifications: number
   invitationsSent: number
   invitationsAccepted: number
@@ -2381,6 +2579,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   tasksCreated?: boolean | UserCountOutputTypeCountTasksCreatedArgs
   activities?: boolean | UserCountOutputTypeCountActivitiesArgs
   comments?: boolean | UserCountOutputTypeCountCommentsArgs
+  decisions?: boolean | UserCountOutputTypeCountDecisionsArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   invitationsSent?: boolean | UserCountOutputTypeCountInvitationsSentArgs
   invitationsAccepted?: boolean | UserCountOutputTypeCountInvitationsAcceptedArgs
@@ -2470,6 +2669,13 @@ export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.E
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountDecisionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaskDecisionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.NotificationWhereInput
 }
@@ -2516,6 +2722,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   tasksCreated?: boolean | Prisma.User$tasksCreatedArgs<ExtArgs>
   activities?: boolean | Prisma.User$activitiesArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
+  decisions?: boolean | Prisma.User$decisionsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   invitationsSent?: boolean | Prisma.User$invitationsSentArgs<ExtArgs>
   invitationsAccepted?: boolean | Prisma.User$invitationsAcceptedArgs<ExtArgs>
@@ -2571,6 +2778,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   tasksCreated?: boolean | Prisma.User$tasksCreatedArgs<ExtArgs>
   activities?: boolean | Prisma.User$activitiesArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
+  decisions?: boolean | Prisma.User$decisionsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   invitationsSent?: boolean | Prisma.User$invitationsSentArgs<ExtArgs>
   invitationsAccepted?: boolean | Prisma.User$invitationsAcceptedArgs<ExtArgs>
@@ -2593,6 +2801,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     tasksCreated: Prisma.$TaskPayload<ExtArgs>[]
     activities: Prisma.$TaskActivityPayload<ExtArgs>[]
     comments: Prisma.$CommentPayload<ExtArgs>[]
+    decisions: Prisma.$TaskDecisionPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     invitationsSent: Prisma.$InvitationPayload<ExtArgs>[]
     invitationsAccepted: Prisma.$InvitationPayload<ExtArgs>[]
@@ -3012,6 +3221,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   tasksCreated<T extends Prisma.User$tasksCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tasksCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activities<T extends Prisma.User$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.User$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  decisions<T extends Prisma.User$decisionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$decisionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskDecisionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invitationsSent<T extends Prisma.User$invitationsSentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invitationsAccepted<T extends Prisma.User$invitationsAcceptedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$invitationsAcceptedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3684,6 +3894,30 @@ export type User$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.CommentScalarFieldEnum | Prisma.CommentScalarFieldEnum[]
+}
+
+/**
+ * User.decisions
+ */
+export type User$decisionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TaskDecision
+   */
+  select?: Prisma.TaskDecisionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TaskDecision
+   */
+  omit?: Prisma.TaskDecisionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskDecisionInclude<ExtArgs> | null
+  where?: Prisma.TaskDecisionWhereInput
+  orderBy?: Prisma.TaskDecisionOrderByWithRelationInput | Prisma.TaskDecisionOrderByWithRelationInput[]
+  cursor?: Prisma.TaskDecisionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TaskDecisionScalarFieldEnum | Prisma.TaskDecisionScalarFieldEnum[]
 }
 
 /**

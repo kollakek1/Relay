@@ -15,6 +15,7 @@ import {
   type StepCondition,
   type WorkflowFormField,
 } from './engine'
+import { notifyApprovers } from '@/features/task/server/approvals'
 
 const workflowListSelect = {
   id: true,
@@ -118,6 +119,7 @@ export async function saveWorkflowDraft(ctx: Context, input: SaveWorkflowInput) 
         assigneeRole: step.assigneeRole,
         dueInDays: step.dueInDays,
         kind: step.kind,
+        approvalMode: step.approvalMode,
         fields: step.fields.length > 0 ? (step.fields as unknown as Prisma.InputJsonValue) : undefined,
         condition: step.condition ? (step.condition as unknown as Prisma.InputJsonValue) : undefined,
       })),
@@ -153,6 +155,7 @@ export async function publishWorkflow(ctx: Context, workflowId: string) {
     assigneeRole: step.assigneeRole,
     dueInDays: step.dueInDays,
     kind: step.kind,
+    approvalMode: step.approvalMode,
     fields: (step.fields as WorkflowFormField[] | null) ?? [],
     condition: (step.condition as StepCondition | null) ?? null,
   }))
@@ -233,7 +236,14 @@ export async function runInstance(ctx: Context, workflowId: string) {
       },
     })
 
-    const created: Array<{ order: number; taskId: string; condition: StepCondition | null }> = []
+    const created: Array<{
+      order: number
+      taskId: string
+      condition: StepCondition | null
+      kind: ProcessSnapshotStep['kind']
+      name: string
+      requiredRole: ProcessSnapshotStep['assigneeRole']
+    }> = []
     for (const step of snapshot.steps) {
       const task = await tx.task.create({
         data: {
@@ -252,7 +262,14 @@ export async function runInstance(ctx: Context, workflowId: string) {
         },
         select: { id: true, stepOrder: true },
       })
-      created.push({ order: task.stepOrder, taskId: task.id, condition: step.condition })
+      created.push({
+        order: task.stepOrder,
+        taskId: task.id,
+        condition: step.condition,
+        kind: step.kind,
+        name: step.name,
+        requiredRole: step.assigneeRole,
+      })
     }
 
     // Activate the first step whose condition holds; skip the rest until one does.
@@ -264,6 +281,15 @@ export async function runInstance(ctx: Context, workflowId: string) {
         await tx.taskActivity.create({
           data: { taskId: entry.taskId, actorId: ctx.userId, type: 'STATUS_CHANGED', fromValue: 'BLOCKED', toValue: 'PENDING' },
         })
+        if (entry.kind === 'APPROVAL') {
+          await notifyApprovers(tx, {
+            organizationId: ctx.organizationId,
+            taskId: entry.taskId,
+            taskName: entry.name,
+            requiredRole: entry.requiredRole,
+            workflowName: workflow.name,
+          })
+        }
         activated = true
       } else {
         await tx.task.update({

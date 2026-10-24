@@ -7,11 +7,12 @@ import { parseInput } from '@/shared/server/action-utils'
 import { rateLimit, RATE_LIMITS } from '@/shared/server/rate-limit'
 import {
   assignTaskSchema,
+  decideTaskSchema,
   taskIdSchema,
   transitionTaskSchema,
   updateTaskSchema,
 } from './schemas/taskSchema'
-import { assignTask, claimTask, transitionTask, updateTask } from './server/service'
+import { assignTask, claimTask, decideTask, transitionTask, updateTask } from './server/service'
 
 function revalidateTask(taskId: string) {
   revalidatePath('/dashboard/tasks')
@@ -65,6 +66,19 @@ export async function transitionTaskAction(input: unknown): Promise<ActionResult
     const data = parseInput(transitionTaskSchema, input)
     await rateLimit('task:transition', ctx.userId, RATE_LIMITS.taskMutate)
     await transitionTask(ctx, data)
+    revalidateTask(data.taskId)
+    return ok(undefined)
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function decideTaskAction(input: unknown): Promise<ActionResult> {
+  try {
+    const ctx = await requireContext()
+    const data = parseInput(decideTaskSchema, input)
+    await rateLimit('task:decide', ctx.userId, RATE_LIMITS.taskMutate)
+    await decideTask(ctx, data)
     revalidateTask(data.taskId)
     return ok(undefined)
   } catch (error) {

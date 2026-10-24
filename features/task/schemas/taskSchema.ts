@@ -27,6 +27,12 @@ export const updateTaskSchema = z.object({
   dueAt: z.coerce.date().nullable().optional(),
 })
 
+export const decideTaskSchema = z.object({
+  taskId: z.string().min(1),
+  decision: z.enum(['APPROVED', 'REJECTED', 'CHANGES_REQUESTED']),
+  note: z.string().trim().max(1000).optional(),
+})
+
 export const transitionTaskSchema = z.object({
   taskId: z.string().min(1),
   to: taskStatusSchema,
@@ -41,6 +47,7 @@ export const transitionTaskSchema = z.object({
 export const taskQuerySchema = z.object({
   search: z.string().trim().max(120).optional(),
   status: taskStatusSchema.optional(),
+  kind: z.enum(['TASK', 'APPROVAL']).optional(),
   assignee: z.enum(['me', 'unassigned', 'all']).optional(),
   priority: taskPrioritySchema.optional(),
   sort: z.enum(['createdAt', 'dueAt', 'priority']).optional(),

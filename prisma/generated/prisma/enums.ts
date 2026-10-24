@@ -85,6 +85,23 @@ export const StepKind = {
 export type StepKind = (typeof StepKind)[keyof typeof StepKind]
 
 
+export const ApprovalMode = {
+  ANY: 'ANY',
+  ALL: 'ALL'
+} as const
+
+export type ApprovalMode = (typeof ApprovalMode)[keyof typeof ApprovalMode]
+
+
+export const ApprovalDecision = {
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CHANGES_REQUESTED: 'CHANGES_REQUESTED'
+} as const
+
+export type ApprovalDecision = (typeof ApprovalDecision)[keyof typeof ApprovalDecision]
+
+
 export const ActivityType = {
   CREATED: 'CREATED',
   CLAIMED: 'CLAIMED',
@@ -92,7 +109,8 @@ export const ActivityType = {
   UNASSIGNED: 'UNASSIGNED',
   STATUS_CHANGED: 'STATUS_CHANGED',
   DUE_CHANGED: 'DUE_CHANGED',
-  COMMENTED: 'COMMENTED'
+  COMMENTED: 'COMMENTED',
+  DECIDED: 'DECIDED'
 } as const
 
 export type ActivityType = (typeof ActivityType)[keyof typeof ActivityType]
@@ -107,7 +125,9 @@ export const NotificationType = {
   INSTANCE_STARTED: 'INSTANCE_STARTED',
   ORG_INVITATION: 'ORG_INVITATION',
   TASK_DUE_SOON: 'TASK_DUE_SOON',
-  TASK_OVERDUE: 'TASK_OVERDUE'
+  TASK_OVERDUE: 'TASK_OVERDUE',
+  APPROVAL_REQUESTED: 'APPROVAL_REQUESTED',
+  APPROVAL_DECIDED: 'APPROVAL_DECIDED'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

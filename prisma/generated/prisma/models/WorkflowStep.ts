@@ -45,6 +45,7 @@ export type WorkflowStepMinAggregateOutputType = {
   assigneeRole: $Enums.OrgRole | null
   dueInDays: number | null
   kind: $Enums.StepKind | null
+  approvalMode: $Enums.ApprovalMode | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +59,7 @@ export type WorkflowStepMaxAggregateOutputType = {
   assigneeRole: $Enums.OrgRole | null
   dueInDays: number | null
   kind: $Enums.StepKind | null
+  approvalMode: $Enums.ApprovalMode | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -71,6 +73,7 @@ export type WorkflowStepCountAggregateOutputType = {
   assigneeRole: number
   dueInDays: number
   kind: number
+  approvalMode: number
   fields: number
   condition: number
   createdAt: number
@@ -98,6 +101,7 @@ export type WorkflowStepMinAggregateInputType = {
   assigneeRole?: true
   dueInDays?: true
   kind?: true
+  approvalMode?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -111,6 +115,7 @@ export type WorkflowStepMaxAggregateInputType = {
   assigneeRole?: true
   dueInDays?: true
   kind?: true
+  approvalMode?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,6 +129,7 @@ export type WorkflowStepCountAggregateInputType = {
   assigneeRole?: true
   dueInDays?: true
   kind?: true
+  approvalMode?: true
   fields?: true
   condition?: true
   createdAt?: true
@@ -226,6 +232,7 @@ export type WorkflowStepGroupByOutputType = {
   assigneeRole: $Enums.OrgRole | null
   dueInDays: number | null
   kind: $Enums.StepKind
+  approvalMode: $Enums.ApprovalMode | null
   fields: runtime.JsonValue | null
   condition: runtime.JsonValue | null
   createdAt: Date
@@ -264,6 +271,7 @@ export type WorkflowStepWhereInput = {
   assigneeRole?: Prisma.EnumOrgRoleNullableFilter<"WorkflowStep"> | $Enums.OrgRole | null
   dueInDays?: Prisma.IntNullableFilter<"WorkflowStep"> | number | null
   kind?: Prisma.EnumStepKindFilter<"WorkflowStep"> | $Enums.StepKind
+  approvalMode?: Prisma.EnumApprovalModeNullableFilter<"WorkflowStep"> | $Enums.ApprovalMode | null
   fields?: Prisma.JsonNullableFilter<"WorkflowStep">
   condition?: Prisma.JsonNullableFilter<"WorkflowStep">
   createdAt?: Prisma.DateTimeFilter<"WorkflowStep"> | Date | string
@@ -280,6 +288,7 @@ export type WorkflowStepOrderByWithRelationInput = {
   assigneeRole?: Prisma.SortOrderInput | Prisma.SortOrder
   dueInDays?: Prisma.SortOrderInput | Prisma.SortOrder
   kind?: Prisma.SortOrder
+  approvalMode?: Prisma.SortOrderInput | Prisma.SortOrder
   fields?: Prisma.SortOrderInput | Prisma.SortOrder
   condition?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -300,6 +309,7 @@ export type WorkflowStepWhereUniqueInput = Prisma.AtLeast<{
   assigneeRole?: Prisma.EnumOrgRoleNullableFilter<"WorkflowStep"> | $Enums.OrgRole | null
   dueInDays?: Prisma.IntNullableFilter<"WorkflowStep"> | number | null
   kind?: Prisma.EnumStepKindFilter<"WorkflowStep"> | $Enums.StepKind
+  approvalMode?: Prisma.EnumApprovalModeNullableFilter<"WorkflowStep"> | $Enums.ApprovalMode | null
   fields?: Prisma.JsonNullableFilter<"WorkflowStep">
   condition?: Prisma.JsonNullableFilter<"WorkflowStep">
   createdAt?: Prisma.DateTimeFilter<"WorkflowStep"> | Date | string
@@ -316,6 +326,7 @@ export type WorkflowStepOrderByWithAggregationInput = {
   assigneeRole?: Prisma.SortOrderInput | Prisma.SortOrder
   dueInDays?: Prisma.SortOrderInput | Prisma.SortOrder
   kind?: Prisma.SortOrder
+  approvalMode?: Prisma.SortOrderInput | Prisma.SortOrder
   fields?: Prisma.SortOrderInput | Prisma.SortOrder
   condition?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -339,6 +350,7 @@ export type WorkflowStepScalarWhereWithAggregatesInput = {
   assigneeRole?: Prisma.EnumOrgRoleNullableWithAggregatesFilter<"WorkflowStep"> | $Enums.OrgRole | null
   dueInDays?: Prisma.IntNullableWithAggregatesFilter<"WorkflowStep"> | number | null
   kind?: Prisma.EnumStepKindWithAggregatesFilter<"WorkflowStep"> | $Enums.StepKind
+  approvalMode?: Prisma.EnumApprovalModeNullableWithAggregatesFilter<"WorkflowStep"> | $Enums.ApprovalMode | null
   fields?: Prisma.JsonNullableWithAggregatesFilter<"WorkflowStep">
   condition?: Prisma.JsonNullableWithAggregatesFilter<"WorkflowStep">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"WorkflowStep"> | Date | string
@@ -353,6 +365,7 @@ export type WorkflowStepCreateInput = {
   assigneeRole?: $Enums.OrgRole | null
   dueInDays?: number | null
   kind?: $Enums.StepKind
+  approvalMode?: $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -369,6 +382,7 @@ export type WorkflowStepUncheckedCreateInput = {
   assigneeRole?: $Enums.OrgRole | null
   dueInDays?: number | null
   kind?: $Enums.StepKind
+  approvalMode?: $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -383,6 +397,7 @@ export type WorkflowStepUpdateInput = {
   assigneeRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   dueInDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  approvalMode?: Prisma.NullableEnumApprovalModeFieldUpdateOperationsInput | $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -399,6 +414,7 @@ export type WorkflowStepUncheckedUpdateInput = {
   assigneeRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   dueInDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  approvalMode?: Prisma.NullableEnumApprovalModeFieldUpdateOperationsInput | $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -414,6 +430,7 @@ export type WorkflowStepCreateManyInput = {
   assigneeRole?: $Enums.OrgRole | null
   dueInDays?: number | null
   kind?: $Enums.StepKind
+  approvalMode?: $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -428,6 +445,7 @@ export type WorkflowStepUpdateManyMutationInput = {
   assigneeRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   dueInDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  approvalMode?: Prisma.NullableEnumApprovalModeFieldUpdateOperationsInput | $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -443,6 +461,7 @@ export type WorkflowStepUncheckedUpdateManyInput = {
   assigneeRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   dueInDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  approvalMode?: Prisma.NullableEnumApprovalModeFieldUpdateOperationsInput | $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -473,6 +492,7 @@ export type WorkflowStepCountOrderByAggregateInput = {
   assigneeRole?: Prisma.SortOrder
   dueInDays?: Prisma.SortOrder
   kind?: Prisma.SortOrder
+  approvalMode?: Prisma.SortOrder
   fields?: Prisma.SortOrder
   condition?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -493,6 +513,7 @@ export type WorkflowStepMaxOrderByAggregateInput = {
   assigneeRole?: Prisma.SortOrder
   dueInDays?: Prisma.SortOrder
   kind?: Prisma.SortOrder
+  approvalMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -506,6 +527,7 @@ export type WorkflowStepMinOrderByAggregateInput = {
   assigneeRole?: Prisma.SortOrder
   dueInDays?: Prisma.SortOrder
   kind?: Prisma.SortOrder
+  approvalMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -573,6 +595,10 @@ export type EnumStepKindFieldUpdateOperationsInput = {
   set?: $Enums.StepKind
 }
 
+export type NullableEnumApprovalModeFieldUpdateOperationsInput = {
+  set?: $Enums.ApprovalMode | null
+}
+
 export type WorkflowStepCreateWithoutWorkflowInput = {
   id?: string
   order: number
@@ -581,6 +607,7 @@ export type WorkflowStepCreateWithoutWorkflowInput = {
   assigneeRole?: $Enums.OrgRole | null
   dueInDays?: number | null
   kind?: $Enums.StepKind
+  approvalMode?: $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -595,6 +622,7 @@ export type WorkflowStepUncheckedCreateWithoutWorkflowInput = {
   assigneeRole?: $Enums.OrgRole | null
   dueInDays?: number | null
   kind?: $Enums.StepKind
+  approvalMode?: $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -639,6 +667,7 @@ export type WorkflowStepScalarWhereInput = {
   assigneeRole?: Prisma.EnumOrgRoleNullableFilter<"WorkflowStep"> | $Enums.OrgRole | null
   dueInDays?: Prisma.IntNullableFilter<"WorkflowStep"> | number | null
   kind?: Prisma.EnumStepKindFilter<"WorkflowStep"> | $Enums.StepKind
+  approvalMode?: Prisma.EnumApprovalModeNullableFilter<"WorkflowStep"> | $Enums.ApprovalMode | null
   fields?: Prisma.JsonNullableFilter<"WorkflowStep">
   condition?: Prisma.JsonNullableFilter<"WorkflowStep">
   createdAt?: Prisma.DateTimeFilter<"WorkflowStep"> | Date | string
@@ -653,6 +682,7 @@ export type WorkflowStepCreateManyWorkflowInput = {
   assigneeRole?: $Enums.OrgRole | null
   dueInDays?: number | null
   kind?: $Enums.StepKind
+  approvalMode?: $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -667,6 +697,7 @@ export type WorkflowStepUpdateWithoutWorkflowInput = {
   assigneeRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   dueInDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  approvalMode?: Prisma.NullableEnumApprovalModeFieldUpdateOperationsInput | $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -681,6 +712,7 @@ export type WorkflowStepUncheckedUpdateWithoutWorkflowInput = {
   assigneeRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   dueInDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  approvalMode?: Prisma.NullableEnumApprovalModeFieldUpdateOperationsInput | $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -695,6 +727,7 @@ export type WorkflowStepUncheckedUpdateManyWithoutWorkflowInput = {
   assigneeRole?: Prisma.NullableEnumOrgRoleFieldUpdateOperationsInput | $Enums.OrgRole | null
   dueInDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   kind?: Prisma.EnumStepKindFieldUpdateOperationsInput | $Enums.StepKind
+  approvalMode?: Prisma.NullableEnumApprovalModeFieldUpdateOperationsInput | $Enums.ApprovalMode | null
   fields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   condition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -712,6 +745,7 @@ export type WorkflowStepSelect<ExtArgs extends runtime.Types.Extensions.Internal
   assigneeRole?: boolean
   dueInDays?: boolean
   kind?: boolean
+  approvalMode?: boolean
   fields?: boolean
   condition?: boolean
   createdAt?: boolean
@@ -728,6 +762,7 @@ export type WorkflowStepSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   assigneeRole?: boolean
   dueInDays?: boolean
   kind?: boolean
+  approvalMode?: boolean
   fields?: boolean
   condition?: boolean
   createdAt?: boolean
@@ -744,6 +779,7 @@ export type WorkflowStepSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   assigneeRole?: boolean
   dueInDays?: boolean
   kind?: boolean
+  approvalMode?: boolean
   fields?: boolean
   condition?: boolean
   createdAt?: boolean
@@ -760,13 +796,14 @@ export type WorkflowStepSelectScalar = {
   assigneeRole?: boolean
   dueInDays?: boolean
   kind?: boolean
+  approvalMode?: boolean
   fields?: boolean
   condition?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type WorkflowStepOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workflowId" | "order" | "name" | "description" | "assigneeRole" | "dueInDays" | "kind" | "fields" | "condition" | "createdAt" | "updatedAt", ExtArgs["result"]["workflowStep"]>
+export type WorkflowStepOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workflowId" | "order" | "name" | "description" | "assigneeRole" | "dueInDays" | "kind" | "approvalMode" | "fields" | "condition" | "createdAt" | "updatedAt", ExtArgs["result"]["workflowStep"]>
 export type WorkflowStepInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workflow?: boolean | Prisma.WorkflowDefaultArgs<ExtArgs>
 }
@@ -791,6 +828,10 @@ export type $WorkflowStepPayload<ExtArgs extends runtime.Types.Extensions.Intern
     assigneeRole: $Enums.OrgRole | null
     dueInDays: number | null
     kind: $Enums.StepKind
+    /**
+     * Approval resolution mode; only meaningful for APPROVAL steps.
+     */
+    approvalMode: $Enums.ApprovalMode | null
     /**
      * Form field definitions (see WorkflowFormField in the engine).
      */
@@ -1233,6 +1274,7 @@ export interface WorkflowStepFieldRefs {
   readonly assigneeRole: Prisma.FieldRef<"WorkflowStep", 'OrgRole'>
   readonly dueInDays: Prisma.FieldRef<"WorkflowStep", 'Int'>
   readonly kind: Prisma.FieldRef<"WorkflowStep", 'StepKind'>
+  readonly approvalMode: Prisma.FieldRef<"WorkflowStep", 'ApprovalMode'>
   readonly fields: Prisma.FieldRef<"WorkflowStep", 'Json'>
   readonly condition: Prisma.FieldRef<"WorkflowStep", 'Json'>
   readonly createdAt: Prisma.FieldRef<"WorkflowStep", 'DateTime'>

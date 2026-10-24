@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation'
 import { requireContext } from '@/shared/server/auth-context'
-import { canManageWorkflows } from '@/shared/server/permissions'
+import { canManageWorkflows, hasOrgRole } from '@/shared/server/permissions'
 import { getTask } from '@/features/task/server/service'
 import { listMembers } from '@/features/organization/server/service'
 import { AppError } from '@/shared/server/errors'
 import { PageHeader } from '@/shared/components/page-header'
 import { TaskDetail } from '@/features/task/components/task-detail'
-import { normalizeFields } from '@/features/workflow/server/engine'
+import { normalizeFields, normalizeSnapshot } from '@/features/workflow/server/engine'
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const ctx = await requireContext()
@@ -40,6 +40,19 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           kind: task.kind,
           fields: normalizeFields(task.fields),
           formValues: (task.formValues as Record<string, unknown> | null) ?? null,
+          decision: task.decision,
+          decisionNote: task.decisionNote,
+          approvalMode:
+            normalizeSnapshot(task.instance.version.steps).steps.find(
+              (step) => step.order === task.stepOrder
+            )?.approvalMode ?? null,
+          decisions: task.decisions.map((decision) => ({
+            id: decision.id,
+            userName: decision.user.name,
+            decision: decision.decision,
+            note: decision.note,
+            createdAt: decision.createdAt,
+          })),
           instance: {
             id: task.instance.id,
             workflow: task.instance.workflow,
@@ -68,6 +81,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         }))}
         currentUserId={ctx.userId}
         canManage={canManageWorkflows(ctx.role)}
+        canDecide={hasOrgRole(ctx.role, task.requiredRole ?? 'MEMBER')}
       />
     </main>
   )

@@ -20,6 +20,7 @@ import {
   MailIcon,
   ClockIcon,
   AlertTriangleIcon,
+  UserCheckIcon,
 } from 'lucide-react'
 
 export interface NotificationView {
@@ -42,6 +43,8 @@ const TYPE_ICON: Record<NotificationType, typeof BellIcon> = {
   ORG_INVITATION: MailIcon,
   TASK_DUE_SOON: ClockIcon,
   TASK_OVERDUE: AlertTriangleIcon,
+  APPROVAL_REQUESTED: UserCheckIcon,
+  APPROVAL_DECIDED: CheckCheckIcon,
 }
 
 export function NotificationsList({ notifications }: { notifications: NotificationView[] }) {

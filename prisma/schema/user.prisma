@@ -19,6 +19,7 @@ model User {
   tasksCreated       Task[]            @relation("TaskCreatedBy")
   activities         TaskActivity[]    @relation("ActivityActor")
   comments           Comment[]         @relation("CommentAuthor")
+  decisions          TaskDecision[]    @relation("TaskDecisionActor")
   notifications      Notification[]    @relation("NotificationRecipient")
   invitationsSent    Invitation[]      @relation("InvitationInviter")
   invitationsAccepted Invitation[]     @relation("InvitationAcceptor")

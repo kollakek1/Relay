@@ -132,6 +132,12 @@ export type ProcessInstance = Prisma.ProcessInstanceModel
  */
 export type Task = Prisma.TaskModel
 /**
+ * Model TaskDecision
+ * A single actor's vote on an approval task. `ALL` mode is satisfied only when
+ * every eligible approver has a row here.
+ */
+export type TaskDecision = Prisma.TaskDecisionModel
+/**
  * Model TaskActivity
  * 
  */

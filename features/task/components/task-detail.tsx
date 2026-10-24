@@ -9,6 +9,7 @@ import { Input } from '@/shared/components/ui/input'
 import { Label } from '@/shared/components/ui/label'
 import { Textarea } from '@/shared/components/ui/textarea'
 import { Separator } from '@/shared/components/ui/separator'
+import { Badge } from '@/shared/components/ui/badge'
 import {
   Select,
   SelectContent,
@@ -34,6 +35,7 @@ import {
 import {
   assignTaskAction,
   claimTaskAction,
+  decideTaskAction,
   transitionTaskAction,
   updateTaskAction,
 } from '@/features/task/actions'
@@ -58,6 +60,7 @@ const ACTIVITY_LABEL: Record<ActivityType, string> = {
   STATUS_CHANGED: 'changed the status',
   DUE_CHANGED: 'changed the due date',
   COMMENTED: 'commented',
+  DECIDED: 'made a decision on',
 }
 
 export interface TaskDetailData {
@@ -72,6 +75,16 @@ export interface TaskDetailData {
   completedAt: Date | string | null
   requiredRole: OrgRole | null
   kind: 'TASK' | 'APPROVAL'
+  decision: 'APPROVED' | 'REJECTED' | 'CHANGES_REQUESTED' | null
+  decisionNote: string | null
+  approvalMode: 'ANY' | 'ALL' | null
+  decisions: Array<{
+    id: string
+    userName: string
+    decision: 'APPROVED' | 'REJECTED' | 'CHANGES_REQUESTED'
+    note: string | null
+    createdAt: Date | string
+  }>
   fields: WorkflowFormField[]
   formValues: Record<string, unknown> | null
   instance: {
@@ -118,6 +131,7 @@ export function TaskDetail({
   members,
   currentUserId,
   canManage,
+  canDecide,
 }: {
   task: TaskDetailData
   comments: CommentView[]
@@ -125,6 +139,7 @@ export function TaskDetail({
   members: MemberView[]
   currentUserId: string
   canManage: boolean
+  canDecide: boolean
 }) {
   const router = useRouter()
   const { isPending, run } = useAction()
@@ -171,6 +186,25 @@ export function TaskDetail({
           dueAt: dueAt ? new Date(dueAt) : null,
         }),
       { success: 'Task updated', onSuccess: refresh }
+    )
+
+  const [decisionNote, setDecisionNote] = useState('')
+
+  const decide = (decision: 'APPROVED' | 'REJECTED' | 'CHANGES_REQUESTED') =>
+    run(
+      () =>
+        decideTaskAction({
+          taskId: task.id,
+          decision,
+          note: decisionNote.trim() || undefined,
+        }),
+      {
+        success: 'Decision recorded',
+        onSuccess: () => {
+          setDecisionNote('')
+          refresh()
+        },
+      }
     )
 
   const submitComment = () => {
@@ -239,14 +273,89 @@ export function TaskDetail({
               </div>
             </div>
 
+            {task.kind === 'APPROVAL' && (
+              <div className="space-y-4 rounded-lg border p-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">Approval</p>
+                  <Badge variant="outline">
+                    {task.approvalMode === 'ALL' ? 'All approvers required' : 'Any approver'}
+                  </Badge>
+                </div>
+
+                {task.decisions.length > 0 && (
+                  <div className="space-y-2">
+                    {task.decisions.map((entry) => (
+                      <div key={entry.id} className="flex items-start gap-2 text-sm">
+                        <Badge variant={decisionVariant(entry.decision)}>{entry.decision}</Badge>
+                        <div className="min-w-0">
+                          <p className="font-medium">{entry.userName}</p>
+                          {entry.note && <p className="text-muted-foreground">{entry.note}</p>}
+                          <p className="text-muted-foreground text-xs">
+                            {formatRelativeTime(entry.createdAt)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {isTerminal ? (
+                  <p className="text-muted-foreground text-sm">
+                    Resolved: {task.decision ?? '—'}
+                    {task.decisionNote ? ` — ${task.decisionNote}` : ''}
+                  </p>
+                ) : canDecide ? (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="decision-note">Note (optional)</Label>
+                      <Textarea
+                        id="decision-note"
+                        value={decisionNote}
+                        onChange={(event) => setDecisionNote(event.target.value)}
+                        disabled={isPending}
+                        placeholder="Reason for your decision"
+                      />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button onClick={() => decide('APPROVED')} disabled={isPending}>
+                        {isPending ? <Loader2Icon className="animate-spin" /> : <CheckCircle2Icon />}
+                        Approve
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => decide('CHANGES_REQUESTED')}
+                        disabled={isPending}
+                      >
+                        <RotateCcwIcon />
+                        Request changes
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="text-destructive"
+                        onClick={() => decide('REJECTED')}
+                        disabled={isPending}
+                      >
+                        <XIcon />
+                        Reject
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm">
+                    You are not eligible to decide this approval.
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-2 pt-2">
-              {task.status === 'PENDING' && !task.assigneeId && (
+              {task.kind === 'TASK' && task.status === 'PENDING' && !task.assigneeId && (
                 <Button onClick={claim} disabled={isPending}>
                   {isPending ? <Loader2Icon className="animate-spin" /> : <HandIcon />}
                   Claim task
                 </Button>
               )}
-              {task.status === 'CLAIMED' && isAssignee && (
+              {task.kind === 'TASK' && task.status === 'CLAIMED' && isAssignee && (
                 <Button
                   onClick={() => transition('IN_PROGRESS', 'Task started')}
                   disabled={isPending}
@@ -255,7 +364,7 @@ export function TaskDetail({
                   Start working
                 </Button>
               )}
-              {task.status === 'IN_PROGRESS' && isAssignee && (
+              {task.kind === 'TASK' && task.status === 'IN_PROGRESS' && isAssignee && (
                 <Button
                   onClick={() => transition('DONE', 'Task completed')}
                   disabled={isPending}
@@ -264,16 +373,18 @@ export function TaskDetail({
                   Complete
                 </Button>
               )}
-              {(task.status === 'CLAIMED' || task.status === 'IN_PROGRESS') && isAssignee && (
-                <Button
-                  variant="outline"
-                  onClick={() => transition('PENDING', 'Task released')}
-                  disabled={isPending}
-                >
-                  <RotateCcwIcon />
-                  Release
-                </Button>
-              )}
+              {task.kind === 'TASK' &&
+                (task.status === 'CLAIMED' || task.status === 'IN_PROGRESS') &&
+                isAssignee && (
+                  <Button
+                    variant="outline"
+                    onClick={() => transition('PENDING', 'Task released')}
+                    disabled={isPending}
+                  >
+                    <RotateCcwIcon />
+                    Release
+                  </Button>
+                )}
               {canManage && !isTerminal && (
                 <Button
                   variant="outline"
@@ -477,6 +588,14 @@ export function TaskDetail({
       </AlertDialog>
     </div>
   )
+}
+
+function decisionVariant(
+  decision: 'APPROVED' | 'REJECTED' | 'CHANGES_REQUESTED'
+): 'default' | 'destructive' | 'secondary' {
+  if (decision === 'APPROVED') return 'default'
+  if (decision === 'REJECTED') return 'destructive'
+  return 'secondary'
 }
 
 function TaskFormField({
