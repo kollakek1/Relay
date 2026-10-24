@@ -38,6 +38,8 @@ import {
   updateTaskAction,
 } from '@/features/task/actions'
 import { PRIORITY_LABEL, TaskPriorityBadge, TaskStatusBadge } from './task-badges'
+import type { WorkflowFormField } from '@/features/workflow/server/engine'
+import { Checkbox } from '@/shared/components/ui/checkbox'
 import {
   CheckCircle2Icon,
   HandIcon,
@@ -69,6 +71,9 @@ export interface TaskDetailData {
   createdAt: Date | string
   completedAt: Date | string | null
   requiredRole: OrgRole | null
+  kind: 'TASK' | 'APPROVAL'
+  fields: WorkflowFormField[]
+  formValues: Record<string, unknown> | null
   instance: {
     id: string
     workflow: { id: string; name: string } | null
@@ -127,6 +132,9 @@ export function TaskDetail({
   const [priority, setPriority] = useState<TaskPriority>(task.priority)
   const [dueAt, setDueAt] = useState(toDateInput(task.dueAt))
   const [confirmCancel, setConfirmCancel] = useState(false)
+  const [formValues, setFormValues] = useState<Record<string, unknown>>(
+    () => (task.formValues as Record<string, unknown> | null) ?? {}
+  )
 
   const isAssignee = task.assigneeId === currentUserId
   const canAct = isAssignee || canManage
@@ -138,7 +146,15 @@ export function TaskDetail({
     run(() => claimTaskAction({ taskId: task.id }), { success: 'Task claimed', onSuccess: refresh })
 
   const transition = (to: TaskStatus, message: string) =>
-    run(() => transitionTaskAction({ taskId: task.id, to }), { success: message, onSuccess: refresh })
+    run(
+      () =>
+        transitionTaskAction({
+          taskId: task.id,
+          to,
+          formValues: to === 'DONE' ? formValues : undefined,
+        }),
+      { success: message, onSuccess: refresh }
+    )
 
   const assign = (assigneeId: string) =>
     run(() => assignTaskAction({ taskId: task.id, assigneeId: assigneeId === 'none' ? null : assigneeId }), {
@@ -180,6 +196,29 @@ export function TaskDetail({
             <p className="text-muted-foreground text-sm">
               {task.description || 'No description provided.'}
             </p>
+
+            {task.fields.length > 0 && (
+              <div className="space-y-3 rounded-lg border p-4">
+                <p className="text-sm font-medium">
+                  {task.kind === 'APPROVAL' ? 'Decision form' : 'Form'}
+                </p>
+                {task.fields.map((field) => (
+                  <TaskFormField
+                    key={field.key}
+                    field={field}
+                    value={formValues[field.key]}
+                    disabled={!canAct || isTerminal}
+                    onChange={(value) =>
+                      setFormValues((prev) => ({ ...prev, [field.key]: value }))
+                    }
+                  />
+                ))}
+                {isTerminal && task.formValues && (
+                  <p className="text-muted-foreground text-xs">Submitted values are shown above.</p>
+                )}
+              </div>
+            )}
+
             <Separator />
             <div className="grid gap-3 text-sm sm:grid-cols-2">
               <div>
@@ -436,6 +475,90 @@ export function TaskDetail({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
+  )
+}
+
+function TaskFormField({
+  field,
+  value,
+  onChange,
+  disabled,
+}: {
+  field: WorkflowFormField
+  value: unknown
+  onChange: (value: unknown) => void
+  disabled: boolean
+}) {
+  const id = `field-${field.key}`
+  const label = (
+    <>
+      {field.label}
+      {field.required && <span className="text-destructive"> *</span>}
+    </>
+  )
+
+  if (field.type === 'checkbox') {
+    return (
+      <label className="flex items-center gap-2 text-sm">
+        <Checkbox
+          checked={value === true}
+          onCheckedChange={(checked) => onChange(checked === true)}
+          disabled={disabled}
+        />
+        {label}
+      </label>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      {field.type === 'textarea' ? (
+        <Textarea
+          id={id}
+          disabled={disabled}
+          value={String(value ?? '')}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      ) : field.type === 'select' ? (
+        <Select
+          value={String(value ?? '')}
+          onValueChange={(next) => onChange(next)}
+          disabled={disabled}
+        >
+          <SelectTrigger id={id} className="w-full">
+            <SelectValue placeholder="Select…" />
+          </SelectTrigger>
+          <SelectContent>
+            {(field.options ?? []).map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ) : field.type === 'number' ? (
+        <Input
+          id={id}
+          type="number"
+          min={field.min}
+          max={field.max}
+          disabled={disabled}
+          value={value === undefined || value === null ? '' : String(value)}
+          onChange={(event) =>
+            onChange(event.target.value === '' ? '' : Number(event.target.value))
+          }
+        />
+      ) : (
+        <Input
+          id={id}
+          type={field.type === 'date' ? 'date' : 'text'}
+          disabled={disabled}
+          value={String(value ?? '')}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      )}
     </div>
   )
 }

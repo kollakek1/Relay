@@ -7,7 +7,14 @@ import type {
   CreateWorkflowInput,
   SaveWorkflowInput,
 } from '../schemas/workflowSchema'
-import { buildStepSnapshot, validateForPublish, type SnapshotStep } from './validation'
+import { buildStepSnapshot, validateForPublish } from './validation'
+import {
+  evaluateCondition,
+  normalizeSnapshot,
+  type ProcessSnapshotStep,
+  type StepCondition,
+  type WorkflowFormField,
+} from './engine'
 
 const workflowListSelect = {
   id: true,
@@ -110,6 +117,9 @@ export async function saveWorkflowDraft(ctx: Context, input: SaveWorkflowInput) 
         description: step.description,
         assigneeRole: step.assigneeRole,
         dueInDays: step.dueInDays,
+        kind: step.kind,
+        fields: step.fields.length > 0 ? (step.fields as unknown as Prisma.InputJsonValue) : undefined,
+        condition: step.condition ? (step.condition as unknown as Prisma.InputJsonValue) : undefined,
       })),
     })
     await tx.workflow.update({
@@ -142,8 +152,11 @@ export async function publishWorkflow(ctx: Context, workflowId: string) {
     description: step.description ?? undefined,
     assigneeRole: step.assigneeRole,
     dueInDays: step.dueInDays,
+    kind: step.kind,
+    fields: (step.fields as WorkflowFormField[] | null) ?? [],
+    condition: (step.condition as StepCondition | null) ?? null,
   }))
-  const snapshot: SnapshotStep[] = validateForPublish(steps)
+  const snapshot: ProcessSnapshotStep[] = validateForPublish(steps)
 
   return prisma.$transaction(async (tx) => {
     const latest = await tx.workflowVersion.findFirst({
@@ -157,7 +170,7 @@ export async function publishWorkflow(ctx: Context, workflowId: string) {
       data: {
         workflowId,
         version,
-        steps: snapshot as unknown as Prisma.InputJsonValue,
+        steps: { schemaVersion: 2, steps: snapshot } as unknown as Prisma.InputJsonValue,
         publishedById: ctx.userId,
       },
     })
@@ -187,8 +200,9 @@ export async function deleteWorkflow(ctx: Context, workflowId: string) {
 
 /**
  * Starts a process instance from the latest published version and generates one
- * task per step. The first task is claimable (`PENDING`); later steps are
- * `BLOCKED` until the previous one completes.
+ * task per step. Steps are created `BLOCKED`; the engine then activates the
+ * first step whose condition holds (skipping/`CANCELLED` steps whose condition
+ * is false). Later steps unblock as the pipeline advances.
  */
 export async function runInstance(ctx: Context, workflowId: string) {
   const workflow = await prisma.workflow.findFirst({
@@ -202,10 +216,11 @@ export async function runInstance(ctx: Context, workflowId: string) {
     throw invalid('Publish the workflow before starting it')
   }
 
-  const steps = version.steps as unknown as SnapshotStep[]
-  if (steps.length === 0) throw invalid('The published version has no steps')
+  const snapshot = normalizeSnapshot(version.steps)
+  if (snapshot.steps.length === 0) throw invalid('The published version has no steps')
 
   const now = Date.now()
+  const variables: Record<string, unknown> = {}
 
   return prisma.$transaction(async (tx) => {
     const instance = await tx.processInstance.create({
@@ -218,20 +233,55 @@ export async function runInstance(ctx: Context, workflowId: string) {
       },
     })
 
-    await tx.task.createMany({
-      data: steps.map((step, index) => ({
-        organizationId: ctx.organizationId,
-        instanceId: instance.id,
-        stepOrder: step.order,
-        name: step.name,
-        description: step.description,
-        status: index === 0 ? 'PENDING' : 'BLOCKED',
-        requiredRole: step.assigneeRole,
-        createdById: ctx.userId,
-        dueAt:
-          step.dueInDays != null ? new Date(now + step.dueInDays * 24 * 60 * 60 * 1000) : null,
-      })),
-    })
+    const created: Array<{ order: number; taskId: string; condition: StepCondition | null }> = []
+    for (const step of snapshot.steps) {
+      const task = await tx.task.create({
+        data: {
+          organizationId: ctx.organizationId,
+          instanceId: instance.id,
+          stepOrder: step.order,
+          name: step.name,
+          description: step.description,
+          status: 'BLOCKED',
+          kind: step.kind,
+          requiredRole: step.assigneeRole,
+          fields: step.fields.length > 0 ? (step.fields as unknown as Prisma.InputJsonValue) : undefined,
+          createdById: ctx.userId,
+          dueAt:
+            step.dueInDays != null ? new Date(now + step.dueInDays * 24 * 60 * 60 * 1000) : null,
+        },
+        select: { id: true, stepOrder: true },
+      })
+      created.push({ order: task.stepOrder, taskId: task.id, condition: step.condition })
+    }
+
+    // Activate the first step whose condition holds; skip the rest until one does.
+    let activated = false
+    for (const entry of created) {
+      if (activated) break
+      if (evaluateCondition(entry.condition, variables)) {
+        await tx.task.update({ where: { id: entry.taskId }, data: { status: 'PENDING' } })
+        await tx.taskActivity.create({
+          data: { taskId: entry.taskId, actorId: ctx.userId, type: 'STATUS_CHANGED', fromValue: 'BLOCKED', toValue: 'PENDING' },
+        })
+        activated = true
+      } else {
+        await tx.task.update({
+          where: { id: entry.taskId },
+          data: { status: 'CANCELLED', cancelReason: 'Skipped by condition' },
+        })
+        await tx.taskActivity.create({
+          data: { taskId: entry.taskId, actorId: ctx.userId, type: 'STATUS_CHANGED', fromValue: 'BLOCKED', toValue: 'CANCELLED' },
+        })
+      }
+    }
+
+    if (!activated) {
+      await tx.processInstance.update({
+        where: { id: instance.id },
+        data: { status: 'COMPLETED', completedAt: new Date() },
+      })
+    }
 
     return instance
   })

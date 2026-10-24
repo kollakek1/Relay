@@ -261,6 +261,9 @@ export const WorkflowStepScalarFieldEnum = {
   description: 'description',
   assigneeRole: 'assigneeRole',
   dueInDays: 'dueInDays',
+  kind: 'kind',
+  fields: 'fields',
+  condition: 'condition',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -303,12 +306,16 @@ export const TaskScalarFieldEnum = {
   description: 'description',
   status: 'status',
   priority: 'priority',
+  kind: 'kind',
   requiredRole: 'requiredRole',
+  fields: 'fields',
+  formValues: 'formValues',
   assigneeId: 'assigneeId',
   createdById: 'createdById',
   dueAt: 'dueAt',
   claimedAt: 'claimedAt',
   completedAt: 'completedAt',
+  cancelReason: 'cancelReason',
   claimVersion: 'claimVersion',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

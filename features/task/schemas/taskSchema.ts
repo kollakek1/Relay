@@ -30,6 +30,8 @@ export const updateTaskSchema = z.object({
 export const transitionTaskSchema = z.object({
   taskId: z.string().min(1),
   to: taskStatusSchema,
+  /** Submitted form values (validated server-side against the step's fields). */
+  formValues: z.record(z.string(), z.unknown()).optional(),
 })
 
 /**

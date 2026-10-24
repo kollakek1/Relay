@@ -6,6 +6,7 @@ import { listMembers } from '@/features/organization/server/service'
 import { AppError } from '@/shared/server/errors'
 import { PageHeader } from '@/shared/components/page-header'
 import { TaskDetail } from '@/features/task/components/task-detail'
+import { normalizeFields } from '@/features/workflow/server/engine'
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const ctx = await requireContext()
@@ -36,6 +37,9 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           createdAt: task.createdAt,
           completedAt: task.completedAt,
           requiredRole: task.requiredRole,
+          kind: task.kind,
+          fields: normalizeFields(task.fields),
+          formValues: (task.formValues as Record<string, unknown> | null) ?? null,
           instance: {
             id: task.instance.id,
             workflow: task.instance.workflow,

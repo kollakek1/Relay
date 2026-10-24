@@ -77,6 +77,14 @@ export const TaskPriority = {
 export type TaskPriority = (typeof TaskPriority)[keyof typeof TaskPriority]
 
 
+export const StepKind = {
+  TASK: 'TASK',
+  APPROVAL: 'APPROVAL'
+} as const
+
+export type StepKind = (typeof StepKind)[keyof typeof StepKind]
+
+
 export const ActivityType = {
   CREATED: 'CREATED',
   CLAIMED: 'CLAIMED',

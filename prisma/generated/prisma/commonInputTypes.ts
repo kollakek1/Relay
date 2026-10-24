@@ -312,6 +312,13 @@ export type IntNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedIntNullableFilter<$PrismaModel> | number | null
 }
 
+export type EnumStepKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.StepKind | Prisma.EnumStepKindFieldRefInput<$PrismaModel>
+  in?: $Enums.StepKind[] | Prisma.ListEnumStepKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StepKind[] | Prisma.ListEnumStepKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStepKindFilter<$PrismaModel> | $Enums.StepKind
+}
+
 export type EnumOrgRoleNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.OrgRole | Prisma.EnumOrgRoleFieldRefInput<$PrismaModel> | null
   in?: $Enums.OrgRole[] | Prisma.ListEnumOrgRoleFieldRefInput<$PrismaModel> | null
@@ -336,6 +343,16 @@ export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _max?: Prisma.NestedIntNullableFilter<$PrismaModel>
+}
+
+export type EnumStepKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StepKind | Prisma.EnumStepKindFieldRefInput<$PrismaModel>
+  in?: $Enums.StepKind[] | Prisma.ListEnumStepKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StepKind[] | Prisma.ListEnumStepKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStepKindWithAggregatesFilter<$PrismaModel> | $Enums.StepKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStepKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStepKindFilter<$PrismaModel>
 }
 
 export type JsonFilter<$PrismaModel = never> =
@@ -747,6 +764,13 @@ export type NestedEnumOrgRoleNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumOrgRoleNullableFilter<$PrismaModel> | $Enums.OrgRole | null
 }
 
+export type NestedEnumStepKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.StepKind | Prisma.EnumStepKindFieldRefInput<$PrismaModel>
+  in?: $Enums.StepKind[] | Prisma.ListEnumStepKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StepKind[] | Prisma.ListEnumStepKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStepKindFilter<$PrismaModel> | $Enums.StepKind
+}
+
 export type NestedEnumOrgRoleNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.OrgRole | Prisma.EnumOrgRoleFieldRefInput<$PrismaModel> | null
   in?: $Enums.OrgRole[] | Prisma.ListEnumOrgRoleFieldRefInput<$PrismaModel> | null
@@ -782,6 +806,16 @@ export type NestedFloatNullableFilter<$PrismaModel = never> = {
   gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
+}
+
+export type NestedEnumStepKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StepKind | Prisma.EnumStepKindFieldRefInput<$PrismaModel>
+  in?: $Enums.StepKind[] | Prisma.ListEnumStepKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StepKind[] | Prisma.ListEnumStepKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStepKindWithAggregatesFilter<$PrismaModel> | $Enums.StepKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStepKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStepKindFilter<$PrismaModel>
 }
 
 export type NestedJsonFilter<$PrismaModel = never> =

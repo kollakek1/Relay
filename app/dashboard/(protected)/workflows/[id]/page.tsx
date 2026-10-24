@@ -4,6 +4,7 @@ import { canManageWorkflows, canWorkOnTasks } from '@/shared/server/permissions'
 import { getWorkflow } from '@/features/workflow/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { WorkflowBuilder } from '@/features/workflow/components/workflow-builder'
+import type { ConditionOp, FormFieldType } from '@/features/workflow/server/engine'
 import { AppError } from '@/shared/server/errors'
 
 export default async function WorkflowDetailPage({
@@ -39,6 +40,31 @@ export default async function WorkflowDetailPage({
             description: step.description ?? '',
             assigneeRole: step.assigneeRole,
             dueInDays: step.dueInDays,
+            kind: step.kind,
+            fields: (Array.isArray(step.fields) ? step.fields : []).map((field) => {
+              const f = field as {
+                key?: string
+                label?: string
+                type?: string
+                required?: boolean
+                options?: string[]
+              }
+              return {
+                key: f.key ?? '',
+                label: f.label ?? '',
+                type: (f.type ?? 'text') as FormFieldType,
+                required: Boolean(f.required),
+                optionsText: (f.options ?? []).join(', '),
+              }
+            }),
+            condition: (() => {
+              const c = step.condition as { field?: string; op?: ConditionOp; value?: unknown } | null
+              return {
+                field: c?.field ?? '',
+                op: (c?.op ?? 'eq') as ConditionOp,
+                valueText: c?.value === undefined || c?.value === null ? '' : String(c.value),
+              }
+            })(),
           })),
           versions: workflow.versions.map((version) => ({
             id: version.id,

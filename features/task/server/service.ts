@@ -12,6 +12,7 @@ import type {
 } from '../schemas/taskSchema'
 import { canTransition } from './state-machine'
 import { notify } from '@/features/notification/server/service'
+import { collectVariables, evaluateCondition, normalizeFields, normalizeSnapshot, validateFormValues } from '@/features/workflow/server/engine'
 
 const listInclude = {
   assignee: { select: { id: true, name: true, image: true } },
@@ -279,6 +280,16 @@ export async function transitionTask(ctx: Context, input: TransitionTaskInput) {
 
   const now = new Date()
 
+  const fields = normalizeFields(task.fields)
+  let formValues: Prisma.InputJsonValue | undefined
+  if (input.to === 'DONE' && fields.length > 0) {
+    const validation = validateFormValues(fields, input.formValues)
+    if (!validation.ok) {
+      throw invalid(validation.errors[0] ?? 'Invalid form values')
+    }
+    formValues = validation.values as unknown as Prisma.InputJsonValue
+  }
+
   return prisma.$transaction(async (tx) => {
     const data: Prisma.TaskUncheckedUpdateInput = { status: input.to }
     if (input.to === 'DONE') data.completedAt = now
@@ -286,6 +297,8 @@ export async function transitionTask(ctx: Context, input: TransitionTaskInput) {
       data.assigneeId = null
       data.claimedAt = null
     }
+    if (input.to === 'CANCELLED') data.cancelReason = 'Cancelled by user'
+    if (formValues) data.formValues = formValues
 
     await tx.task.update({ where: { id: task.id }, data })
     await tx.taskActivity.create({
@@ -321,8 +334,10 @@ export async function transitionTask(ctx: Context, input: TransitionTaskInput) {
 }
 
 /**
- * Unblocks the next step after one completes, and closes the instance when the
- * last step is done.
+ * Advances the pipeline after a step completes: collects process variables from
+ * completed tasks, then activates the next step whose condition holds. Steps
+ * whose condition is false are `CANCELLED` (skipped). Closes the instance when
+ * no active step remains.
  */
 async function advanceInstance(
   tx: Prisma.TransactionClient,
@@ -330,21 +345,44 @@ async function advanceInstance(
   instanceId: string,
   completedStepOrder: number
 ) {
-  const next = await tx.task.findFirst({
-    where: { instanceId, stepOrder: { gt: completedStepOrder }, status: 'BLOCKED' },
-    orderBy: { stepOrder: 'asc' },
-    select: { id: true },
+  const instance = await tx.processInstance.findUnique({
+    where: { id: instanceId },
+    select: { version: { select: { steps: true } } },
   })
+  const snapshot = normalizeSnapshot(instance?.version.steps)
 
-  if (next) {
+  const doneTasks = await tx.task.findMany({
+    where: { instanceId, status: 'DONE' },
+    select: { formValues: true },
+  })
+  const variables = collectVariables(doneTasks)
+
+  const remainingSteps = snapshot.steps
+    .filter((step) => step.order > completedStepOrder)
+    .sort((a, b) => a.order - b.order)
+
+  for (const step of remainingSteps) {
+    const task = await tx.task.findFirst({
+      where: { instanceId, stepOrder: step.order },
+      select: { id: true, status: true },
+    })
+    if (!task || task.status !== 'BLOCKED') continue
+
+    if (evaluateCondition(step.condition, variables)) {
+      await tx.task.update({ where: { id: task.id }, data: { status: 'PENDING' } })
+      await tx.taskActivity.create({
+        data: { taskId: task.id, actorId: ctx.userId, type: 'STATUS_CHANGED', fromValue: 'BLOCKED', toValue: 'PENDING' },
+      })
+      return
+    }
+
     await tx.task.update({
-      where: { id: next.id },
-      data: { status: 'PENDING' },
+      where: { id: task.id },
+      data: { status: 'CANCELLED', cancelReason: 'Skipped by condition' },
     })
     await tx.taskActivity.create({
-      data: { taskId: next.id, actorId: ctx.userId, type: 'STATUS_CHANGED', fromValue: 'BLOCKED', toValue: 'PENDING' },
+      data: { taskId: task.id, actorId: ctx.userId, type: 'STATUS_CHANGED', fromValue: 'BLOCKED', toValue: 'CANCELLED' },
     })
-    return
   }
 
   const remaining = await tx.task.count({

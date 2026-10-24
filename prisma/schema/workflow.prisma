@@ -26,6 +26,13 @@ enum TaskPriority {
   URGENT
 }
 
+/// Execution node kind. `TASK` is human work; `APPROVAL` is a decision step
+/// (decision semantics are added in a later stage).
+enum StepKind {
+  TASK
+  APPROVAL
+}
+
 enum ActivityType {
   CREATED
   CLAIMED
@@ -77,6 +84,11 @@ model WorkflowStep {
   description  String?
   assigneeRole OrgRole?
   dueInDays    Int?
+  kind         StepKind  @default(TASK)
+  /// Form field definitions (see WorkflowFormField in the engine).
+  fields       Json?
+  /// Optional skip condition evaluated against collected process variables.
+  condition    Json?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -137,8 +149,13 @@ model Task {
   description    String?
   status         TaskStatus   @default(PENDING)
   priority       TaskPriority @default(MEDIUM)
+  kind           StepKind     @default(TASK)
   /// Minimum organization role allowed to claim this task (from the step).
   requiredRole   OrgRole?
+  /// Form field definitions captured from the step at instance start.
+  fields         Json?
+  /// Submitted form values (validated server-side before completion).
+  formValues     Json?
   assigneeId     String?
   assignee       User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   createdById    String
@@ -146,6 +163,8 @@ model Task {
   dueAt          DateTime?
   claimedAt      DateTime?
   completedAt    DateTime?
+  /// Reason recorded when a task is cancelled (e.g. skipped by a condition).
+  cancelReason   String?
   /// Incremented on every claim to make the pool claim atomic (optimistic lock).
   claimVersion   Int          @default(0)
   createdAt      DateTime     @default(now())
