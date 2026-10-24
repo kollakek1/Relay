@@ -18,6 +18,7 @@ import {
   transitionTask,
 } from '@/features/task/server/service'
 import { addComment } from '@/features/activity/server/service'
+import { normalizeSnapshot } from '@/features/workflow/server/engine'
 import {
   getUnreadCount,
   listNotifications,
@@ -131,8 +132,8 @@ describe('workflow engine', () => {
     })
 
     const frozen = await prisma.workflowVersion.findUniqueOrThrow({ where: { id: version.id } })
-    const snapshot = frozen.steps as unknown as { name: string }[]
-    expect(snapshot.map((s) => s.name)).toEqual(['Only'])
+    const snapshot = normalizeSnapshot(frozen.steps)
+    expect(snapshot.steps.map((s) => s.name)).toEqual(['Only'])
 
     const tasks = await prisma.task.findMany({ where: { instanceId: instance.id } })
     expect(tasks).toHaveLength(1)
