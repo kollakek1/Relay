@@ -1,15 +1,25 @@
 model User {
-  id            String    @id
+  id            String   @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean  @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  role          Role      @default(USER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  role          Role     @default(USER)
   permissions   String[]
   sessions      Session[]
   accounts      Account[]
+
+  memberships        Membership[]
+  workflowsCreated   Workflow[]        @relation("WorkflowCreatedBy")
+  versionsPublished  WorkflowVersion[] @relation("VersionPublishedBy")
+  instancesStarted   ProcessInstance[] @relation("InstanceStartedBy")
+  tasksAssigned      Task[]            @relation("TaskAssignee")
+  tasksCreated       Task[]            @relation("TaskCreatedBy")
+  activities         TaskActivity[]    @relation("ActivityActor")
+  comments           Comment[]         @relation("CommentAuthor")
+  notifications      Notification[]    @relation("NotificationRecipient")
 
   @@unique([email])
   @@map("user")

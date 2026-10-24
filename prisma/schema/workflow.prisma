@@ -1,0 +1,205 @@
+enum WorkflowStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum InstanceStatus {
+  RUNNING
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskStatus {
+  BLOCKED
+  PENDING
+  CLAIMED
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ActivityType {
+  CREATED
+  CLAIMED
+  ASSIGNED
+  UNASSIGNED
+  STATUS_CHANGED
+  DUE_CHANGED
+  COMMENTED
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  TASK_CLAIMED
+  TASK_COMPLETED
+  TASK_COMMENTED
+  WORKFLOW_PUBLISHED
+  INSTANCE_STARTED
+}
+
+model Workflow {
+  id             String         @id @default(cuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  status         WorkflowStatus @default(DRAFT)
+  createdById    String
+  createdBy      User           @relation("WorkflowCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  steps     WorkflowStep[]
+  versions  WorkflowVersion[]
+  instances ProcessInstance[]
+
+  @@index([organizationId, status])
+  @@map("workflow")
+}
+
+model WorkflowStep {
+  id           String    @id @default(cuid())
+  workflowId   String
+  workflow     Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  order        Int
+  name         String
+  description  String?
+  assigneeRole OrgRole?
+  dueInDays    Int?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([workflowId, order])
+  @@index([workflowId])
+  @@map("workflow_step")
+}
+
+/// Immutable snapshot of a workflow's steps captured at publish time.
+/// Active instances always reference a version, so editing the draft never
+/// mutates a running process.
+model WorkflowVersion {
+  id            String    @id @default(cuid())
+  workflowId    String
+  workflow      Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  version       Int
+  steps         Json
+  publishedById String
+  publishedBy   User      @relation("VersionPublishedBy", fields: [publishedById], references: [id], onDelete: Restrict)
+  publishedAt   DateTime  @default(now())
+
+  instances ProcessInstance[]
+
+  @@unique([workflowId, version])
+  @@index([workflowId])
+  @@map("workflow_version")
+}
+
+model ProcessInstance {
+  id             String         @id @default(cuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  workflowId     String
+  workflow       Workflow       @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  versionId      String
+  version        WorkflowVersion @relation(fields: [versionId], references: [id], onDelete: Restrict)
+  status         InstanceStatus @default(RUNNING)
+  startedById    String
+  startedBy      User           @relation("InstanceStartedBy", fields: [startedById], references: [id], onDelete: Restrict)
+  startedAt      DateTime       @default(now())
+  completedAt    DateTime?
+
+  tasks Task[]
+
+  @@index([organizationId, status])
+  @@index([workflowId])
+  @@map("process_instance")
+}
+
+model Task {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  instanceId     String
+  instance       ProcessInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  stepOrder      Int
+  name           String
+  description    String?
+  status         TaskStatus   @default(PENDING)
+  priority       TaskPriority @default(MEDIUM)
+  /// Minimum organization role allowed to claim this task (from the step).
+  requiredRole   OrgRole?
+  assigneeId     String?
+  assignee       User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  createdById    String
+  createdBy      User         @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  dueAt          DateTime?
+  claimedAt      DateTime?
+  completedAt    DateTime?
+  /// Incremented on every claim to make the pool claim atomic (optimistic lock).
+  claimVersion   Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  activities TaskActivity[]
+  comments   Comment[]
+
+  @@index([organizationId, status, createdAt])
+  @@index([assigneeId, status])
+  @@index([instanceId])
+  @@map("task")
+}
+
+model TaskActivity {
+  id        String       @id @default(cuid())
+  taskId    String
+  task      Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  actorId   String?
+  actor     User?        @relation("ActivityActor", fields: [actorId], references: [id], onDelete: SetNull)
+  type      ActivityType
+  fromValue String?
+  toValue   String?
+  createdAt DateTime     @default(now())
+
+  @@index([taskId, createdAt])
+  @@map("task_activity")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation("CommentAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([taskId, createdAt])
+  @@map("comment")
+}
+
+model Notification {
+  id             String           @id @default(cuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User             @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  type           NotificationType
+  title          String
+  body           String?
+  link           String?
+  readAt         DateTime?
+  createdAt      DateTime         @default(now())
+
+  @@index([userId, readAt])
+  @@index([organizationId])
+  @@map("notification")
+}
