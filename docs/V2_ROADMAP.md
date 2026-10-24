@@ -90,21 +90,15 @@ blocked by a missing external service is documented with the reason.
 | B — Security & foundation | ✅ done |
 | C — Organizations & teams | ✅ done |
 | H — Analytics, search, export | ✅ done |
-| F — Serverless automation | 🟡 partial (outbox, idempotent cron jobs, retries/backoff, job log; user-authored trigger/action rules not built) |
+| F — Serverless automation | ✅ done (outbox, idempotent cron jobs, retries, job log, user-authored automation rules) |
 | I — DX & operations | 🟡 partial (CI + structured logs + docs; Playwright E2E not automated) |
 | D — Workflow Engine V2 | ✅ done (conditions, forms, step kinds, templates, version diff/restore) |
-| E — Tasks & approvals | 🟡 partial (approvals ANY/ALL + decision log; `Task.tags` column added, tags UI pending) |
+| E — Tasks & approvals | ✅ done (approvals ANY/ALL, decision log, tags, observers, dependencies, reopen) |
 | G — API & webhooks | ✅ done (versioned API, scoped hashed keys, HMAC webhooks, retries, delivery log, SSRF guard) |
 | J — Stabilization | ✅ done (full local verification + docs; report delivered) |
 
 ### Remaining gaps
 
-- **E**: task tags are stored (`Task.tags`) but have no UI; task dependencies,
-  observers and custom fields are not implemented.
-- **F**: the reliability backbone exists (transactional outbox, idempotency,
-  bounded cron jobs, retries/backoff, `job_run` log), but users cannot author
-  their own trigger/action rules yet.
-- **I**: CI covers lint/typecheck/tests/build; browser E2E is still verified
-  manually through Chrome DevTools rather than Playwright.
-- **G** is complete: versioned API, scoped hashed keys, HMAC-signed webhooks with
-  retries, a delivery log and an SSRF guard.
+- **I**: CI covers lint/typecheck/tests/build; browser E2E is verified manually
+  through Chrome DevTools rather than Playwright.
+- Everything else in stages A–H and J is implemented; see the table above.

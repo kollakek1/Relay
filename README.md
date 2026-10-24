@@ -148,8 +148,8 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
 isolation → invitations & multi-workspace → audit log → analytics → global search
 → CSV export → rate limiting → idempotent SLA automation → CI → tests.
 
-**Not implemented yet (documented in `docs/V2_ROADMAP.md`):** task tags UI,
-dependencies/observers, user-authored automation rules, browser E2E
-(Playwright), full BPMN, external integrations (Telegram), billing.
+**Not implemented yet (documented in `docs/V2_ROADMAP.md`):** browser E2E
+(Playwright), full BPMN, attachments (no storage), external integrations
+(Telegram), billing, AI provider.
 
 <div align="center"> Developed with ❤️ by <b>kollakek</b> </div>
