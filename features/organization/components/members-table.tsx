@@ -100,7 +100,7 @@ export function MembersTable({
                       onValueChange={(value) => changeRole(member, value as OrgRole)}
                       disabled={isPending}
                     >
-                      <SelectTrigger size="sm" className="ml-auto w-32" aria-label="Member role">
+                      <SelectTrigger size="sm" id={`role-${member.id}`} className="ml-auto w-32" aria-label="Member role">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

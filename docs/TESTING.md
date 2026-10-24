@@ -58,7 +58,40 @@ Test Files  6 passed (6)
 Tests       28 passed (28)
 ```
 
+## Manual browser verification (Chrome DevTools)
+
+The MVP was exercised end-to-end in a real browser via the Chrome DevTools MCP.
+Verified against a running dev server + the seeded workspace:
+
+- **Login / registration** — sign-in redirects to `/dashboard`; sign-out
+  (confirm dialog) revokes the session and returns to `/dashboard/auth`.
+- **Happy path** — open *Content Review* → **Publish** (creates v1, status
+  `PUBLISHED`) → **Start instance** (v1, `RUNNING 0/3`) → **Task Pool** shows the
+  first step `Available` → **Claim** (pool empties, task assigned) → task detail
+  **Start working** → **Complete** → the next step unblocks and the instance
+  progress advances.
+- **Real dashboard** — KPIs (`My tasks`, `Available in pool`, `Completed today`,
+  `Active instances`, `Overdue`) and *Recent activity* reflect actual DB state.
+- **Team / Settings / Notifications** — members with roles (Owner), workspace
+  summary, and the notification empty state render correctly.
+- **Search** — workflows and tasks filter live (debounced) with an empty state.
+- **Theming** — the light/dark toggle applies `.light`/`.dark` and persists in
+  `localStorage`.
+
+No runtime console errors were observed on any page.
+
+### Known DevTools note
+
+Chrome's *Issues* panel reports *"A form field element should have an id or name
+attribute"* for Radix `Select` triggers (`role="combobox"` rendered as a button)
+even when the control has an `id`, an associated `<Label htmlFor>`, or an
+`aria-label`. Every form control on every page was confirmed to carry an `id`
+(`document.querySelectorAll('input, select, textarea, [role="combobox"]')` →
+none missing), so this is a heuristic false positive, not an accessibility
+defect.
+
 ## Not yet automated
+
 
 - Browser-level E2E (Playwright) for the rendered UI — the MVP verifies server
   behaviour and the real data layer; UI flows were checked manually against a

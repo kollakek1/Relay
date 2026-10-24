@@ -38,6 +38,7 @@ export function ProfileForm({ initialName }: { initialName: string }) {
         <Label htmlFor="profile-name">Display name</Label>
         <Input
           id="profile-name"
+          autoComplete="name"
           value={name}
           onChange={(event) => setName(event.target.value)}
           disabled={isSaving}

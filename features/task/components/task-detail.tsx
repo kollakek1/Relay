@@ -305,10 +305,10 @@ export function TaskDetail({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Assignee</Label>
+              <Label htmlFor="task-assignee">Assignee</Label>
               {canManage ? (
                 <Select value={task.assigneeId ?? 'none'} onValueChange={assign} disabled={isPending}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger id="task-assignee" className="w-full">
                     <SelectValue placeholder="Unassigned" />
                   </SelectTrigger>
                   <SelectContent>
@@ -328,13 +328,13 @@ export function TaskDetail({
             </div>
 
             <div className="space-y-2">
-              <Label>Priority</Label>
+              <Label htmlFor="task-priority">Priority</Label>
               <Select
                 value={priority}
                 onValueChange={(value) => setPriority(value as TaskPriority)}
                 disabled={!canAct || isPending}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger id="task-priority" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

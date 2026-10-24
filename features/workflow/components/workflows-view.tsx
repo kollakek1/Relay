@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, useTransition } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import type { WorkflowStatus } from '@/prisma/generated/prisma/enums'
 import { Badge } from '@/shared/components/ui/badge'
@@ -50,18 +50,28 @@ export function WorkflowsView({
   initialQuery: string
 }) {
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { isPending, run } = useAction()
+  const [isSearching, startSearch] = useTransition()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [query, setQuery] = useState(initialQuery)
 
-  const submitSearch = (event: React.FormEvent) => {
-    event.preventDefault()
-    const params = new URLSearchParams()
-    if (query.trim()) params.set('q', query.trim())
-    router.push(`/dashboard/workflows${params.toString() ? `?${params}` : ''}`)
-  }
+  // Debounce the search box into the URL so filtering happens live.
+  useEffect(() => {
+    const current = searchParams.get('q') ?? ''
+    if (query === current) return
+    const timer = setTimeout(() => {
+      const next = new URLSearchParams(searchParams.toString())
+      if (query.trim()) next.set('q', query.trim())
+      else next.delete('q')
+      startSearch(() => router.push(`${pathname}?${next.toString()}`))
+    }, 300)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query])
 
   const createWorkflow = () => {
     run(() => createWorkflowAction({ name, description }), {
@@ -78,16 +88,22 @@ export function WorkflowsView({
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <form onSubmit={submitSearch} className="relative w-full sm:max-w-xs">
+        <div className="relative w-full sm:max-w-xs">
           <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
+            id="workflow-search"
+            name="q"
+            autoComplete="off"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search workflows"
             className="pl-9"
             aria-label="Search workflows"
           />
-        </form>
+          {isSearching && (
+            <Loader2Icon className="text-muted-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin" />
+          )}
+        </div>
 
         {canManage && (
           <Dialog open={open} onOpenChange={setOpen}>

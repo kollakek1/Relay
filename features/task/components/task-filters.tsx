@@ -45,6 +45,9 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
       <div className="relative min-w-52 flex-1">
         <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
         <Input
+          id="task-search"
+          name="q"
+          autoComplete="off"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Search tasks"
@@ -57,7 +60,7 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
       </div>
 
       <Select value={params.get('status') ?? 'all'} onValueChange={(value) => update('status', value)}>
-        <SelectTrigger className="w-36" aria-label="Filter by status">
+        <SelectTrigger id="task-filter-status" className="w-36" aria-label="Filter by status">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>
@@ -74,7 +77,7 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
           value={params.get('assignee') ?? 'all'}
           onValueChange={(value) => update('assignee', value)}
         >
-          <SelectTrigger className="w-36" aria-label="Filter by assignee">
+          <SelectTrigger id="task-filter-assignee" className="w-36" aria-label="Filter by assignee">
             <SelectValue placeholder="Assignee" />
           </SelectTrigger>
           <SelectContent>
@@ -89,7 +92,7 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
         value={params.get('priority') ?? 'all'}
         onValueChange={(value) => update('priority', value)}
       >
-        <SelectTrigger className="w-32" aria-label="Filter by priority">
+        <SelectTrigger id="task-filter-priority" className="w-32" aria-label="Filter by priority">
           <SelectValue placeholder="Priority" />
         </SelectTrigger>
         <SelectContent>
@@ -105,7 +108,7 @@ export function TaskFilters({ showAssignee = true }: { showAssignee?: boolean })
         value={params.get('sort') ?? 'createdAt'}
         onValueChange={(value) => update('sort', value)}
       >
-        <SelectTrigger className="w-40" aria-label="Sort tasks">
+        <SelectTrigger id="task-filter-sort" className="w-40" aria-label="Sort tasks">
           <SelectValue placeholder="Sort" />
         </SelectTrigger>
         <SelectContent>

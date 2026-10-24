@@ -151,7 +151,7 @@ export function WorkflowBuilder({
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="builder-name">Name</Label>
-              <Input id="builder-name" disabled={!canManage} {...register('name')} />
+              <Input id="builder-name" autoComplete="off" disabled={!canManage} {...register('name')} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="builder-description">Description</Label>
@@ -239,19 +239,20 @@ export function WorkflowBuilder({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Required role to claim</Label>
+                    <Label htmlFor={`step-role-${index}`}>Required role to claim</Label>
                     <Controller
                       control={control}
                       name={`steps.${index}.assigneeRole` as const}
                       render={({ field: controllerField }) => (
                         <Select
                           value={controllerField.value ?? NO_ROLE}
+                          name={`step-role-${index}`}
                           onValueChange={(value) =>
                             controllerField.onChange(value === NO_ROLE ? null : (value as OrgRole))
                           }
                           disabled={!canManage}
                         >
-                          <SelectTrigger className="w-full">
+                          <SelectTrigger id={`step-role-${index}`} className="w-full">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
