@@ -503,14 +503,6 @@ export type WorkflowStepUncheckedUpdateManyWithoutWorkflowNestedInput = {
   deleteMany?: Prisma.WorkflowStepScalarWhereInput | Prisma.WorkflowStepScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type NullableEnumOrgRoleFieldUpdateOperationsInput = {
   set?: $Enums.OrgRole | null
 }

@@ -67,6 +67,14 @@ export type Organization = Prisma.OrganizationModel
  */
 export type Membership = Prisma.MembershipModel
 /**
+ * Model RateLimitBucket
+ * Fixed-window rate-limit counters. A single row per key with an atomic
+ * `INSERT ... ON CONFLICT DO UPDATE` makes the limiter correct across all
+ * serverless instances (PostgreSQL is the shared source of truth — never
+ * in-memory state).
+ */
+export type RateLimitBucket = Prisma.RateLimitBucketModel
+/**
  * Model User
  * 
  */

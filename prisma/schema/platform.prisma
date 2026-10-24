@@ -1,0 +1,13 @@
+/// Fixed-window rate-limit counters. A single row per key with an atomic
+/// `INSERT ... ON CONFLICT DO UPDATE` makes the limiter correct across all
+/// serverless instances (PostgreSQL is the shared source of truth — never
+/// in-memory state).
+model RateLimitBucket {
+  key         String   @id
+  count       Int      @default(0)
+  windowStart DateTime
+  expiresAt   DateTime
+
+  @@index([expiresAt])
+  @@map("rate_limit_bucket")
+}

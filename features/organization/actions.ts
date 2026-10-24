@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { getContext, getSession, requireContext } from '@/shared/server/auth-context'
 import { fail, ok, unauthorized, type ActionResult } from '@/shared/server/errors'
 import { parseInput } from '@/shared/server/action-utils'
+import { rateLimit, RATE_LIMITS } from '@/shared/server/rate-limit'
 import {
   createOrganizationSchema,
   removeMemberSchema,
@@ -42,6 +43,7 @@ export async function updateMemberRoleAction(input: unknown): Promise<ActionResu
   try {
     const ctx = await requireContext()
     const data = parseInput(updateMemberRoleSchema, input)
+    await rateLimit('org:role', ctx.userId, RATE_LIMITS.orgMutate)
     await updateMemberRole(ctx, data)
     revalidatePath('/dashboard/team')
     return ok(undefined)
@@ -54,6 +56,7 @@ export async function removeMemberAction(input: unknown): Promise<ActionResult> 
   try {
     const ctx = await requireContext()
     const data = parseInput(removeMemberSchema, input)
+    await rateLimit('org:remove', ctx.userId, RATE_LIMITS.orgMutate)
     await removeMember(ctx, data.membershipId)
     revalidatePath('/dashboard/team')
     return ok(undefined)

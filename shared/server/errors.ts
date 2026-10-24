@@ -1,3 +1,5 @@
+import { logger } from './logger'
+
 /**
  * Application error used across the server service layer.
  *
@@ -6,7 +8,13 @@
  * `UNAUTHORIZED` / `FORBIDDEN` / `CONFLICT` / `NOT_FOUND` without string
  * matching.
  */
-export type ErrorCode = 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'CONFLICT' | 'VALIDATION'
+export type ErrorCode =
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'NOT_FOUND'
+  | 'CONFLICT'
+  | 'VALIDATION'
+  | 'RATE_LIMITED'
 
 const STATUS: Record<ErrorCode, number> = {
   UNAUTHORIZED: 401,
@@ -14,6 +22,7 @@ const STATUS: Record<ErrorCode, number> = {
   NOT_FOUND: 404,
   CONFLICT: 409,
   VALIDATION: 422,
+  RATE_LIMITED: 429,
 }
 
 export class AppError extends Error {
@@ -36,6 +45,8 @@ export const notFound = (message = 'Resource not found') => new AppError('NOT_FO
 export const conflict = (message = 'The resource was modified by someone else') =>
   new AppError('CONFLICT', message)
 export const invalid = (message = 'Invalid input') => new AppError('VALIDATION', message)
+export const rateLimited = (message = 'Too many requests. Please try again shortly.') =>
+  new AppError('RATE_LIMITED', message)
 
 /** Structured result returned from every server action. */
 export type ActionResult<T = void> =
@@ -50,6 +61,9 @@ export function fail(error: unknown): ActionResult<never> {
   if (error instanceof AppError) {
     return { ok: false, error: error.message, code: error.code }
   }
-  console.error('[relay] unexpected server error:', error)
+  logger.error('unexpected_server_error', {
+    message: error instanceof Error ? error.message : String(error),
+    stack: error instanceof Error ? error.stack?.split('\n').slice(0, 4).join('\n') : undefined,
+  })
   return { ok: false, error: 'Something went wrong. Please try again.', code: 'VALIDATION' }
 }

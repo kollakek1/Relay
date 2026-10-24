@@ -56,6 +56,7 @@ export const ModelName = {
   Verification: 'Verification',
   Organization: 'Organization',
   Membership: 'Membership',
+  RateLimitBucket: 'RateLimitBucket',
   User: 'User',
   Workflow: 'Workflow',
   WorkflowStep: 'WorkflowStep',
@@ -149,6 +150,16 @@ export const MembershipScalarFieldEnum = {
 } as const
 
 export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
+
+
+export const RateLimitBucketScalarFieldEnum = {
+  key: 'key',
+  count: 'count',
+  windowStart: 'windowStart',
+  expiresAt: 'expiresAt'
+} as const
+
+export type RateLimitBucketScalarFieldEnum = (typeof RateLimitBucketScalarFieldEnum)[keyof typeof RateLimitBucketScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
