@@ -90,18 +90,21 @@ blocked by a missing external service is documented with the reason.
 | B — Security & foundation | ✅ done |
 | C — Organizations & teams | ✅ done |
 | H — Analytics, search, export | ✅ done |
-| F — Serverless automation | 🟡 partial (SLA scan + idempotency + JobRun; generic trigger/action engine pending) |
-| I — DX & operations | 🟡 partial (CI added; E2E pending) |
-| D — Workflow Engine V2 | 🟡 partial (conditions, process forms, step kinds done; visual graph, templates, version diff pending) |
-| E — Tasks & approvals | 🟡 partial (approval steps with ANY/ALL decisions, decision log, notifications done; task dependencies/tags/observers pending) |
-| G — API & webhooks | ⛔ not started |
+| F — Serverless automation | 🟡 partial (outbox, idempotent cron jobs, retries/backoff, job log; user-authored trigger/action rules not built) |
+| I — DX & operations | 🟡 partial (CI + structured logs + docs; Playwright E2E not automated) |
+| D — Workflow Engine V2 | ✅ done (conditions, forms, step kinds, templates, version diff/restore) |
+| E — Tasks & approvals | 🟡 partial (approvals ANY/ALL + decision log; `Task.tags` column added, tags UI pending) |
+| G — API & webhooks | ✅ done (versioned API, scoped hashed keys, HMAC webhooks, retries, delivery log, SSRF guard) |
 | J — Stabilization | ✅ done (full local verification + docs; report delivered) |
 
-### Why D/E/G were not started
+### Remaining gaps
 
-They are large, tightly-coupled features (the conditional engine needs a
-decision on branching semantics; approvals need explicit multi-approver rules;
-the public API needs key management + SSRF-safe webhooks). Shipping them
-half-finished would leave the product worse than an honest stop. Their
-foundations are in place: an immutable, `schemaVersion`-ready version snapshot,
-an idempotency primitive, an audited org model, and a green test/CI pipeline.
+- **E**: task tags are stored (`Task.tags`) but have no UI; task dependencies,
+  observers and custom fields are not implemented.
+- **F**: the reliability backbone exists (transactional outbox, idempotency,
+  bounded cron jobs, retries/backoff, `job_run` log), but users cannot author
+  their own trigger/action rules yet.
+- **I**: CI covers lint/typecheck/tests/build; browser E2E is still verified
+  manually through Chrome DevTools rather than Playwright.
+- **G** is complete: versioned API, scoped hashed keys, HMAC-signed webhooks with
+  retries, a delivery log and an SSRF guard.

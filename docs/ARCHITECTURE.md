@@ -149,6 +149,35 @@ See `.env.example` for the full list.
 | SLA scan (idempotent, cron-triggered) | `features/sla/server/service.ts`, `app/api/jobs/sla-scan/route.ts` (+ `job_run`) |
 | Workflow execution engine (conditions, forms) | `features/workflow/server/engine.ts` + `service.ts` |
 | Approvals (ANY/ALL decisions) | `features/task/server/{service,approvals}.ts` (+ `task_decision`) |
+| Templates & version diff | `features/workflow/server/{templates,versioning}.ts` (+ `workflow_template`) |
+| Public API (v1) | `app/api/v1/**`, `features/api/server/{handler,keys}.ts` (+ `api_key`) |
+| Webhooks + transactional outbox | `features/webhooks/server/{service,delivery}.ts` (+ `webhook_endpoint`, `webhook_delivery`, `outbox_event`) |
+| Outbound SSRF guard | `shared/server/ssrf.ts` |
+
+### Public API and webhooks
+
+- **API keys** (`rk_…`) are stored only as SHA-256 hashes and carry explicit
+  scopes. A key acts with the *current* role of its creator, so removing or
+  demoting that user immediately shrinks the key's authority.
+- **`/api/v1`** exposes workflows, tasks, task detail, claim and instance runs
+  with pagination, uniform `{ error: { code, message } }` responses and a
+  per-key rate limit.
+- **Webhooks** are delivered through the **transactional outbox**: domain events
+  are written in the same transaction as the mutation, fanned out to subscribed
+  endpoints, then delivered as HMAC-SHA256-signed POSTs with exponential backoff,
+  a delivery log and automatic disabling after repeated failures.
+- **SSRF**: outbound URLs must be http(s), credential-free and non-private;
+  redirects are never followed and requests are bounded by a timeout.
+
+### Serverless jobs
+
+Three secret-protected, idempotent endpoints (`CRON_SECRET`) do all periodic
+work — no long-running worker:
+
+| Endpoint | Purpose |
+| --- | --- |
+| `POST /api/jobs/sla-scan` | overdue / due-soon notifications, prune rate-limit buckets |
+| `POST /api/jobs/drain` | fan out the outbox, deliver webhooks with retries, prune idempotency keys |
 
 ### Approval semantics (explicit)
 

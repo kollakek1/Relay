@@ -49,7 +49,12 @@ role-based access enforced on the server.
 - 📊 **Dashboard & analytics** — real KPIs, process throughput, cycle time and
   step bottlenecks.
 - 🔎 **Global search & CSV export** — tenant- and permission-scoped.
-- ⏱ **Serverless automation** — idempotent, cron-triggered SLA scan; no worker.
+- 🧩 **Templates & version diff** — start from ready-made processes, compare
+  published versions and restore a draft from any version.
+- 🔌 **Public API & webhooks** — scoped hashed API keys against `/api/v1`, and
+  HMAC-signed webhooks delivered through a transactional outbox with retries.
+- ⏱ **Serverless automation** — idempotent, cron-triggered SLA scan and outbox
+  drain; no worker.
 - 🛡 **Hardened** — DB-backed rate limiting, structured redacting logs, audit
   trail. See `docs/THREAT_MODEL.md`.
 - 🌗 **shadcn/ui design system** — light/dark themes, responsive, accessible.
@@ -143,8 +148,8 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
 isolation → invitations & multi-workspace → audit log → analytics → global search
 → CSV export → rate limiting → idempotent SLA automation → CI → tests.
 
-**Not implemented yet (documented in `docs/V2_ROADMAP.md`):** templates, version
-diff, task dependencies/tags/observers, public API & webhooks, browser E2E
+**Not implemented yet (documented in `docs/V2_ROADMAP.md`):** task tags UI,
+dependencies/observers, user-authored automation rules, browser E2E
 (Playwright), full BPMN, external integrations (Telegram), billing.
 
 <div align="center"> Developed with ❤️ by <b>kollakek</b> </div>
