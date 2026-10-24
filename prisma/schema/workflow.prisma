@@ -43,6 +43,7 @@ enum NotificationType {
   TASK_COMMENTED
   WORKFLOW_PUBLISHED
   INSTANCE_STARTED
+  ORG_INVITATION
 }
 
 model Workflow {

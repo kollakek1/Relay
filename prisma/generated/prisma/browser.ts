@@ -43,6 +43,18 @@ export type Organization = Prisma.OrganizationModel
  */
 export type Membership = Prisma.MembershipModel
 /**
+ * Model Invitation
+ * A pending/accepted/revoked invitation to join an organization. Only the
+ * SHA-256 hash of the token is persisted; the raw token lives only in the
+ * invitation link, so a database leak cannot be replayed.
+ */
+export type Invitation = Prisma.InvitationModel
+/**
+ * Model OrgAuditLog
+ * Append-only administrative audit trail (who did what, when).
+ */
+export type OrgAuditLog = Prisma.OrgAuditLogModel
+/**
  * Model RateLimitBucket
  * Fixed-window rate-limit counters. A single row per key with an atomic
  * `INSERT ... ON CONFLICT DO UPDATE` makes the limiter correct across all

@@ -20,6 +20,9 @@ model User {
   activities         TaskActivity[]    @relation("ActivityActor")
   comments           Comment[]         @relation("CommentAuthor")
   notifications      Notification[]    @relation("NotificationRecipient")
+  invitationsSent    Invitation[]      @relation("InvitationInviter")
+  invitationsAccepted Invitation[]     @relation("InvitationAcceptor")
+  auditLogs          OrgAuditLog[]     @relation("AuditActor")
 
   @@unique([email])
   @@map("user")

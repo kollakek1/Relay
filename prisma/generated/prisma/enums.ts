@@ -18,6 +18,16 @@ export const OrgRole = {
 export type OrgRole = (typeof OrgRole)[keyof typeof OrgRole]
 
 
+export const InvitationStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REVOKED: 'REVOKED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]
+
+
 export const Role = {
   ADMIN: 'ADMIN',
   MANAGER: 'MANAGER',
@@ -86,7 +96,8 @@ export const NotificationType = {
   TASK_COMPLETED: 'TASK_COMPLETED',
   TASK_COMMENTED: 'TASK_COMMENTED',
   WORKFLOW_PUBLISHED: 'WORKFLOW_PUBLISHED',
-  INSTANCE_STARTED: 'INSTANCE_STARTED'
+  INSTANCE_STARTED: 'INSTANCE_STARTED',
+  ORG_INVITATION: 'ORG_INVITATION'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

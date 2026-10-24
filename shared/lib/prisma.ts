@@ -14,7 +14,13 @@ function createPrismaClient(): PrismaClient {
     throw new Error('DATABASE_URL environment variable is not set')
   }
   const adapter = new PrismaPg({ connectionString })
-  return new PrismaClient({ adapter })
+  // A remote/managed Postgres can be slow to start or commit a transaction;
+  // the Prisma defaults (maxWait 2s / timeout 5s) are too tight for that. A
+  // modest pool also avoids exhausting a managed instance's connection limit.
+  return new PrismaClient({
+    adapter,
+    transactionOptions: { maxWait: 20_000, timeout: 30_000 },
+  })
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient()

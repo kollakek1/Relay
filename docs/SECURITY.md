@@ -65,6 +65,13 @@ _Scope: MVP threat model, controls actually implemented, and known limitations._
 
 ## 7. Known limitations (accepted for the MVP)
 
+> Superseded in part by Relay V2. The V2 stages add: DB-backed rate limiting
+> (`shared/server/rate-limit.ts`), invitations with hashed single-use tokens,
+> multi-workspace support with a re-validated active-org cookie, an admin audit
+> trail (`org_audit_log`), structured redacting logs, and
+> `docs/THREAT_MODEL.md` + `docs/INCIDENT_RESPONSE.md`.
+
+
 | Area | Limitation | Mitigation / next step |
 | --- | --- | --- |
 | Rate limiting | No per-IP/route throttling; the atomic claim prevents task duplication but not brute-force on auth endpoints | Add reverse-proxy/edge rate limiting; Better Auth rate-limit plugin |

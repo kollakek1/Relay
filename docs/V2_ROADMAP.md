@@ -86,6 +86,13 @@ blocked by a missing external service is documented with the reason.
 
 | Stage | Status |
 | --- | --- |
-| A | ✅ done |
-| B | in progress |
-| C–J | planned |
+| A — Audit & roadmap | ✅ done |
+| B — Security & foundation | ✅ done |
+| C — Organizations & teams | ✅ done |
+| D — Workflow Engine V2 | planned |
+| E — Tasks & approvals | planned |
+| F — Serverless automation | planned |
+| G — API & webhooks | planned |
+| H — Analytics, search, export | planned |
+| I — DX & operations | planned |
+| J — Stabilization | planned |

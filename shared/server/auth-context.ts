@@ -1,10 +1,12 @@
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import type { OrgRole } from '@/prisma/generated/prisma/enums'
 import { auth } from '@/shared/lib/auth'
 import { prisma } from '@/shared/lib/prisma'
 import { forbidden, unauthorized } from './errors'
 import { hasOrgRole } from './permissions'
 import type { Context } from './context'
+
+export const ACTIVE_ORG_COOKIE = 'relay_org'
 
 export interface SessionUser {
   id: string
@@ -31,16 +33,40 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
 
 /**
  * Resolves the authorization context for the current request: the authenticated
- * user plus their active organization membership (the oldest membership is the
- * active workspace in the MVP). Returns `null` for anonymous users or users
- * without a membership.
+ * user plus their **active** organization membership.
+ *
+ * The active workspace is read from a cookie but is *always* re-validated
+ * against a real membership, so the cookie is a preference, never an authority.
+ * When absent (or stale) the oldest membership is used as a fallback.
  */
 export async function getContext(): Promise<Context | null> {
   const session = await getSession()
   if (!session?.user) return null
+  const activeId = (await cookies()).get(ACTIVE_ORG_COOKIE)?.value
+  return resolveContext(session.user.id, activeId)
+}
+
+/**
+ * Pure-ish resolver (only touches the DB): returns the context for `userId`,
+ * preferring `activeOrganizationId` **only if it is a real membership**, else
+ * falling back to the oldest membership. Exposed for testing.
+ */
+export async function resolveContext(
+  userId: string,
+  activeOrganizationId?: string | null
+): Promise<Context | null> {
+  if (activeOrganizationId) {
+    const active = await prisma.membership.findUnique({
+      where: { organizationId_userId: { organizationId: activeOrganizationId, userId } },
+      select: { organizationId: true, role: true },
+    })
+    if (active) {
+      return { userId, organizationId: active.organizationId, role: active.role }
+    }
+  }
 
   const membership = await prisma.membership.findFirst({
-    where: { userId: session.user.id },
+    where: { userId },
     orderBy: { createdAt: 'asc' },
     select: { organizationId: true, role: true },
   })
@@ -48,10 +74,25 @@ export async function getContext(): Promise<Context | null> {
   if (!membership) return null
 
   return {
-    userId: session.user.id,
+    userId,
     organizationId: membership.organizationId,
     role: membership.role,
   }
+}
+
+/**
+ * Persists the active workspace preference. Only callable from a Server Action
+ * or Route Handler (where cookies are writable). Membership is validated by the
+ * caller before this is invoked.
+ */
+export async function setActiveOrganizationCookie(organizationId: string): Promise<void> {
+  const store = await cookies()
+  store.set(ACTIVE_ORG_COOKIE, organizationId, {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+  })
 }
 
 /** Like {@link getContext} but throws when unauthenticated / org-less. */

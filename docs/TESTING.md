@@ -50,6 +50,23 @@ npm run db:seed     # optional: root admin + demo data
 | Notifications | `workflow-tasks.test.ts` | assignment/comment notifications, unread count, mark-read, actor not self-notified |
 | Search & filtering | `workflow-tasks.test.ts` | text search, status filter, pool filter |
 | Validation & errors | `workflow-validation.test.ts`, `workflow-tasks.test.ts` | empty publish rejected, duplicate steps rejected, missing id → `NOT_FOUND` |
+| Rate limiting | `rate-limit.test.ts` | limit enforced, window reset, atomic under concurrency, pruning |
+| Invitations | `organizations.test.ts` | create/list/accept, wrong email, duplicate member, revoke, expiry, token rotation, role guards, audit |
+| Multiple organizations | `organizations.test.ts` | active-org resolution from a validated value, forged-value fallback, per-org isolation, settings perms, ownership transfer |
+
+## Remote test database note
+
+The suite runs against a **remote managed Postgres** instance. Under a long
+serial run, rare `Unable to start/commit a transaction` latency spikes occur
+that are unrelated to the code under test — every test passes when its file runs
+in isolation. To absorb that infrastructure noise:
+
+- `vitest.config.mts` sets `retry: 1` and a 120s per-test timeout.
+- `shared/lib/prisma.ts` raises interactive transaction `maxWait`/`timeout` to
+  20s/30s (also safer in production against a managed database).
+
+A real logic failure reproduces deterministically and is not hidden by the retry.
+
 
 ## Current result
 

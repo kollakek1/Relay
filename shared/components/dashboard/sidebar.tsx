@@ -47,6 +47,10 @@ import { useState } from 'react'
 import { cn } from '@/shared/lib/utils'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { ThemeToggle } from '@/shared/components/theme-toggle'
+import {
+  WorkspaceSwitcher,
+  type WorkspaceSummary,
+} from '@/features/organization/components/workspace-switcher'
 import { Loader2Icon } from 'lucide-react'
 
 const navItems = [
@@ -60,7 +64,15 @@ const navItems = [
   { title: 'Settings', href: '/dashboard/settings', icon: SettingsIcon },
 ]
 
-export function DashboardSidebar({ unreadCount = 0 }: { unreadCount?: number }) {
+export function DashboardSidebar({
+  unreadCount = 0,
+  workspaces = [],
+  activeOrganizationId = null,
+}: {
+  unreadCount?: number
+  workspaces?: WorkspaceSummary[]
+  activeOrganizationId?: string | null
+}) {
   const pathname = usePathname()
   const { user, logout, isLoading } = useAuth()
   const [confirmLogout, setConfirmLogout] = useState(false)
@@ -78,6 +90,7 @@ export function DashboardSidebar({ unreadCount = 0 }: { unreadCount?: number }) 
             </Link>
             <ThemeToggle />
           </div>
+          <WorkspaceSwitcher workspaces={workspaces} activeId={activeOrganizationId} />
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>

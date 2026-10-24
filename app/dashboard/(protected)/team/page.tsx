@@ -1,23 +1,34 @@
 import { requireContext } from '@/shared/server/auth-context'
-import { canManageMembers } from '@/shared/server/permissions'
+import { canManageMembers, isOwner } from '@/shared/server/permissions'
 import { getOrganization, listMembers } from '@/features/organization/server/service'
+import { listInvitations } from '@/features/organization/server/invitations'
 import { PageHeader } from '@/shared/components/page-header'
 import { MembersTable } from '@/features/organization/components/members-table'
+import { InvitationsPanel } from '@/features/organization/components/invitations-panel'
 
 export default async function TeamPage() {
   const ctx = await requireContext()
-  const [organization, members] = await Promise.all([getOrganization(ctx), listMembers(ctx)])
+  const canManage = canManageMembers(ctx.role)
+
+  const [organization, members, invitations] = await Promise.all([
+    getOrganization(ctx),
+    listMembers(ctx),
+    canManage ? listInvitations(ctx) : Promise.resolve([]),
+  ])
 
   return (
     <main className="mx-auto w-full max-w-5xl space-y-8 px-4 py-8 lg:p-10">
-      <PageHeader
-        title="Team"
-        description={`People with access to ${organization.name}.`}
-      />
+      <PageHeader title="Team" description={`People with access to ${organization.name}.`} />
       <MembersTable
         members={members}
-        canManage={canManageMembers(ctx.role)}
+        canManage={canManage}
         currentUserId={ctx.userId}
+        currentRole={ctx.role}
+      />
+      <InvitationsPanel
+        invitations={invitations}
+        canManage={canManage}
+        canInviteOwner={isOwner(ctx.role)}
       />
     </main>
   )

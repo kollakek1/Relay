@@ -17,6 +17,7 @@ import {
   MessageSquareIcon,
   RocketIcon,
   UserIcon,
+  MailIcon,
 } from 'lucide-react'
 
 export interface NotificationView {
@@ -36,6 +37,7 @@ const TYPE_ICON: Record<NotificationType, typeof BellIcon> = {
   TASK_COMMENTED: MessageSquareIcon,
   WORKFLOW_PUBLISHED: RocketIcon,
   INSTANCE_STARTED: RocketIcon,
+  ORG_INVITATION: MailIcon,
 }
 
 export function NotificationsList({ notifications }: { notifications: NotificationView[] }) {
