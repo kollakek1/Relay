@@ -2,11 +2,14 @@ import type { Prisma } from '@/prisma/generated/prisma/client'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
 import { forbidden, invalid, notFound } from '@/shared/server/errors'
-import { logger } from '@/shared/server/logger'
+import { logger, newRequestId } from '@/shared/server/logger'
 import { canManageMembers } from '@/shared/server/permissions'
+import { DEFAULT_LEASE_MS, DEFAULT_MAX_ATTEMPTS, nextAttemptAt } from '@/shared/server/retry'
 import { notify } from '@/features/notification/server/service'
 import { rolesAtLeast } from '@/features/task/server/approvals'
 import { recordAudit } from '@/features/organization/server/audit'
+
+type Db = Prisma.TransactionClient | typeof prisma
 
 export const AUTOMATION_TRIGGERS = [
   'task.created',
@@ -30,6 +33,12 @@ export function isTrigger(value: string): value is AutomationTrigger {
 }
 export function isAction(value: string): value is AutomationAction {
   return (AUTOMATION_ACTIONS as readonly string[]).includes(value)
+}
+
+const DETAIL_MAX = 300
+
+function isUniqueViolation(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && (error as { code?: string }).code === 'P2002'
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -137,6 +146,39 @@ export async function listAutomationRuns(ctx: Context, limit = 30) {
   })
 }
 
+export interface AutomationHealth {
+  pending: number
+  processing: number
+  succeeded: number
+  failed: number
+  deadLettered: number
+}
+
+/** Tenant-scoped automation diagnostics for the admin UI. */
+export async function getAutomationHealth(ctx: Context): Promise<AutomationHealth> {
+  assertManage(ctx)
+  const grouped = await prisma.automationRun.groupBy({
+    by: ['status'],
+    where: { rule: { organizationId: ctx.organizationId } },
+    _count: { _all: true },
+  })
+  const deadLettered = await prisma.automationRun.count({
+    where: {
+      rule: { organizationId: ctx.organizationId },
+      status: 'FAILED',
+      attempts: { gte: DEFAULT_MAX_ATTEMPTS },
+    },
+  })
+  const count = (status: string) => grouped.find((row) => row.status === status)?._count._all ?? 0
+  return {
+    pending: count('PENDING'),
+    processing: count('PROCESSING'),
+    succeeded: count('SUCCESS'),
+    failed: count('FAILED'),
+    deadLettered,
+  }
+}
+
 export async function setAutomationRuleEnabled(ctx: Context, id: string, enabled: boolean) {
   assertManage(ctx)
   const rule = await prisma.automationRule.findFirst({
@@ -167,6 +209,22 @@ export async function deleteAutomationRule(ctx: Context, id: string) {
   })
 }
 
+/** Re-queues every dead-lettered / failed automation run in the workspace. */
+export async function requeueFailedAutomationRuns(ctx: Context): Promise<number> {
+  assertManage(ctx)
+  const result = await prisma.automationRun.updateMany({
+    where: { rule: { organizationId: ctx.organizationId }, status: 'FAILED' },
+    data: {
+      status: 'PENDING',
+      attempts: 0,
+      nextAttemptAt: new Date(),
+      lockedAt: null,
+      lockedBy: null,
+    },
+  })
+  return result.count
+}
+
 interface EventLike {
   id: string
   organizationId: string
@@ -175,6 +233,7 @@ interface EventLike {
 }
 
 async function executeAction(
+  db: Db,
   rule: { id: string; name: string; action: string; config: unknown; createdById: string },
   event: EventLike
 ) {
@@ -184,14 +243,14 @@ async function executeAction(
   switch (rule.action) {
     case 'notify_role': {
       const role = (config.role as (typeof AUTOMATION_ROLES)[number]) ?? 'MEMBER'
-      const members = await prisma.membership.findMany({
+      const members = await db.membership.findMany({
         where: { organizationId: event.organizationId, role: { in: rolesAtLeast(role) } },
         select: { userId: true },
       })
       const title = String(config.title ?? `Automation: ${rule.name}`)
       const link = payload.taskId ? `/dashboard/tasks/${String(payload.taskId)}` : '/dashboard'
       for (const member of members) {
-        await notify(prisma, {
+        await notify(db, {
           organizationId: event.organizationId,
           userId: member.userId,
           type: 'AUTOMATION_NOTIFICATION',
@@ -206,26 +265,26 @@ async function executeAction(
     case 'add_tag': {
       const taskId = String(payload.taskId ?? '')
       if (!taskId) return 'skipped: event has no task'
-      const task = await prisma.task.findFirst({
+      const task = await db.task.findFirst({
         where: { id: taskId, organizationId: event.organizationId },
         select: { id: true, tags: true },
       })
       if (!task) return 'skipped: task not found'
       const tag = String(config.tag)
       if (task.tags.includes(tag)) return 'skipped: tag already present'
-      await prisma.task.update({ where: { id: task.id }, data: { tags: [...task.tags, tag] } })
+      await db.task.update({ where: { id: task.id }, data: { tags: [...task.tags, tag] } })
       return `tagged "${tag}"`
     }
 
     case 'set_priority': {
       const taskId = String(payload.taskId ?? '')
       if (!taskId) return 'skipped: event has no task'
-      const task = await prisma.task.findFirst({
+      const task = await db.task.findFirst({
         where: { id: taskId, organizationId: event.organizationId },
         select: { id: true },
       })
       if (!task) return 'skipped: task not found'
-      await prisma.task.update({
+      await db.task.update({
         where: { id: task.id },
         data: { priority: config.priority as 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT' },
       })
@@ -235,18 +294,31 @@ async function executeAction(
     case 'create_task': {
       const instanceId = String(payload.instanceId ?? '')
       if (!instanceId) return 'skipped: event has no instance'
-      const instance = await prisma.processInstance.findFirst({
+      const instance = await db.processInstance.findFirst({
         where: { id: instanceId, organizationId: event.organizationId },
         select: { id: true },
       })
       if (!instance) return 'skipped: instance not found'
 
-      const last = await prisma.task.findFirst({
+      // Idempotency: the follow-up task is keyed by (instance, name, creator) so
+      // a retried attempt never creates a duplicate.
+      const existing = await db.task.findFirst({
+        where: {
+          instanceId,
+          name: String(config.name),
+          createdById: rule.createdById,
+          organizationId: event.organizationId,
+        },
+        select: { id: true },
+      })
+      if (existing) return 'task already exists'
+
+      const last = await db.task.findFirst({
         where: { instanceId },
         orderBy: { stepOrder: 'desc' },
         select: { stepOrder: true },
       })
-      await prisma.task.create({
+      await db.task.create({
         data: {
           organizationId: event.organizationId,
           instanceId,
@@ -273,11 +345,119 @@ export interface AutomationResult {
 }
 
 /**
- * Runs every enabled rule matching the event's topic. Idempotent per (rule,
- * event): the AutomationRun row uses a unique key, so a repeated drain of the
- * same event never re-runs an action.
+ * Atomically claims a `(rule, event)` unit of work with a lease. Returns `true`
+ * when this caller owns it; `false` when it already succeeded, is still being
+ * processed by another worker, is not yet due, or is exhausted (dead-letter).
+ * This is what makes concurrent drains safe.
  */
-export async function runAutomationsForEvent(event: EventLike): Promise<AutomationResult> {
+async function claimAutomationRun(
+  ruleId: string,
+  eventId: string,
+  runId: string
+): Promise<boolean> {
+  try {
+    await prisma.automationRun.create({
+      data: {
+        ruleId,
+        eventId,
+        status: 'PROCESSING',
+        attempts: 1,
+        lockedAt: new Date(),
+        lockedBy: runId,
+      },
+    })
+    return true
+  } catch (error) {
+    if (!isUniqueViolation(error)) throw error
+  }
+
+  const leaseCutoff = new Date(Date.now() - DEFAULT_LEASE_MS)
+  const claimed = await prisma.automationRun.updateMany({
+    where: {
+      ruleId,
+      eventId,
+      OR: [
+        { status: 'PENDING' },
+        { status: 'FAILED', attempts: { lt: DEFAULT_MAX_ATTEMPTS } },
+        { status: 'PROCESSING', lockedAt: { lt: leaseCutoff } },
+      ],
+    },
+    data: {
+      status: 'PROCESSING',
+      attempts: { increment: 1 },
+      lockedAt: new Date(),
+      lockedBy: runId,
+    },
+  })
+  return claimed.count > 0
+}
+
+/** Runs one claimed automation inside a transaction so the action and its
+ * status update commit atomically (a crash rolls both back and the lease
+ * reclaims the run — no partially-applied side effect survives). */
+async function runClaimedAutomation(
+  rule: {
+    id: string
+    name: string
+    action: string
+    config: unknown
+    createdById: string
+  },
+  event: EventLike
+): Promise<{ ok: true } | { ok: false; attempts: number; message: string }> {
+  try {
+    await prisma.$transaction(async (tx) => {
+      const detail = await executeAction(tx, rule, event)
+      await tx.automationRun.update({
+        where: { ruleId_eventId: { ruleId: rule.id, eventId: event.id } },
+        data: {
+          status: 'SUCCESS',
+          detail: detail.slice(0, DETAIL_MAX),
+          nextAttemptAt: null,
+          lockedAt: null,
+          lockedBy: null,
+        },
+      })
+      await tx.automationRule.update({
+        where: { id: rule.id },
+        data: { lastRunAt: new Date() },
+      })
+    })
+    return { ok: true }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    const run = await prisma.automationRun.findUnique({
+      where: { ruleId_eventId: { ruleId: rule.id, eventId: event.id } },
+      select: { attempts: true },
+    })
+    const attempts = run?.attempts ?? 1
+    const exhausted = attempts >= DEFAULT_MAX_ATTEMPTS
+    await prisma.automationRun.update({
+      where: { ruleId_eventId: { ruleId: rule.id, eventId: event.id } },
+      data: {
+        status: 'FAILED',
+        detail: message.slice(0, DETAIL_MAX),
+        nextAttemptAt: exhausted ? null : nextAttemptAt(attempts),
+        lockedAt: null,
+        lockedBy: null,
+      },
+    })
+    return { ok: false, attempts, message }
+  }
+}
+
+/**
+ * Runs every enabled rule matching the event's topic. Idempotent per
+ * `(rule, event)`: the unique key plus the claim lease mean a repeated drain of
+ * the same event never re-runs a completed action, while a *failed* action is
+ * retried on a later drain (bounded by `DEFAULT_MAX_ATTEMPTS`).
+ */
+export async function dispatchAutomationsForEvent(
+  event: EventLike,
+  options: { runId?: string } = {}
+): Promise<AutomationResult> {
+  const runId = options.runId ?? newRequestId()
+
   const rules = await prisma.automationRule.findMany({
     where: { organizationId: event.organizationId, enabled: true, trigger: event.topic },
   })
@@ -285,39 +465,111 @@ export async function runAutomationsForEvent(event: EventLike): Promise<Automati
   const result: AutomationResult = { rules: rules.length, succeeded: 0, failed: 0, skipped: 0 }
 
   for (const rule of rules) {
-    try {
-      await prisma.automationRun.create({
-        data: { ruleId: rule.id, eventId: event.id, status: 'PENDING' },
-      })
-    } catch (error) {
-      // Unique violation → already ran for this event.
-      if (typeof error === 'object' && error !== null && (error as { code?: string }).code === 'P2002') {
-        result.skipped += 1
-        continue
-      }
-      throw error
+    const claimed = await claimAutomationRun(rule.id, event.id, runId)
+    if (!claimed) {
+      result.skipped += 1
+      continue
     }
 
-    try {
-      const detail = await executeAction(rule, event)
-      await prisma.automationRun.update({
-        where: { ruleId_eventId: { ruleId: rule.id, eventId: event.id } },
-        data: { status: 'SUCCESS', detail },
-      })
-      await prisma.automationRule.update({
-        where: { id: rule.id },
-        data: { lastRunAt: new Date() },
-      })
+    const outcome = await runClaimedAutomation(rule, event)
+    if (outcome.ok) {
       result.succeeded += 1
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error)
-      await prisma.automationRun.update({
-        where: { ruleId_eventId: { ruleId: rule.id, eventId: event.id } },
-        data: { status: 'FAILED', detail },
-      })
+    } else {
       result.failed += 1
-      logger.warn('automation_failed', { ruleId: rule.id, detail })
+      logger.warn('automation_failed', {
+        ruleId: rule.id,
+        attempts: outcome.attempts,
+        exhausted: outcome.attempts >= DEFAULT_MAX_ATTEMPTS,
+        detail: outcome.message,
+      })
     }
+  }
+
+  return result
+}
+
+/** Backwards-compatible alias for {@link dispatchAutomationsForEvent}. */
+export function runAutomationsForEvent(event: EventLike): Promise<AutomationResult> {
+  return dispatchAutomationsForEvent(event)
+}
+
+export interface AutomationRetryResult {
+  retried: number
+  recovered: number
+  discarded: number
+}
+
+/**
+ * Retries automation runs that failed or were abandoned by a crashed worker.
+ * Called by the drain job after fan-out. Loads the originating outbox event so
+ * the action can be replayed against the same payload.
+ */
+export async function runAutomationsForPendingEvents(
+  options: { runId?: string; limit?: number } = {}
+): Promise<AutomationRetryResult> {
+  const runId = options.runId ?? newRequestId()
+  const limit = options.limit ?? 100
+  const now = new Date()
+  const leaseCutoff = new Date(now.getTime() - DEFAULT_LEASE_MS)
+
+  const candidates = await prisma.automationRun.findMany({
+    where: {
+      attempts: { lt: DEFAULT_MAX_ATTEMPTS },
+      OR: [
+        { status: 'PENDING', OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }] },
+        { status: 'FAILED', OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }] },
+        { status: 'PROCESSING', lockedAt: { lt: leaseCutoff } },
+      ],
+    },
+    orderBy: { createdAt: 'asc' },
+    take: limit,
+    select: { ruleId: true, eventId: true },
+  })
+
+  const result: AutomationRetryResult = { retried: 0, recovered: 0, discarded: 0 }
+
+  for (const candidate of candidates) {
+    const [rule, event] = await Promise.all([
+      prisma.automationRule.findUnique({
+        where: { id: candidate.ruleId },
+        select: { id: true, name: true, action: true, config: true, createdById: true, enabled: true },
+      }),
+      prisma.outboxEvent.findUnique({
+        where: { id: candidate.eventId },
+        select: { id: true, organizationId: true, topic: true, payload: true },
+      }),
+    ])
+
+    if (!rule || !event) {
+      await prisma.automationRun.update({
+        where: { ruleId_eventId: { ruleId: candidate.ruleId, eventId: candidate.eventId } },
+        data: {
+          status: 'FAILED',
+          detail: !event ? 'Originating event no longer exists' : 'Automation rule was deleted',
+          nextAttemptAt: null,
+          lockedAt: null,
+          lockedBy: null,
+        },
+      })
+      result.discarded += 1
+      continue
+    }
+
+    if (!rule.enabled) {
+      await prisma.automationRun.update({
+        where: { ruleId_eventId: { ruleId: candidate.ruleId, eventId: candidate.eventId } },
+        data: { status: 'FAILED', detail: 'Rule disabled', nextAttemptAt: null, lockedAt: null, lockedBy: null },
+      })
+      result.discarded += 1
+      continue
+    }
+
+    const claimed = await claimAutomationRun(rule.id, event.id, runId)
+    if (!claimed) continue
+
+    const outcome = await runClaimedAutomation(rule, event)
+    result.retried += 1
+    if (outcome.ok) result.recovered += 1
   }
 
   return result

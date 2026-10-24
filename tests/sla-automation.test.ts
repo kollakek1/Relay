@@ -4,7 +4,7 @@ import { claimIdempotencyKey } from '@/shared/server/idempotency'
 import { runSlaScan } from '@/features/sla/server/service'
 import { createWorkflow, publishWorkflow, runInstance, saveWorkflowDraft } from '@/features/workflow/server/service'
 import { assignTask } from '@/features/task/server/service'
-import { GET, POST } from '@/app/api/jobs/sla-scan/route'
+import { POST } from '@/app/api/jobs/sla-scan/route'
 import type { Context } from '@/shared/server/context'
 import { cleanupDatabase, createContext, createTestUser, disconnect } from './helpers/db'
 
@@ -97,14 +97,23 @@ describe('sla-scan HTTP endpoint', () => {
 
   it('returns 503 when not configured and 401 when unauthorized', async () => {
     delete process.env.CRON_SECRET
-    const notConfigured = await GET(new Request('http://localhost/api/jobs/sla-scan'))
+    const notConfigured = await POST(new Request('http://localhost/api/jobs/sla-scan', { method: 'POST' }))
     expect(notConfigured.status).toBe(503)
 
     process.env.CRON_SECRET = 'test-cron-secret'
     const unauthorized = await POST(
-      new Request('http://localhost/api/jobs/sla-scan', { headers: { authorization: 'Bearer nope' } })
+      new Request('http://localhost/api/jobs/sla-scan', {
+        method: 'POST',
+        headers: { authorization: 'Bearer nope' },
+      })
     )
     expect(unauthorized.status).toBe(401)
+
+    // A secret in the query string is never accepted (would leak via logs).
+    const querySecret = await POST(
+      new Request('http://localhost/api/jobs/sla-scan?secret=test-cron-secret', { method: 'POST' })
+    )
+    expect(querySecret.status).toBe(401)
   })
 
   it('runs once per hour bucket and skips repeats', async () => {

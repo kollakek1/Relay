@@ -1,5 +1,6 @@
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
+import { csvCell, toCsv } from './csv'
 
 /** Hard cap on export size — exports are synchronous serverless responses. */
 export const MAX_EXPORT_ROWS = 5000
@@ -10,16 +11,7 @@ export interface ExportResult {
   truncated: boolean
 }
 
-function csvCell(value: unknown): string {
-  if (value === null || value === undefined) return ''
-  const text = value instanceof Date ? value.toISOString() : String(value)
-  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
-}
-
-function toCsv(header: string[], rows: unknown[][]): string {
-  const lines = [header.join(','), ...rows.map((row) => row.map(csvCell).join(','))]
-  return lines.join('\r\n')
-}
+export { csvCell, toCsv }
 
 export interface TaskExportFilters {
   status?: string

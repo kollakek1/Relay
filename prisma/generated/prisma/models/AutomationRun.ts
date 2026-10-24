@@ -20,8 +20,18 @@ export type AutomationRunModel = runtime.Types.Result.DefaultSelection<Prisma.$A
 
 export type AggregateAutomationRun = {
   _count: AutomationRunCountAggregateOutputType | null
+  _avg: AutomationRunAvgAggregateOutputType | null
+  _sum: AutomationRunSumAggregateOutputType | null
   _min: AutomationRunMinAggregateOutputType | null
   _max: AutomationRunMaxAggregateOutputType | null
+}
+
+export type AutomationRunAvgAggregateOutputType = {
+  attempts: number | null
+}
+
+export type AutomationRunSumAggregateOutputType = {
+  attempts: number | null
 }
 
 export type AutomationRunMinAggregateOutputType = {
@@ -30,6 +40,10 @@ export type AutomationRunMinAggregateOutputType = {
   eventId: string | null
   status: string | null
   detail: string | null
+  attempts: number | null
+  nextAttemptAt: Date | null
+  lockedAt: Date | null
+  lockedBy: string | null
   createdAt: Date | null
 }
 
@@ -39,6 +53,10 @@ export type AutomationRunMaxAggregateOutputType = {
   eventId: string | null
   status: string | null
   detail: string | null
+  attempts: number | null
+  nextAttemptAt: Date | null
+  lockedAt: Date | null
+  lockedBy: string | null
   createdAt: Date | null
 }
 
@@ -48,10 +66,22 @@ export type AutomationRunCountAggregateOutputType = {
   eventId: number
   status: number
   detail: number
+  attempts: number
+  nextAttemptAt: number
+  lockedAt: number
+  lockedBy: number
   createdAt: number
   _all: number
 }
 
+
+export type AutomationRunAvgAggregateInputType = {
+  attempts?: true
+}
+
+export type AutomationRunSumAggregateInputType = {
+  attempts?: true
+}
 
 export type AutomationRunMinAggregateInputType = {
   id?: true
@@ -59,6 +89,10 @@ export type AutomationRunMinAggregateInputType = {
   eventId?: true
   status?: true
   detail?: true
+  attempts?: true
+  nextAttemptAt?: true
+  lockedAt?: true
+  lockedBy?: true
   createdAt?: true
 }
 
@@ -68,6 +102,10 @@ export type AutomationRunMaxAggregateInputType = {
   eventId?: true
   status?: true
   detail?: true
+  attempts?: true
+  nextAttemptAt?: true
+  lockedAt?: true
+  lockedBy?: true
   createdAt?: true
 }
 
@@ -77,6 +115,10 @@ export type AutomationRunCountAggregateInputType = {
   eventId?: true
   status?: true
   detail?: true
+  attempts?: true
+  nextAttemptAt?: true
+  lockedAt?: true
+  lockedBy?: true
   createdAt?: true
   _all?: true
 }
@@ -119,6 +161,18 @@ export type AutomationRunAggregateArgs<ExtArgs extends runtime.Types.Extensions.
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: AutomationRunAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: AutomationRunSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: AutomationRunMinAggregateInputType
@@ -149,6 +203,8 @@ export type AutomationRunGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   _count?: AutomationRunCountAggregateInputType | true
+  _avg?: AutomationRunAvgAggregateInputType
+  _sum?: AutomationRunSumAggregateInputType
   _min?: AutomationRunMinAggregateInputType
   _max?: AutomationRunMaxAggregateInputType
 }
@@ -159,8 +215,14 @@ export type AutomationRunGroupByOutputType = {
   eventId: string
   status: string
   detail: string | null
+  attempts: number
+  nextAttemptAt: Date | null
+  lockedAt: Date | null
+  lockedBy: string | null
   createdAt: Date
   _count: AutomationRunCountAggregateOutputType | null
+  _avg: AutomationRunAvgAggregateOutputType | null
+  _sum: AutomationRunSumAggregateOutputType | null
   _min: AutomationRunMinAggregateOutputType | null
   _max: AutomationRunMaxAggregateOutputType | null
 }
@@ -189,6 +251,10 @@ export type AutomationRunWhereInput = {
   eventId?: Prisma.StringFilter<"AutomationRun"> | string
   status?: Prisma.StringFilter<"AutomationRun"> | string
   detail?: Prisma.StringNullableFilter<"AutomationRun"> | string | null
+  attempts?: Prisma.IntFilter<"AutomationRun"> | number
+  nextAttemptAt?: Prisma.DateTimeNullableFilter<"AutomationRun"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"AutomationRun"> | Date | string | null
+  lockedBy?: Prisma.StringNullableFilter<"AutomationRun"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AutomationRun"> | Date | string
   rule?: Prisma.XOR<Prisma.AutomationRuleScalarRelationFilter, Prisma.AutomationRuleWhereInput>
 }
@@ -199,6 +265,10 @@ export type AutomationRunOrderByWithRelationInput = {
   eventId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   detail?: Prisma.SortOrderInput | Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   rule?: Prisma.AutomationRuleOrderByWithRelationInput
 }
@@ -213,6 +283,10 @@ export type AutomationRunWhereUniqueInput = Prisma.AtLeast<{
   eventId?: Prisma.StringFilter<"AutomationRun"> | string
   status?: Prisma.StringFilter<"AutomationRun"> | string
   detail?: Prisma.StringNullableFilter<"AutomationRun"> | string | null
+  attempts?: Prisma.IntFilter<"AutomationRun"> | number
+  nextAttemptAt?: Prisma.DateTimeNullableFilter<"AutomationRun"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"AutomationRun"> | Date | string | null
+  lockedBy?: Prisma.StringNullableFilter<"AutomationRun"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AutomationRun"> | Date | string
   rule?: Prisma.XOR<Prisma.AutomationRuleScalarRelationFilter, Prisma.AutomationRuleWhereInput>
 }, "id" | "ruleId_eventId">
@@ -223,10 +297,16 @@ export type AutomationRunOrderByWithAggregationInput = {
   eventId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   detail?: Prisma.SortOrderInput | Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.AutomationRunCountOrderByAggregateInput
+  _avg?: Prisma.AutomationRunAvgOrderByAggregateInput
   _max?: Prisma.AutomationRunMaxOrderByAggregateInput
   _min?: Prisma.AutomationRunMinOrderByAggregateInput
+  _sum?: Prisma.AutomationRunSumOrderByAggregateInput
 }
 
 export type AutomationRunScalarWhereWithAggregatesInput = {
@@ -238,6 +318,10 @@ export type AutomationRunScalarWhereWithAggregatesInput = {
   eventId?: Prisma.StringWithAggregatesFilter<"AutomationRun"> | string
   status?: Prisma.StringWithAggregatesFilter<"AutomationRun"> | string
   detail?: Prisma.StringNullableWithAggregatesFilter<"AutomationRun"> | string | null
+  attempts?: Prisma.IntWithAggregatesFilter<"AutomationRun"> | number
+  nextAttemptAt?: Prisma.DateTimeNullableWithAggregatesFilter<"AutomationRun"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"AutomationRun"> | Date | string | null
+  lockedBy?: Prisma.StringNullableWithAggregatesFilter<"AutomationRun"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AutomationRun"> | Date | string
 }
 
@@ -246,6 +330,10 @@ export type AutomationRunCreateInput = {
   eventId: string
   status?: string
   detail?: string | null
+  attempts?: number
+  nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   createdAt?: Date | string
   rule: Prisma.AutomationRuleCreateNestedOneWithoutRunsInput
 }
@@ -256,6 +344,10 @@ export type AutomationRunUncheckedCreateInput = {
   eventId: string
   status?: string
   detail?: string | null
+  attempts?: number
+  nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   createdAt?: Date | string
 }
 
@@ -264,6 +356,10 @@ export type AutomationRunUpdateInput = {
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   detail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rule?: Prisma.AutomationRuleUpdateOneRequiredWithoutRunsNestedInput
 }
@@ -274,6 +370,10 @@ export type AutomationRunUncheckedUpdateInput = {
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   detail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -283,6 +383,10 @@ export type AutomationRunCreateManyInput = {
   eventId: string
   status?: string
   detail?: string | null
+  attempts?: number
+  nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   createdAt?: Date | string
 }
 
@@ -291,6 +395,10 @@ export type AutomationRunUpdateManyMutationInput = {
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   detail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -300,6 +408,10 @@ export type AutomationRunUncheckedUpdateManyInput = {
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   detail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -324,7 +436,15 @@ export type AutomationRunCountOrderByAggregateInput = {
   eventId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   detail?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  lockedBy?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type AutomationRunAvgOrderByAggregateInput = {
+  attempts?: Prisma.SortOrder
 }
 
 export type AutomationRunMaxOrderByAggregateInput = {
@@ -333,6 +453,10 @@ export type AutomationRunMaxOrderByAggregateInput = {
   eventId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   detail?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  lockedBy?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -342,7 +466,15 @@ export type AutomationRunMinOrderByAggregateInput = {
   eventId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   detail?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  lockedBy?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type AutomationRunSumOrderByAggregateInput = {
+  attempts?: Prisma.SortOrder
 }
 
 export type AutomationRunCreateNestedManyWithoutRuleInput = {
@@ -387,11 +519,23 @@ export type AutomationRunUncheckedUpdateManyWithoutRuleNestedInput = {
   deleteMany?: Prisma.AutomationRunScalarWhereInput | Prisma.AutomationRunScalarWhereInput[]
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type AutomationRunCreateWithoutRuleInput = {
   id?: string
   eventId: string
   status?: string
   detail?: string | null
+  attempts?: number
+  nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   createdAt?: Date | string
 }
 
@@ -400,6 +544,10 @@ export type AutomationRunUncheckedCreateWithoutRuleInput = {
   eventId: string
   status?: string
   detail?: string | null
+  attempts?: number
+  nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   createdAt?: Date | string
 }
 
@@ -438,6 +586,10 @@ export type AutomationRunScalarWhereInput = {
   eventId?: Prisma.StringFilter<"AutomationRun"> | string
   status?: Prisma.StringFilter<"AutomationRun"> | string
   detail?: Prisma.StringNullableFilter<"AutomationRun"> | string | null
+  attempts?: Prisma.IntFilter<"AutomationRun"> | number
+  nextAttemptAt?: Prisma.DateTimeNullableFilter<"AutomationRun"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"AutomationRun"> | Date | string | null
+  lockedBy?: Prisma.StringNullableFilter<"AutomationRun"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AutomationRun"> | Date | string
 }
 
@@ -446,6 +598,10 @@ export type AutomationRunCreateManyRuleInput = {
   eventId: string
   status?: string
   detail?: string | null
+  attempts?: number
+  nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   createdAt?: Date | string
 }
 
@@ -454,6 +610,10 @@ export type AutomationRunUpdateWithoutRuleInput = {
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   detail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -462,6 +622,10 @@ export type AutomationRunUncheckedUpdateWithoutRuleInput = {
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   detail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -470,6 +634,10 @@ export type AutomationRunUncheckedUpdateManyWithoutRuleInput = {
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   detail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -481,6 +649,10 @@ export type AutomationRunSelect<ExtArgs extends runtime.Types.Extensions.Interna
   eventId?: boolean
   status?: boolean
   detail?: boolean
+  attempts?: boolean
+  nextAttemptAt?: boolean
+  lockedAt?: boolean
+  lockedBy?: boolean
   createdAt?: boolean
   rule?: boolean | Prisma.AutomationRuleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["automationRun"]>
@@ -491,6 +663,10 @@ export type AutomationRunSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   eventId?: boolean
   status?: boolean
   detail?: boolean
+  attempts?: boolean
+  nextAttemptAt?: boolean
+  lockedAt?: boolean
+  lockedBy?: boolean
   createdAt?: boolean
   rule?: boolean | Prisma.AutomationRuleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["automationRun"]>
@@ -501,6 +677,10 @@ export type AutomationRunSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   eventId?: boolean
   status?: boolean
   detail?: boolean
+  attempts?: boolean
+  nextAttemptAt?: boolean
+  lockedAt?: boolean
+  lockedBy?: boolean
   createdAt?: boolean
   rule?: boolean | Prisma.AutomationRuleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["automationRun"]>
@@ -511,10 +691,14 @@ export type AutomationRunSelectScalar = {
   eventId?: boolean
   status?: boolean
   detail?: boolean
+  attempts?: boolean
+  nextAttemptAt?: boolean
+  lockedAt?: boolean
+  lockedBy?: boolean
   createdAt?: boolean
 }
 
-export type AutomationRunOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ruleId" | "eventId" | "status" | "detail" | "createdAt", ExtArgs["result"]["automationRun"]>
+export type AutomationRunOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ruleId" | "eventId" | "status" | "detail" | "attempts" | "nextAttemptAt" | "lockedAt" | "lockedBy" | "createdAt", ExtArgs["result"]["automationRun"]>
 export type AutomationRunInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   rule?: boolean | Prisma.AutomationRuleDefaultArgs<ExtArgs>
 }
@@ -535,10 +719,20 @@ export type $AutomationRunPayload<ExtArgs extends runtime.Types.Extensions.Inter
     ruleId: string
     eventId: string
     /**
-     * PENDING | SUCCESS | FAILED
+     * PENDING | PROCESSING | SUCCESS | FAILED
      */
     status: string
+    /**
+     * Result summary (success) or the last error message (failure).
+     */
     detail: string | null
+    attempts: number
+    nextAttemptAt: Date | null
+    /**
+     * Lease owner + expiry so a crashed worker's run can be reclaimed.
+     */
+    lockedAt: Date | null
+    lockedBy: string | null
     createdAt: Date
   }, ExtArgs["result"]["automationRun"]>
   composites: {}
@@ -969,6 +1163,10 @@ export interface AutomationRunFieldRefs {
   readonly eventId: Prisma.FieldRef<"AutomationRun", 'String'>
   readonly status: Prisma.FieldRef<"AutomationRun", 'String'>
   readonly detail: Prisma.FieldRef<"AutomationRun", 'String'>
+  readonly attempts: Prisma.FieldRef<"AutomationRun", 'Int'>
+  readonly nextAttemptAt: Prisma.FieldRef<"AutomationRun", 'DateTime'>
+  readonly lockedAt: Prisma.FieldRef<"AutomationRun", 'DateTime'>
+  readonly lockedBy: Prisma.FieldRef<"AutomationRun", 'String'>
   readonly createdAt: Prisma.FieldRef<"AutomationRun", 'DateTime'>
 }
     

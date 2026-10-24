@@ -39,12 +39,15 @@ export type WebhookDeliverySumAggregateOutputType = {
 export type WebhookDeliveryMinAggregateOutputType = {
   id: string | null
   endpointId: string | null
+  eventId: string | null
   event: string | null
   status: string | null
   attempts: number | null
   responseCode: number | null
   error: string | null
   nextAttemptAt: Date | null
+  lockedAt: Date | null
+  lockedBy: string | null
   deliveredAt: Date | null
   createdAt: Date | null
 }
@@ -52,12 +55,15 @@ export type WebhookDeliveryMinAggregateOutputType = {
 export type WebhookDeliveryMaxAggregateOutputType = {
   id: string | null
   endpointId: string | null
+  eventId: string | null
   event: string | null
   status: string | null
   attempts: number | null
   responseCode: number | null
   error: string | null
   nextAttemptAt: Date | null
+  lockedAt: Date | null
+  lockedBy: string | null
   deliveredAt: Date | null
   createdAt: Date | null
 }
@@ -65,6 +71,7 @@ export type WebhookDeliveryMaxAggregateOutputType = {
 export type WebhookDeliveryCountAggregateOutputType = {
   id: number
   endpointId: number
+  eventId: number
   event: number
   payload: number
   status: number
@@ -72,6 +79,8 @@ export type WebhookDeliveryCountAggregateOutputType = {
   responseCode: number
   error: number
   nextAttemptAt: number
+  lockedAt: number
+  lockedBy: number
   deliveredAt: number
   createdAt: number
   _all: number
@@ -91,12 +100,15 @@ export type WebhookDeliverySumAggregateInputType = {
 export type WebhookDeliveryMinAggregateInputType = {
   id?: true
   endpointId?: true
+  eventId?: true
   event?: true
   status?: true
   attempts?: true
   responseCode?: true
   error?: true
   nextAttemptAt?: true
+  lockedAt?: true
+  lockedBy?: true
   deliveredAt?: true
   createdAt?: true
 }
@@ -104,12 +116,15 @@ export type WebhookDeliveryMinAggregateInputType = {
 export type WebhookDeliveryMaxAggregateInputType = {
   id?: true
   endpointId?: true
+  eventId?: true
   event?: true
   status?: true
   attempts?: true
   responseCode?: true
   error?: true
   nextAttemptAt?: true
+  lockedAt?: true
+  lockedBy?: true
   deliveredAt?: true
   createdAt?: true
 }
@@ -117,6 +132,7 @@ export type WebhookDeliveryMaxAggregateInputType = {
 export type WebhookDeliveryCountAggregateInputType = {
   id?: true
   endpointId?: true
+  eventId?: true
   event?: true
   payload?: true
   status?: true
@@ -124,6 +140,8 @@ export type WebhookDeliveryCountAggregateInputType = {
   responseCode?: true
   error?: true
   nextAttemptAt?: true
+  lockedAt?: true
+  lockedBy?: true
   deliveredAt?: true
   createdAt?: true
   _all?: true
@@ -218,6 +236,7 @@ export type WebhookDeliveryGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 export type WebhookDeliveryGroupByOutputType = {
   id: string
   endpointId: string
+  eventId: string | null
   event: string
   payload: runtime.JsonValue
   status: string
@@ -225,6 +244,8 @@ export type WebhookDeliveryGroupByOutputType = {
   responseCode: number | null
   error: string | null
   nextAttemptAt: Date | null
+  lockedAt: Date | null
+  lockedBy: string | null
   deliveredAt: Date | null
   createdAt: Date
   _count: WebhookDeliveryCountAggregateOutputType | null
@@ -255,6 +276,7 @@ export type WebhookDeliveryWhereInput = {
   NOT?: Prisma.WebhookDeliveryWhereInput | Prisma.WebhookDeliveryWhereInput[]
   id?: Prisma.StringFilter<"WebhookDelivery"> | string
   endpointId?: Prisma.StringFilter<"WebhookDelivery"> | string
+  eventId?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   event?: Prisma.StringFilter<"WebhookDelivery"> | string
   payload?: Prisma.JsonFilter<"WebhookDelivery">
   status?: Prisma.StringFilter<"WebhookDelivery"> | string
@@ -262,6 +284,8 @@ export type WebhookDeliveryWhereInput = {
   responseCode?: Prisma.IntNullableFilter<"WebhookDelivery"> | number | null
   error?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   nextAttemptAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
+  lockedBy?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   deliveredAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"WebhookDelivery"> | Date | string
   endpoint?: Prisma.XOR<Prisma.WebhookEndpointScalarRelationFilter, Prisma.WebhookEndpointWhereInput>
@@ -270,6 +294,7 @@ export type WebhookDeliveryWhereInput = {
 export type WebhookDeliveryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   endpointId?: Prisma.SortOrder
+  eventId?: Prisma.SortOrderInput | Prisma.SortOrder
   event?: Prisma.SortOrder
   payload?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -277,6 +302,8 @@ export type WebhookDeliveryOrderByWithRelationInput = {
   responseCode?: Prisma.SortOrderInput | Prisma.SortOrder
   error?: Prisma.SortOrderInput | Prisma.SortOrder
   nextAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   endpoint?: Prisma.WebhookEndpointOrderByWithRelationInput
@@ -284,10 +311,12 @@ export type WebhookDeliveryOrderByWithRelationInput = {
 
 export type WebhookDeliveryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  endpointId_eventId?: Prisma.WebhookDeliveryEndpointIdEventIdCompoundUniqueInput
   AND?: Prisma.WebhookDeliveryWhereInput | Prisma.WebhookDeliveryWhereInput[]
   OR?: Prisma.WebhookDeliveryWhereInput[]
   NOT?: Prisma.WebhookDeliveryWhereInput | Prisma.WebhookDeliveryWhereInput[]
   endpointId?: Prisma.StringFilter<"WebhookDelivery"> | string
+  eventId?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   event?: Prisma.StringFilter<"WebhookDelivery"> | string
   payload?: Prisma.JsonFilter<"WebhookDelivery">
   status?: Prisma.StringFilter<"WebhookDelivery"> | string
@@ -295,14 +324,17 @@ export type WebhookDeliveryWhereUniqueInput = Prisma.AtLeast<{
   responseCode?: Prisma.IntNullableFilter<"WebhookDelivery"> | number | null
   error?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   nextAttemptAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
+  lockedBy?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   deliveredAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"WebhookDelivery"> | Date | string
   endpoint?: Prisma.XOR<Prisma.WebhookEndpointScalarRelationFilter, Prisma.WebhookEndpointWhereInput>
-}, "id">
+}, "id" | "endpointId_eventId">
 
 export type WebhookDeliveryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   endpointId?: Prisma.SortOrder
+  eventId?: Prisma.SortOrderInput | Prisma.SortOrder
   event?: Prisma.SortOrder
   payload?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -310,6 +342,8 @@ export type WebhookDeliveryOrderByWithAggregationInput = {
   responseCode?: Prisma.SortOrderInput | Prisma.SortOrder
   error?: Prisma.SortOrderInput | Prisma.SortOrder
   nextAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.WebhookDeliveryCountOrderByAggregateInput
@@ -325,6 +359,7 @@ export type WebhookDeliveryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.WebhookDeliveryScalarWhereWithAggregatesInput | Prisma.WebhookDeliveryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"WebhookDelivery"> | string
   endpointId?: Prisma.StringWithAggregatesFilter<"WebhookDelivery"> | string
+  eventId?: Prisma.StringNullableWithAggregatesFilter<"WebhookDelivery"> | string | null
   event?: Prisma.StringWithAggregatesFilter<"WebhookDelivery"> | string
   payload?: Prisma.JsonWithAggregatesFilter<"WebhookDelivery">
   status?: Prisma.StringWithAggregatesFilter<"WebhookDelivery"> | string
@@ -332,12 +367,15 @@ export type WebhookDeliveryScalarWhereWithAggregatesInput = {
   responseCode?: Prisma.IntNullableWithAggregatesFilter<"WebhookDelivery"> | number | null
   error?: Prisma.StringNullableWithAggregatesFilter<"WebhookDelivery"> | string | null
   nextAttemptAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WebhookDelivery"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WebhookDelivery"> | Date | string | null
+  lockedBy?: Prisma.StringNullableWithAggregatesFilter<"WebhookDelivery"> | string | null
   deliveredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WebhookDelivery"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"WebhookDelivery"> | Date | string
 }
 
 export type WebhookDeliveryCreateInput = {
   id?: string
+  eventId?: string | null
   event: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
@@ -345,6 +383,8 @@ export type WebhookDeliveryCreateInput = {
   responseCode?: number | null
   error?: string | null
   nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   deliveredAt?: Date | string | null
   createdAt?: Date | string
   endpoint: Prisma.WebhookEndpointCreateNestedOneWithoutDeliveriesInput
@@ -353,6 +393,7 @@ export type WebhookDeliveryCreateInput = {
 export type WebhookDeliveryUncheckedCreateInput = {
   id?: string
   endpointId: string
+  eventId?: string | null
   event: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
@@ -360,12 +401,15 @@ export type WebhookDeliveryUncheckedCreateInput = {
   responseCode?: number | null
   error?: string | null
   nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   deliveredAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type WebhookDeliveryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   event?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -373,6 +417,8 @@ export type WebhookDeliveryUpdateInput = {
   responseCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endpoint?: Prisma.WebhookEndpointUpdateOneRequiredWithoutDeliveriesNestedInput
@@ -381,6 +427,7 @@ export type WebhookDeliveryUpdateInput = {
 export type WebhookDeliveryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   endpointId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   event?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -388,6 +435,8 @@ export type WebhookDeliveryUncheckedUpdateInput = {
   responseCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -395,6 +444,7 @@ export type WebhookDeliveryUncheckedUpdateInput = {
 export type WebhookDeliveryCreateManyInput = {
   id?: string
   endpointId: string
+  eventId?: string | null
   event: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
@@ -402,12 +452,15 @@ export type WebhookDeliveryCreateManyInput = {
   responseCode?: number | null
   error?: string | null
   nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   deliveredAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type WebhookDeliveryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   event?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -415,6 +468,8 @@ export type WebhookDeliveryUpdateManyMutationInput = {
   responseCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -422,6 +477,7 @@ export type WebhookDeliveryUpdateManyMutationInput = {
 export type WebhookDeliveryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   endpointId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   event?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -429,6 +485,8 @@ export type WebhookDeliveryUncheckedUpdateManyInput = {
   responseCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -443,9 +501,15 @@ export type WebhookDeliveryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type WebhookDeliveryEndpointIdEventIdCompoundUniqueInput = {
+  endpointId: string
+  eventId: string
+}
+
 export type WebhookDeliveryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   endpointId?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
   event?: Prisma.SortOrder
   payload?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -453,6 +517,8 @@ export type WebhookDeliveryCountOrderByAggregateInput = {
   responseCode?: Prisma.SortOrder
   error?: Prisma.SortOrder
   nextAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  lockedBy?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -465,12 +531,15 @@ export type WebhookDeliveryAvgOrderByAggregateInput = {
 export type WebhookDeliveryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   endpointId?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
   event?: Prisma.SortOrder
   status?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   responseCode?: Prisma.SortOrder
   error?: Prisma.SortOrder
   nextAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  lockedBy?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -478,12 +547,15 @@ export type WebhookDeliveryMaxOrderByAggregateInput = {
 export type WebhookDeliveryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   endpointId?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
   event?: Prisma.SortOrder
   status?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   responseCode?: Prisma.SortOrder
   error?: Prisma.SortOrder
   nextAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  lockedBy?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -545,6 +617,7 @@ export type NullableIntFieldUpdateOperationsInput = {
 
 export type WebhookDeliveryCreateWithoutEndpointInput = {
   id?: string
+  eventId?: string | null
   event: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
@@ -552,12 +625,15 @@ export type WebhookDeliveryCreateWithoutEndpointInput = {
   responseCode?: number | null
   error?: string | null
   nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   deliveredAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type WebhookDeliveryUncheckedCreateWithoutEndpointInput = {
   id?: string
+  eventId?: string | null
   event: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
@@ -565,6 +641,8 @@ export type WebhookDeliveryUncheckedCreateWithoutEndpointInput = {
   responseCode?: number | null
   error?: string | null
   nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   deliveredAt?: Date | string | null
   createdAt?: Date | string
 }
@@ -601,6 +679,7 @@ export type WebhookDeliveryScalarWhereInput = {
   NOT?: Prisma.WebhookDeliveryScalarWhereInput | Prisma.WebhookDeliveryScalarWhereInput[]
   id?: Prisma.StringFilter<"WebhookDelivery"> | string
   endpointId?: Prisma.StringFilter<"WebhookDelivery"> | string
+  eventId?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   event?: Prisma.StringFilter<"WebhookDelivery"> | string
   payload?: Prisma.JsonFilter<"WebhookDelivery">
   status?: Prisma.StringFilter<"WebhookDelivery"> | string
@@ -608,12 +687,15 @@ export type WebhookDeliveryScalarWhereInput = {
   responseCode?: Prisma.IntNullableFilter<"WebhookDelivery"> | number | null
   error?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   nextAttemptAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
+  lockedBy?: Prisma.StringNullableFilter<"WebhookDelivery"> | string | null
   deliveredAt?: Prisma.DateTimeNullableFilter<"WebhookDelivery"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"WebhookDelivery"> | Date | string
 }
 
 export type WebhookDeliveryCreateManyEndpointInput = {
   id?: string
+  eventId?: string | null
   event: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
@@ -621,12 +703,15 @@ export type WebhookDeliveryCreateManyEndpointInput = {
   responseCode?: number | null
   error?: string | null
   nextAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
+  lockedBy?: string | null
   deliveredAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type WebhookDeliveryUpdateWithoutEndpointInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   event?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -634,12 +719,15 @@ export type WebhookDeliveryUpdateWithoutEndpointInput = {
   responseCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebhookDeliveryUncheckedUpdateWithoutEndpointInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   event?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -647,12 +735,15 @@ export type WebhookDeliveryUncheckedUpdateWithoutEndpointInput = {
   responseCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebhookDeliveryUncheckedUpdateManyWithoutEndpointInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   event?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -660,6 +751,8 @@ export type WebhookDeliveryUncheckedUpdateManyWithoutEndpointInput = {
   responseCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -669,6 +762,7 @@ export type WebhookDeliveryUncheckedUpdateManyWithoutEndpointInput = {
 export type WebhookDeliverySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   endpointId?: boolean
+  eventId?: boolean
   event?: boolean
   payload?: boolean
   status?: boolean
@@ -676,6 +770,8 @@ export type WebhookDeliverySelect<ExtArgs extends runtime.Types.Extensions.Inter
   responseCode?: boolean
   error?: boolean
   nextAttemptAt?: boolean
+  lockedAt?: boolean
+  lockedBy?: boolean
   deliveredAt?: boolean
   createdAt?: boolean
   endpoint?: boolean | Prisma.WebhookEndpointDefaultArgs<ExtArgs>
@@ -684,6 +780,7 @@ export type WebhookDeliverySelect<ExtArgs extends runtime.Types.Extensions.Inter
 export type WebhookDeliverySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   endpointId?: boolean
+  eventId?: boolean
   event?: boolean
   payload?: boolean
   status?: boolean
@@ -691,6 +788,8 @@ export type WebhookDeliverySelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   responseCode?: boolean
   error?: boolean
   nextAttemptAt?: boolean
+  lockedAt?: boolean
+  lockedBy?: boolean
   deliveredAt?: boolean
   createdAt?: boolean
   endpoint?: boolean | Prisma.WebhookEndpointDefaultArgs<ExtArgs>
@@ -699,6 +798,7 @@ export type WebhookDeliverySelectCreateManyAndReturn<ExtArgs extends runtime.Typ
 export type WebhookDeliverySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   endpointId?: boolean
+  eventId?: boolean
   event?: boolean
   payload?: boolean
   status?: boolean
@@ -706,6 +806,8 @@ export type WebhookDeliverySelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   responseCode?: boolean
   error?: boolean
   nextAttemptAt?: boolean
+  lockedAt?: boolean
+  lockedBy?: boolean
   deliveredAt?: boolean
   createdAt?: boolean
   endpoint?: boolean | Prisma.WebhookEndpointDefaultArgs<ExtArgs>
@@ -714,6 +816,7 @@ export type WebhookDeliverySelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
 export type WebhookDeliverySelectScalar = {
   id?: boolean
   endpointId?: boolean
+  eventId?: boolean
   event?: boolean
   payload?: boolean
   status?: boolean
@@ -721,11 +824,13 @@ export type WebhookDeliverySelectScalar = {
   responseCode?: boolean
   error?: boolean
   nextAttemptAt?: boolean
+  lockedAt?: boolean
+  lockedBy?: boolean
   deliveredAt?: boolean
   createdAt?: boolean
 }
 
-export type WebhookDeliveryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "endpointId" | "event" | "payload" | "status" | "attempts" | "responseCode" | "error" | "nextAttemptAt" | "deliveredAt" | "createdAt", ExtArgs["result"]["webhookDelivery"]>
+export type WebhookDeliveryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "endpointId" | "eventId" | "event" | "payload" | "status" | "attempts" | "responseCode" | "error" | "nextAttemptAt" | "lockedAt" | "lockedBy" | "deliveredAt" | "createdAt", ExtArgs["result"]["webhookDelivery"]>
 export type WebhookDeliveryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   endpoint?: boolean | Prisma.WebhookEndpointDefaultArgs<ExtArgs>
 }
@@ -744,16 +849,26 @@ export type $WebhookDeliveryPayload<ExtArgs extends runtime.Types.Extensions.Int
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     endpointId: string
+    /**
+     * The outbox event that produced this delivery (null for legacy rows).
+     * The unique (endpointId, eventId) index makes fan-out idempotent.
+     */
+    eventId: string | null
     event: string
     payload: runtime.JsonValue
     /**
-     * PENDING | DELIVERED | FAILED
+     * PENDING | PROCESSING | DELIVERED | FAILED
      */
     status: string
     attempts: number
     responseCode: number | null
     error: string | null
     nextAttemptAt: Date | null
+    /**
+     * Lease owner + expiry so a crashed worker's delivery can be reclaimed.
+     */
+    lockedAt: Date | null
+    lockedBy: string | null
     deliveredAt: Date | null
     createdAt: Date
   }, ExtArgs["result"]["webhookDelivery"]>
@@ -1182,6 +1297,7 @@ export interface Prisma__WebhookDeliveryClient<T, Null = never, ExtArgs extends 
 export interface WebhookDeliveryFieldRefs {
   readonly id: Prisma.FieldRef<"WebhookDelivery", 'String'>
   readonly endpointId: Prisma.FieldRef<"WebhookDelivery", 'String'>
+  readonly eventId: Prisma.FieldRef<"WebhookDelivery", 'String'>
   readonly event: Prisma.FieldRef<"WebhookDelivery", 'String'>
   readonly payload: Prisma.FieldRef<"WebhookDelivery", 'Json'>
   readonly status: Prisma.FieldRef<"WebhookDelivery", 'String'>
@@ -1189,6 +1305,8 @@ export interface WebhookDeliveryFieldRefs {
   readonly responseCode: Prisma.FieldRef<"WebhookDelivery", 'Int'>
   readonly error: Prisma.FieldRef<"WebhookDelivery", 'String'>
   readonly nextAttemptAt: Prisma.FieldRef<"WebhookDelivery", 'DateTime'>
+  readonly lockedAt: Prisma.FieldRef<"WebhookDelivery", 'DateTime'>
+  readonly lockedBy: Prisma.FieldRef<"WebhookDelivery", 'String'>
   readonly deliveredAt: Prisma.FieldRef<"WebhookDelivery", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"WebhookDelivery", 'DateTime'>
 }

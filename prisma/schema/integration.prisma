@@ -23,17 +23,24 @@ model AutomationRule {
 
 /// One execution of a rule for one outbox event (unique → effectively-once).
 model AutomationRun {
-  id        String         @id @default(cuid())
-  ruleId    String
-  rule      AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
-  eventId   String
-  /// PENDING | SUCCESS | FAILED
-  status    String         @default("PENDING")
-  detail    String?
-  createdAt DateTime       @default(now())
+  id            String         @id @default(cuid())
+  ruleId        String
+  rule          AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  eventId       String
+  /// PENDING | PROCESSING | SUCCESS | FAILED
+  status        String         @default("PENDING")
+  /// Result summary (success) or the last error message (failure).
+  detail        String?
+  attempts      Int            @default(0)
+  nextAttemptAt DateTime?
+  /// Lease owner + expiry so a crashed worker's run can be reclaimed.
+  lockedAt      DateTime?
+  lockedBy      String?
+  createdAt     DateTime       @default(now())
 
   @@unique([ruleId, eventId])
   @@index([ruleId, createdAt])
+  @@index([status, nextAttemptAt])
   @@map("automation_run")
 }
 
@@ -88,17 +95,24 @@ model WebhookDelivery {
   id            String          @id @default(cuid())
   endpointId    String
   endpoint      WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  /// The outbox event that produced this delivery (null for legacy rows).
+  /// The unique (endpointId, eventId) index makes fan-out idempotent.
+  eventId       String?
   event         String
   payload       Json
-  /// PENDING | DELIVERED | FAILED
+  /// PENDING | PROCESSING | DELIVERED | FAILED
   status        String          @default("PENDING")
   attempts      Int             @default(0)
   responseCode  Int?
   error         String?
   nextAttemptAt DateTime?
+  /// Lease owner + expiry so a crashed worker's delivery can be reclaimed.
+  lockedAt      DateTime?
+  lockedBy      String?
   deliveredAt   DateTime?
   createdAt     DateTime        @default(now())
 
+  @@unique([endpointId, eventId])
   @@index([status, nextAttemptAt])
   @@index([endpointId, createdAt])
   @@map("webhook_delivery")
@@ -107,15 +121,27 @@ model WebhookDelivery {
 /// Transactional outbox: domain events are written in the same transaction as
 /// the mutation that produced them, then fanned out to webhooks by the drain
 /// job. This guarantees at-least-once delivery without losing events.
+///
+/// A row is claimed with a lease (`PROCESSING` + `lockedAt`) so concurrent
+/// drains never double-process it; failures retry with backoff until `FAILED`
+/// (dead-letter), which an admin can requeue.
 model OutboxEvent {
   id             String       @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   topic          String
   payload        Json
+  /// PENDING | PROCESSING | PROCESSED | FAILED
+  status         String       @default("PENDING")
+  attempts       Int          @default(0)
+  lastError      String?
+  nextAttemptAt  DateTime?
+  lockedAt       DateTime?
+  lockedBy       String?
   createdAt      DateTime     @default(now())
   processedAt    DateTime?
 
+  @@index([status, nextAttemptAt])
   @@index([processedAt])
   @@index([organizationId, topic])
   @@map("outbox_event")

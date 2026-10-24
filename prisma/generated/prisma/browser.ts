@@ -65,6 +65,10 @@ export type WebhookDelivery = Prisma.WebhookDeliveryModel
  * Transactional outbox: domain events are written in the same transaction as
  * the mutation that produced them, then fanned out to webhooks by the drain
  * job. This guarantees at-least-once delivery without losing events.
+ * 
+ * A row is claimed with a lease (`PROCESSING` + `lockedAt`) so concurrent
+ * drains never double-process it; failures retry with backoff until `FAILED`
+ * (dead-letter), which an admin can requeue.
  */
 export type OutboxEvent = Prisma.OutboxEventModel
 /**

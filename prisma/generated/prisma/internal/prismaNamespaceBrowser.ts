@@ -164,6 +164,10 @@ export const AutomationRunScalarFieldEnum = {
   eventId: 'eventId',
   status: 'status',
   detail: 'detail',
+  attempts: 'attempts',
+  nextAttemptAt: 'nextAttemptAt',
+  lockedAt: 'lockedAt',
+  lockedBy: 'lockedBy',
   createdAt: 'createdAt'
 } as const
 
@@ -206,6 +210,7 @@ export type WebhookEndpointScalarFieldEnum = (typeof WebhookEndpointScalarFieldE
 export const WebhookDeliveryScalarFieldEnum = {
   id: 'id',
   endpointId: 'endpointId',
+  eventId: 'eventId',
   event: 'event',
   payload: 'payload',
   status: 'status',
@@ -213,6 +218,8 @@ export const WebhookDeliveryScalarFieldEnum = {
   responseCode: 'responseCode',
   error: 'error',
   nextAttemptAt: 'nextAttemptAt',
+  lockedAt: 'lockedAt',
+  lockedBy: 'lockedBy',
   deliveredAt: 'deliveredAt',
   createdAt: 'createdAt'
 } as const
@@ -225,6 +232,12 @@ export const OutboxEventScalarFieldEnum = {
   organizationId: 'organizationId',
   topic: 'topic',
   payload: 'payload',
+  status: 'status',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  nextAttemptAt: 'nextAttemptAt',
+  lockedAt: 'lockedAt',
+  lockedBy: 'lockedBy',
   createdAt: 'createdAt',
   processedAt: 'processedAt'
 } as const
