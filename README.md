@@ -307,7 +307,18 @@ exist today, and the residual risks Relay explicitly accepts, are documented in
 
 ## License
 
-[MIT](LICENSE) © kollakek1
+Copyright © 2026 kollakek1
+
+Relay is free software: you can redistribute it and/or modify it under the terms
+of the **GNU Affero General Public License**, version 3, as published by the Free
+Software Foundation.
+
+Relay is distributed in the hope that it will be useful, but **WITHOUT ANY
+WARRANTY**; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the [full AGPL v3 text](LICENSE) for the exact terms.
+
+> Because the AGPL is a network-copyleft license, anyone who runs a modified
+> Relay as a network service must offer the corresponding source to their users.
 
 ## Project status and known limitations
 

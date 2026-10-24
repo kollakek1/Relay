@@ -228,7 +228,7 @@ A second pass prepared Relay for a public release. Scope and evidence:
 
 | Item | File | State |
 | --- | --- | --- |
-| License | `LICENSE` | MIT, copyright © 2026 kollakek1. **The licence choice is the owner's** — MIT is a permissive default; alternatives (Apache-2.0, AGPL-3.0) are noted in the final report. The OpenAPI `info.license` was updated to match. |
+| License | `LICENSE` | **GNU AGPL-3.0** (verbatim FSF text), copyright © 2026 kollakek1. Chosen by the owner during the launch pass: network copyleft, so anyone running a modified Relay as a network service must publish their source. The OpenAPI `info.license` is `AGPL-3.0-only` to match. |
 | Contributing | `CONTRIBUTING.md` | Setup, required checks, conventions, PR expectations. |
 | Code of conduct | `CODE_OF_CONDUCT.md` | Contributor Covenant 2.1, enforcement contact = the maintainer. |
 | Security policy | `SECURITY.md` | Private reporting, scope, in/out-of-scope, expected timelines. |

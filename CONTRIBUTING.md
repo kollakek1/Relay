@@ -121,4 +121,6 @@ problem covered by the roadmap. Breaking changes to the public API
 ## License
 
 By contributing, you agree that your contributions are licensed under the
-project's [MIT License](LICENSE).
+project's [GNU Affero General Public License v3](LICENSE). Because the AGPL is a
+network-copyleft license, running a modified Relay as a network service obliges
+you to offer the corresponding source to its users.

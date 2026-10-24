@@ -111,7 +111,7 @@ Legend: ✅ done & verified · 🚧 in progress · ⬜ not started
 
 ## Phase H — Open-source launch ✅
 
-- [x] LICENSE (MIT), CONTRIBUTING, CODE_OF_CONDUCT, root SECURITY policy.
+- [x] LICENSE (AGPL-3.0), CONTRIBUTING, CODE_OF_CONDUCT, root SECURITY policy.
 - [x] `.github/ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml`,
       `.github/PULL_REQUEST_TEMPLATE.md`, `.github/CODEOWNERS`.
 - [x] README rewritten as the project home page (badges, TOC, features, real

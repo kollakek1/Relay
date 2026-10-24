@@ -50,7 +50,7 @@ project at this tag; there was no earlier tagged release.
 - **Public site and documentation** — a marketing landing page, a docs centre
   under `/docs`, an interactive `/api-reference`, and an OpenAPI 3.1 document
   served at `/api/openapi` and validated in CI.
-- **Open-source governance** — MIT license, contributing guide, code of conduct,
+- **Open-source governance** — GNU AGPL-3.0 license, contributing guide, code of conduct,
   security policy, issue and pull request templates.
 - **Automated checks** — lint, strict types, Prisma validation and migrations on
   a throwaway database, unit and integration tests, OpenAPI validation,
