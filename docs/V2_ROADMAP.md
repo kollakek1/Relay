@@ -92,8 +92,16 @@ blocked by a missing external service is documented with the reason.
 | H — Analytics, search, export | ✅ done |
 | F — Serverless automation | 🟡 partial (SLA scan + idempotency + JobRun; generic trigger/action engine pending) |
 | I — DX & operations | 🟡 partial (CI added; E2E pending) |
-| D — Workflow Engine V2 | planned |
-| E — Tasks & approvals | planned |
-| F — Serverless automation | planned |
-| G — API & webhooks | planned |
-| J — Stabilization | planned |
+| D — Workflow Engine V2 | ⛔ not started (forms, conditions, templates, version diff) |
+| E — Tasks & approvals | ⛔ not started (approvals, multi-approver modes) |
+| G — API & webhooks | ⛔ not started |
+| J — Stabilization | ✅ done (full local verification + docs; report delivered) |
+
+### Why D/E/G were not started
+
+They are large, tightly-coupled features (the conditional engine needs a
+decision on branching semantics; approvals need explicit multi-approver rules;
+the public API needs key management + SSRF-safe webhooks). Shipping them
+half-finished would leave the product worse than an honest stop. Their
+foundations are in place: an immutable, `schemaVersion`-ready version snapshot,
+an idempotency primitive, an audited org model, and a green test/CI pipeline.

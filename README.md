@@ -36,12 +36,18 @@ role-based access enforced on the server.
   people ever get the same task).
 - 🔐 **Organizations & roles** — `OWNER` / `ADMIN` / `MEMBER`, enforced
   server-side on every mutation; strict tenant isolation.
+- ✉️ **Invitations & multiple workspaces** — invite by email (hashed, single-use,
+  expiring links), switch between workspaces, transfer ownership, admin audit log.
 - 💬 **Comments & activity** — discussion plus an append-only history of status
   and assignment changes.
-- 🔔 **In-app notifications** — assignment, comment and completion events with an
-  unread count.
-- 📊 **Dashboard** — real KPIs (my tasks, pool, completed today, active
-  instances, overdue) and recent activity.
+- 🔔 **In-app notifications** — assignment, comment, completion, invitation and
+  SLA (overdue / due-soon) events with an unread count.
+- 📊 **Dashboard & analytics** — real KPIs, process throughput, cycle time and
+  step bottlenecks.
+- 🔎 **Global search & CSV export** — tenant- and permission-scoped.
+- ⏱ **Serverless automation** — idempotent, cron-triggered SLA scan; no worker.
+- 🛡 **Hardened** — DB-backed rate limiting, structured redacting logs, audit
+  trail. See `docs/THREAT_MODEL.md`.
 - 🌗 **shadcn/ui design system** — light/dark themes, responsive, accessible.
 
 ## 🛠 Tech Stack
@@ -126,12 +132,15 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: `app/` (routes),
 - [Testing guide](docs/TESTING.md)
 - [Dependency audit](docs/DEPENDENCY_AUDIT.md)
 
-## 🚦 MVP scope
+## 🚦 Scope
 
-Implemented: workflow → publish/version → run → tasks → atomic pool → comments →
-activity → notifications → real dashboard → roles & tenant isolation → tests.
+**Implemented (V1 + V2):** workflow → publish/version → run → tasks → atomic pool
+→ comments → activity → notifications → real dashboard → roles & tenant
+isolation → invitations & multi-workspace → audit log → analytics → global search
+→ CSV export → rate limiting → idempotent SLA automation → CI → tests.
 
-Out of scope (by design): full BPMN graph editing, background job
-infrastructure, external integrations (Telegram), billing, advanced analytics.
+**Not implemented yet (documented in `docs/V2_ROADMAP.md`):** conditional
+branching & process forms, approvals, templates, public API & webhooks, browser
+E2E (Playwright), full BPMN, external integrations (Telegram), billing.
 
 <div align="center"> Developed with ❤️ by <b>kollakek</b> </div>

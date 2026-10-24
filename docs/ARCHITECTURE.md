@@ -132,3 +132,27 @@ TaskTable (client) → useAction → claimTaskAction ('use server')
 - Prisma CLI reads `prisma.config.ts`; the datasource URL comes from `.env`.
 
 See `.env.example` for the full list.
+
+## 9. V2 additions
+
+| Concern | Module |
+| --- | --- |
+| DB-backed rate limiting | `shared/server/rate-limit.ts` (+ `rate_limit_bucket`) |
+| Structured, redacting logs | `shared/server/logger.ts` |
+| Idempotency/dedupe for at-least-once work | `shared/server/idempotency.ts` (+ `idempotency_key`) |
+| Email adapter (optional provider, honest dev flow) | `shared/server/email.ts` |
+| Active-org resolution (cookie re-validated vs membership) | `shared/server/auth-context.ts` (`resolveContext`, `setActiveOrganizationCookie`) |
+| Invitations, audit trail, org settings | `features/organization/server/{invitations,audit,service}.ts` |
+| Global search | `features/search/server/service.ts` |
+| Analytics | `features/analytics/server/service.ts` |
+| CSV export (bounded, permission-checked) | `features/export/server/service.ts`, `app/api/export/route.ts` |
+| SLA scan (idempotent, cron-triggered) | `features/sla/server/service.ts`, `app/api/jobs/sla-scan/route.ts` (+ `job_run`) |
+
+### Serverless execution model
+
+There is **no long-running worker**. Work that must happen periodically is a
+bounded, idempotent, secret-protected route handler (`/api/jobs/*`) that a cron
+or platform scheduler calls. Idempotency is enforced in PostgreSQL via
+`idempotency_key`: a successful `create` means "do it", a unique-constraint
+violation means "already done". Each run records a `job_run` row for
+observability. This makes missed or duplicated triggers safe.
