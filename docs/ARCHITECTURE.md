@@ -147,6 +147,25 @@ See `.env.example` for the full list.
 | Analytics | `features/analytics/server/service.ts` |
 | CSV export (bounded, permission-checked) | `features/export/server/service.ts`, `app/api/export/route.ts` |
 | SLA scan (idempotent, cron-triggered) | `features/sla/server/service.ts`, `app/api/jobs/sla-scan/route.ts` (+ `job_run`) |
+| Workflow execution engine (conditions, forms) | `features/workflow/server/engine.ts` + `service.ts` |
+
+### Workflow execution model (V2)
+
+The published `WorkflowVersion.steps` snapshot is versioned (`schemaVersion: 2`).
+Legacy v1 snapshots (plain arrays) are normalized in memory by
+`normalizeSnapshot`, so **old versions keep running unchanged**.
+
+- A step may define **form fields** (`fields`) that the performer fills in;
+  values are validated server-side against the frozen definitions and stored on
+  the task, then exposed as process **variables**.
+- A step may define a **condition** (`{ field, op, value }`) evaluated against
+  collected variables. Publishing rejects a condition that references a field no
+  earlier step collects, so conditions are always resolvable.
+- On start and on every step completion the engine activates the next step whose
+  condition holds and marks skipped steps `CANCELLED` (reason "Skipped by
+  condition"); the instance completes when no active step remains.
+- No branching graph/BPMN is required — this is a deliberately small, documented
+  set of constructs that extends without rewriting the engine.
 
 ### Serverless execution model
 
