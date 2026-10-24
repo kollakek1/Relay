@@ -27,6 +27,9 @@ model Organization {
   instances     ProcessInstance[]
   tasks         Task[]
   notifications Notification[]
+  apiKeys       ApiKey[]
+  webhooks      WebhookEndpoint[]
+  outboxEvents  OutboxEvent[]
 
   @@map("organization")
 }

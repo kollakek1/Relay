@@ -583,14 +583,6 @@ export type NullableEnumOrgRoleFieldUpdateOperationsInput = {
   set?: $Enums.OrgRole | null
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type EnumStepKindFieldUpdateOperationsInput = {
   set?: $Enums.StepKind
 }

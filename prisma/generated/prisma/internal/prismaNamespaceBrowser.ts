@@ -54,6 +54,10 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  ApiKey: 'ApiKey',
+  WebhookEndpoint: 'WebhookEndpoint',
+  WebhookDelivery: 'WebhookDelivery',
+  OutboxEvent: 'OutboxEvent',
   Organization: 'Organization',
   Membership: 'Membership',
   Invitation: 'Invitation',
@@ -132,6 +136,68 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const ApiKeyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  name: 'name',
+  prefix: 'prefix',
+  keyHash: 'keyHash',
+  scopes: 'scopes',
+  createdById: 'createdById',
+  lastUsedAt: 'lastUsedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
+
+
+export const WebhookEndpointScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  url: 'url',
+  secret: 'secret',
+  events: 'events',
+  active: 'active',
+  disabledAt: 'disabledAt',
+  failureCount: 'failureCount',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WebhookEndpointScalarFieldEnum = (typeof WebhookEndpointScalarFieldEnum)[keyof typeof WebhookEndpointScalarFieldEnum]
+
+
+export const WebhookDeliveryScalarFieldEnum = {
+  id: 'id',
+  endpointId: 'endpointId',
+  event: 'event',
+  payload: 'payload',
+  status: 'status',
+  attempts: 'attempts',
+  responseCode: 'responseCode',
+  error: 'error',
+  nextAttemptAt: 'nextAttemptAt',
+  deliveredAt: 'deliveredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type WebhookDeliveryScalarFieldEnum = (typeof WebhookDeliveryScalarFieldEnum)[keyof typeof WebhookDeliveryScalarFieldEnum]
+
+
+export const OutboxEventScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  topic: 'topic',
+  payload: 'payload',
+  createdAt: 'createdAt',
+  processedAt: 'processedAt'
+} as const
+
+export type OutboxEventScalarFieldEnum = (typeof OutboxEventScalarFieldEnum)[keyof typeof OutboxEventScalarFieldEnum]
 
 
 export const OrganizationScalarFieldEnum = {
@@ -389,19 +455,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

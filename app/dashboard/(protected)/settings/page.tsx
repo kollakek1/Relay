@@ -6,11 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { Badge } from '@/shared/components/ui/badge'
 import { ProfileForm } from '@/features/user/components/profile-form'
 import { OrganizationSettingsForm } from '@/features/organization/components/organization-settings-form'
+import { ApiKeysPanel } from '@/features/api/components/api-keys-panel'
+import { WebhooksPanel } from '@/features/webhooks/components/webhooks-panel'
+import { listApiKeys } from '@/features/api/server/keys'
+import { listDeliveries, listWebhookEndpoints } from '@/features/webhooks/server/service'
 import { formatDate } from '@/shared/lib/format'
 
 export default async function SettingsPage() {
   const [user, ctx] = await Promise.all([getCurrentUser(), getContext()])
   const organization = ctx ? await getOrganization(ctx) : null
+  const canManage = ctx ? canManageMembers(ctx.role) : false
+
+  const [apiKeys, endpoints, deliveries] = ctx && canManage
+    ? await Promise.all([listApiKeys(ctx), listWebhookEndpoints(ctx), listDeliveries(ctx, 20)])
+    : [[], [], []]
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-8 px-4 py-8 lg:p-10">
@@ -84,6 +93,49 @@ export default async function SettingsPage() {
           </p>
         </CardContent>
       </Card>
+
+      {ctx && canManage && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Integrations</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-8">
+            <ApiKeysPanel
+              canManage={canManage}
+              keys={apiKeys.map((key) => ({
+                id: key.id,
+                name: key.name,
+                prefix: key.prefix,
+                scopes: key.scopes,
+                lastUsedAt: key.lastUsedAt,
+                revokedAt: key.revokedAt,
+                createdAt: key.createdAt,
+              }))}
+            />
+            <WebhooksPanel
+              canManage={canManage}
+              endpoints={endpoints.map((endpoint) => ({
+                id: endpoint.id,
+                url: endpoint.url,
+                events: endpoint.events,
+                active: endpoint.active,
+                failureCount: endpoint.failureCount,
+                deliveries: endpoint._count.deliveries,
+              }))}
+              deliveries={deliveries.map((delivery) => ({
+                id: delivery.id,
+                event: delivery.event,
+                status: delivery.status,
+                attempts: delivery.attempts,
+                responseCode: delivery.responseCode,
+                error: delivery.error,
+                createdAt: delivery.createdAt,
+                endpointUrl: delivery.endpoint.url,
+              }))}
+            />
+          </CardContent>
+        </Card>
+      )}
     </main>
   )
 }

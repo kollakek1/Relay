@@ -1,0 +1,83 @@
+/// A machine credential for the public API. Only the SHA-256 hash of the token
+/// is stored; the raw value is shown once at creation.
+model ApiKey {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  /// Public, non-secret prefix shown in the UI (e.g. `rk_live_ab12cd34`).
+  prefix         String
+  keyHash        String       @unique
+  /// Fine-grained capabilities, e.g. `tasks:read`, `instances:write`.
+  scopes         String[]
+  createdById    String
+  createdBy      User         @relation("ApiKeyCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  lastUsedAt     DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@map("api_key")
+}
+
+/// An outbound HTTP endpoint subscribed to domain events. Delivery is attempted
+/// through the outbox + a bounded cron drain (no long-running worker).
+model WebhookEndpoint {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  url            String
+  /// HMAC-SHA256 signing secret (`whsec_...`), shown once at creation.
+  secret         String
+  events         String[]
+  active         Boolean      @default(true)
+  disabledAt     DateTime?
+  failureCount   Int          @default(0)
+  createdById    String
+  createdBy      User         @relation("WebhookCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  deliveries WebhookDelivery[]
+
+  @@index([organizationId, active])
+  @@map("webhook_endpoint")
+}
+
+/// One delivery attempt series for a single event to a single endpoint.
+model WebhookDelivery {
+  id            String          @id @default(cuid())
+  endpointId    String
+  endpoint      WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  event         String
+  payload       Json
+  /// PENDING | DELIVERED | FAILED
+  status        String          @default("PENDING")
+  attempts      Int             @default(0)
+  responseCode  Int?
+  error         String?
+  nextAttemptAt DateTime?
+  deliveredAt   DateTime?
+  createdAt     DateTime        @default(now())
+
+  @@index([status, nextAttemptAt])
+  @@index([endpointId, createdAt])
+  @@map("webhook_delivery")
+}
+
+/// Transactional outbox: domain events are written in the same transaction as
+/// the mutation that produced them, then fanned out to webhooks by the drain
+/// job. This guarantees at-least-once delivery without losing events.
+model OutboxEvent {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  topic          String
+  payload        Json
+  createdAt      DateTime     @default(now())
+  processedAt    DateTime?
+
+  @@index([processedAt])
+  @@index([organizationId, topic])
+  @@map("outbox_event")
+}

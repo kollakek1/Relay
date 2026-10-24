@@ -20,6 +20,8 @@ model User {
   activities         TaskActivity[]    @relation("ActivityActor")
   comments           Comment[]         @relation("CommentAuthor")
   decisions          TaskDecision[]    @relation("TaskDecisionActor")
+  apiKeys            ApiKey[]          @relation("ApiKeyCreator")
+  webhooks           WebhookEndpoint[] @relation("WebhookCreator")
   notifications      Notification[]    @relation("NotificationRecipient")
   invitationsSent    Invitation[]      @relation("InvitationInviter")
   invitationsAccepted Invitation[]     @relation("InvitationAcceptor")

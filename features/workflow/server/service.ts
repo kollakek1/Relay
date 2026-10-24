@@ -16,6 +16,7 @@ import {
   type WorkflowFormField,
 } from './engine'
 import { notifyApprovers } from '@/features/task/server/approvals'
+import { enqueueEvent } from '@/features/webhooks/server/delivery'
 
 const workflowListSelect = {
   id: true,
@@ -178,6 +179,11 @@ export async function publishWorkflow(ctx: Context, workflowId: string) {
       },
     })
     await tx.workflow.update({ where: { id: workflowId }, data: { status: 'PUBLISHED' } })
+    await enqueueEvent(tx, {
+      organizationId: ctx.organizationId,
+      topic: 'workflow.published',
+      payload: { workflowId, version },
+    })
     return created
   })
 }
@@ -308,6 +314,12 @@ export async function runInstance(ctx: Context, workflowId: string) {
         data: { status: 'COMPLETED', completedAt: new Date() },
       })
     }
+
+    await enqueueEvent(tx, {
+      organizationId: ctx.organizationId,
+      topic: 'instance.started',
+      payload: { instanceId: instance.id, workflowId, versionId: version.id },
+    })
 
     return instance
   })

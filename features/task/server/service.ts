@@ -14,6 +14,7 @@ import { canTransition, isTerminal } from './state-machine'
 import { notify } from '@/features/notification/server/service'
 import { collectVariables, evaluateCondition, normalizeFields, normalizeSnapshot, validateFormValues } from '@/features/workflow/server/engine'
 import { eligibleApproverIds, notifyApprovers } from './approvals'
+import { enqueueEvent } from '@/features/webhooks/server/delivery'
 import type { ApprovalDecision } from '@/prisma/generated/prisma/client'
 
 const listInclude = {
@@ -181,6 +182,12 @@ export async function claimTask(ctx: Context, taskId: string) {
       data: { taskId, actorId: ctx.userId, type: 'CLAIMED', toValue: ctx.userId },
     })
 
+    await enqueueEvent(tx, {
+      organizationId: ctx.organizationId,
+      topic: 'task.claimed',
+      payload: { taskId, name: task.name, assigneeId: ctx.userId },
+    })
+
     return tx.task.findUniqueOrThrow({ where: { id: taskId }, include: listInclude })
   })
 }
@@ -327,6 +334,11 @@ export async function transitionTask(ctx: Context, input: TransitionTaskInput) {
     })
 
     if (input.to === 'DONE') {
+      await enqueueEvent(tx, {
+        organizationId: ctx.organizationId,
+        topic: 'task.completed',
+        payload: { taskId: task.id, name: task.name, instanceId: task.instanceId },
+      })
       await advanceInstance(tx, ctx, task.instanceId, task.stepOrder)
 
       const instance = await tx.processInstance.findUnique({
@@ -362,7 +374,7 @@ async function advanceInstance(
 ) {
   const instance = await tx.processInstance.findUnique({
     where: { id: instanceId },
-    select: { version: { select: { steps: true } } },
+    select: { organizationId: true, version: { select: { steps: true } } },
   })
   const snapshot = normalizeSnapshot(instance?.version.steps)
 
@@ -415,6 +427,11 @@ async function advanceInstance(
     await tx.processInstance.update({
       where: { id: instanceId },
       data: { status: 'COMPLETED', completedAt: new Date() },
+    })
+    await enqueueEvent(tx, {
+      organizationId: instance?.organizationId ?? ctx.organizationId,
+      topic: 'instance.completed',
+      payload: { instanceId },
     })
   }
 }
@@ -565,6 +582,12 @@ export async function decideTask(ctx: Context, input: DecideTaskInput) {
     } else {
       await cancelInstance(tx, ctx, task.instanceId, 'Rejected by approver')
     }
+
+    await enqueueEvent(tx, {
+      organizationId: ctx.organizationId,
+      topic: 'task.decided',
+      payload: { taskId: task.id, name: task.name, decision: resolved, instanceId: task.instanceId },
+    })
 
     if (task.instance.startedById !== ctx.userId) {
       await notify(tx, {

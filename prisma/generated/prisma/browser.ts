@@ -33,6 +33,30 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model ApiKey
+ * A machine credential for the public API. Only the SHA-256 hash of the token
+ * is stored; the raw value is shown once at creation.
+ */
+export type ApiKey = Prisma.ApiKeyModel
+/**
+ * Model WebhookEndpoint
+ * An outbound HTTP endpoint subscribed to domain events. Delivery is attempted
+ * through the outbox + a bounded cron drain (no long-running worker).
+ */
+export type WebhookEndpoint = Prisma.WebhookEndpointModel
+/**
+ * Model WebhookDelivery
+ * One delivery attempt series for a single event to a single endpoint.
+ */
+export type WebhookDelivery = Prisma.WebhookDeliveryModel
+/**
+ * Model OutboxEvent
+ * Transactional outbox: domain events are written in the same transaction as
+ * the mutation that produced them, then fanned out to webhooks by the drain
+ * job. This guarantees at-least-once delivery without losing events.
+ */
+export type OutboxEvent = Prisma.OutboxEventModel
+/**
  * Model Organization
  * 
  */
