@@ -68,7 +68,9 @@ defined steps without a spreadsheet for a database.
 | **Publishing and versions** | Publishing freezes an immutable snapshot. Running instances never change when you keep editing the draft; you can diff and restore versions. |
 | **Shared task pool** | Unassigned work is claimed with a single atomic update — two people can never hold the same task. |
 | **Approvals** | `ANY` (first decision wins) and `ALL` (every eligible approver decides) modes, with approve / request-changes / reject and a decision log. |
-| **Organizations and roles** | `OWNER > ADMIN > MEMBER`, enforced server-side on every mutation. Multiple workspaces, ownership transfer, admin audit log. |
+| **Organizations and roles** | `OWNER > ADMIN > MEMBER` plus additive per-member permission grants, enforced server-side on every mutation. A plain member cannot start processes unless granted `workflow.start`. Multiple workspaces, ownership transfer, admin audit log. |
+| **Permission-aware UI** | Navigation, actions and pages all derive from one permission table, so a hidden tab and a blocked URL can never disagree. An in-app **Access & permissions** centre shows each member what they may do. |
+| **Archive finished runs** | A completed process can be archived (reversible soft delete) and restored, with tasks, history and audit trail preserved. |
 | **Invitations** | Invite by email with hashed, single-use, expiring links. Atomic acceptance. |
 | **Collaboration** | Comments, watchers, tags, task dependencies, reopening, and an append-only activity trail. |
 | **Notifications** | Assignment, comments, approvals, invitations and SLA reminders, with an unread count. |
@@ -77,7 +79,7 @@ defined steps without a spreadsheet for a database.
 | **Public API** | Scoped, hashed API keys against `/api/v1`, with pagination, uniform errors and per-key rate limits. |
 | **Analytics** | Throughput, completion and overdue rates, cycle time and step bottlenecks — isolated per workflow. |
 | **Search and export** | Tenant-scoped global search, and bounded CSV export that neutralises spreadsheet formula injection. |
-| **English and Русский** | A typed dictionary i18n system with a remembered preference across the site, the app and the docs. |
+| **Six languages** | English, Русский, Українська, Deutsch, Беларуская and Қазақша — a typed dictionary i18n system with a remembered preference, a six-language switcher, and CI-enforced key parity. |
 | **Hardened** | Database-backed rate limiting, structured redacting logs, an audit trail, an SSRF guard for outbound requests, and no default credentials. |
 
 ## Screenshots
@@ -175,7 +177,7 @@ npm run db:generate  # regenerate the Prisma client
 npm run db:migrate   # create + apply a migration
 npm run db:validate  # validate the Prisma schema
 npm run api:check    # OpenAPI spec matches the implemented routes
-npm run i18n:check   # RU/EN translation completeness
+npm run i18n:check   # six-language translation completeness
 ```
 
 The generated Prisma client is **not** committed; `npm install` and
@@ -246,6 +248,7 @@ docs/                     guides, architecture, security, API spec
 - **Deployment** — [`docs/guides/DEPLOYMENT.md`](docs/guides/DEPLOYMENT.md)
 - **Configuration** — [`docs/guides/CONFIGURATION.md`](docs/guides/CONFIGURATION.md)
 - **Workflows** — [`docs/guides/WORKFLOWS.md`](docs/guides/WORKFLOWS.md)
+- **Roles and permissions** — [`docs/guides/PERMISSIONS.md`](docs/guides/PERMISSIONS.md)
 - **Automations and jobs** — [`docs/guides/AUTOMATIONS.md`](docs/guides/AUTOMATIONS.md)
 - **Integrations (API & webhooks)** — [`docs/guides/INTEGRATIONS.md`](docs/guides/INTEGRATIONS.md)
 - **Architecture** — [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
@@ -280,14 +283,16 @@ no handler or an implemented route is undocumented.
 ## Testing
 
 ```bash
-npm test                          # unit + integration (23 files)
+npm test                          # unit + integration
 E2E=1 npm run test:e2e            # browser smoke test (needs a DB + server)
 ```
 
-Coverage includes authorization and tenant isolation, the state machine, atomic
-claims under concurrency, invitation single-use, rate limiting, CSV injection,
-SSRF classification and DNS rebinding, outbox leases/retries/dead-letter,
-automation idempotency, analytics isolation, and the seed's credential policy.
+Coverage includes the permission catalogue and launch restriction, navigation
+access rules, instance archiving (guards, tenancy, concurrency), authorization
+and tenant isolation, the state machine, atomic claims under concurrency,
+invitation single-use, rate limiting, CSV injection, SSRF classification and DNS
+rebinding, outbox leases/retries/dead-letter, automation idempotency, analytics
+isolation, and the seed's credential policy.
 CI runs lint, types, Prisma validation and migrations, the full test suite, the
 OpenAPI and i18n checks, a production build, and the Playwright smoke test.
 
@@ -330,8 +335,10 @@ Read [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md) before deploying.
 Highlights: delivery is at-least-once (deduplicate on `x-relay-delivery`); a
 residual DNS-rebinding TOCTOU window remains in the SSRF guard; rate limiting is
 fixed-window; email verification is disabled; workflow execution is linear (no
-parallel branches or BPMN gateways); and some deeper dashboard panels are
-English-only.
+parallel branches or BPMN gateways); the role model is fixed (three roles plus
+additive grants, no custom-role builder); long-form docs and marketing prose
+remain English/Russian only (other locales fall back to English); and some
+date/number helpers are not yet locale-aware.
 
 <div align="center">
   <sub>Built with Next.js, PostgreSQL, Prisma and Better Auth.</sub>

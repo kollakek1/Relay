@@ -23,21 +23,44 @@ _Scope: MVP threat model, controls actually implemented, and known limitations._
 - Covered by tests: `tests/auth-organization.test.ts`,
   `tests/workflow-tasks.test.ts` ("blocks foreign-tenant access").
 
-## 3. Authorization (roles)
+## 3. Authorization (roles & permissions)
 
-- Role hierarchy `OWNER > ADMIN > MEMBER` is defined once in
-  `shared/server/permissions.ts` and enforced via `requireRole` / capability
-  helpers.
-- Capabilities:
-  | Action | Minimum role |
-  | --- | --- |
-  | Create / edit / publish / delete workflows | ADMIN |
-  | Assign tasks, cancel tasks, manage members | ADMIN |
-  | Claim / progress own tasks, comment | MEMBER |
-  | Grant/revoke OWNER, remove owners, last-owner guard | OWNER |
-- **The client is never trusted**: `usePermission`/UI hiding is cosmetic only;
-  every mutation re-checks on the server. Buttons that require a role are also
-  disabled, but the guard is server-side.
+- The model is defined once in `shared/server/permissions.ts`: three fixed roles
+  (`OWNER > ADMIN > MEMBER`) plus an **additive, per-membership grant** list.
+  Effective permissions are `baseline(role) ∪ grants`.
+- Every server-side check flows through `can(ctx, permission)` / `assertCan`,
+  and page-level access through `requireAreaAccess` (`shared/server/access.ts`).
+  There is a single catalogue of permissions and a single table of area rules,
+  so a hidden tab and a blocked URL cannot disagree.
+- Effective permissions are resolved from the membership row in the same query
+  as the role (`resolveContext`, `authenticateApiKey`) — no extra round trip per
+  request, and never from anything the client sent.
+- **Deny by default**: an unlisted permission is denied.
+- **No escalation**: an administrator may only grant permissions they hold
+  themselves; only an `OWNER` can change another owner’s grants; the last owner
+  cannot be demoted or removed.
+- **`workflow.start` is a permission, not a role.** A plain `MEMBER` cannot
+  start process instances; the check runs in `runInstance` before any instance,
+  task, notification or outbox side effect, and covers both the dashboard action
+  and the public API. The public API key acts with the **current** role and
+  grants of its owner, so demotion immediately shrinks the key.
+- **The client is never trusted**: hiding navigation or disabling a button is
+  cosmetic only; every read of a protected page and every mutation re-checks on
+  the server. Forged `role`, `organizationId` or `userId` values are ignored.
+
+### Capabilities (baseline)
+
+| Action | MEMBER | ADMIN | OWNER |
+| --- | :---: | :---: | :---: |
+| View processes & runs | ✅ | ✅ | ✅ |
+| Start / cancel / create / edit / publish / delete workflows | — | ✅ | ✅ |
+| Claim / progress / decide own tasks | ✅ | ✅ | ✅ |
+| Assign tasks, cancel tasks, manage members | — | ✅ | ✅ |
+| Manage organization settings, webhooks, automations, API keys | — | ✅ | ✅ |
+| Grant/revoke OWNER, remove owners, last-owner guard | — | — | ✅ |
+
+Full detail, including the permission catalogue and archive rules, is in
+[`docs/guides/PERMISSIONS.md`](guides/PERMISSIONS.md).
 
 ## 4. Input validation
 

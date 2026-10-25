@@ -40,6 +40,11 @@ npm run db:seed     # optional: root admin + demo data
 | Registration & login | `auth-organization.test.ts` | Better Auth sign-up + sign-in; workspace provisioning as OWNER; idempotency |
 | Organization isolation | `auth-organization.test.ts` | foreign membership returns `NOT_FOUND` |
 | Role enforcement | `auth-organization.test.ts`, `permissions.test.ts` | role hierarchy, MEMBER blocked, last-owner guard, ADMIN can't remove OWNER |
+| Permission catalogue | `permissions.test.ts` | deny-by-default, MEMBER has no `workflow.*` management/start, grants are additive, unknown grants ignored, role-baseline fallback |
+| RBAC — launching processes | `rbac-access.test.ts` | MEMBER cannot start an instance; a MEMBER granted `workflow.start` can; task work is unaffected; ADMIN/OWNER keep powers |
+| Permission grants | `rbac-access.test.ts` | no escalation (an actor cannot grant what they lack), normalisation, audit entry |
+| Navigation access rules | `rbac-access.test.ts` | management areas hidden from MEMBER, revealed by a grant, shown to ADMIN |
+| Instance archive | `rbac-access.test.ts` | running instance refused; finished instance archives, leaves the active list, restores; permission required; tenant isolation; double archive → `CONFLICT` |
 | Workflow create/publish/version | `workflow-tasks.test.ts` | draft → publish → v1/v2, status transitions, MEMBER forbidden |
 | Instance run & task generation | `workflow-tasks.test.ts` | sequential tasks (`PENDING`+`BLOCKED`), unblocking, instance auto-completion |
 | Published-version protection | `workflow-tasks.test.ts` | editing the draft does not change the frozen version or running tasks |
@@ -70,13 +75,14 @@ npm run db:seed     # optional: root admin + demo data
 ```bash
 npm run db:validate   # Prisma schema is valid
 npm run api:check     # OpenAPI 3.1 spec validates AND matches the route files
-npm run i18n:check    # RU/EN key parity, no empty values, plural sanity
+npm run i18n:check    # six-language key parity, no empty values, plural sanity
 ```
 
 `api:check` fails if a documented path has no route handler, or if a route under
 `app/api/v1` is undocumented — so the docs cannot drift from the code.
-`i18n:check` is backed by the type system: `ru.ts` is typed as `Messages`, so a
-missing key is already a compile error; the script catches runtime-only escapes.
+`i18n:check` is backed by the type system: every locale file is typed as
+`Messages`, so a missing key is already a compile error; the script also compares
+all six key sets at runtime and flags values still identical to English.
 
 ## Remote test database note
 

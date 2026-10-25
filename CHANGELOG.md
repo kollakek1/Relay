@@ -12,6 +12,97 @@ still change between minor releases; every such change is called out under
 
 Nothing yet.
 
+## [0.2.5] - 2026-10-25
+
+A security, clarity and reach release. Members no longer see or reach features
+they cannot use; a plain `MEMBER` can no longer start processes unless an
+administrator grants it; finished processes can be archived safely; and the
+interface is now available in six languages.
+
+### Added
+
+- **Server-enforced permission catalogue.** A single, typed source of truth
+  (`shared/server/permissions.ts`) defines every action (`workflow.view`,
+  `workflow.start`, `task.claim`, `approval.decide`, `member.manage`,
+  `organization.manage`, …). All server checks flow through `can` / `assertCan`;
+  the UI derives visibility from the same list.
+- **Per-membership permission grants.** An administrator can grant an individual
+  member extra permissions (for example `workflow.start`) without changing their
+  role. Grants are additive: `effective = baseline(role) ∪ grants`. An actor can
+  only grant what they hold; only an owner can change another owner’s grants;
+  every change is audited (`member.permissions_changed`).
+- **Permission-aware navigation.** The dashboard sidebar and the protected pages
+  consult one table of area rules (`shared/server/access.ts`), so a hidden tab
+  and a blocked URL can never disagree. A member who is granted `workflow.start`
+  automatically sees the Workflows area.
+- **Archiving for finished processes.** A `COMPLETED` or `CANCELLED` instance
+  whose tasks are all finished can be archived (a reversible soft delete) by a
+  holder of `workflow.delete`. Archived runs leave the active list, appear under
+  `/dashboard/archive` with search and status filters, and can be restored in
+  their terminal state. Tasks, comments, activity, notifications, outbox events
+  and the audit trail are preserved.
+- **Access & permissions center** (`/dashboard/access`). Every member sees, in
+  plain language, what they are allowed to do. Owners and administrators can
+  grant extra permissions from the same screen.
+- **Six languages.** Ukrainian (`uk`), German (`de`), Belarusian (`be`) and
+  Kazakh (`kk`) join English and Russian. Completeness across all six is checked
+  in CI (`npm run i18n:check`) and enforced by the type system.
+- **A proper language switcher.** A keyboard-accessible dropdown lists every
+  language by its endonym plus a short code, marks the active one, and shows a
+  spinner while the new locale loads. The choice persists in a cookie and never
+  resets to English on reload.
+
+### Changed
+
+- `MEMBER` may **no longer start process instances** (`workflow.start`) or
+  create/edit/publish/delete workflows, all enforced on the server — including
+  through the public API, which acts with the key owner’s current role and
+  grants.
+- The dashboard hides areas a member cannot act in (Workflows, Templates,
+  Analytics, Team) and keeps the ones they can (Tasks, Task pool, Runs, Archive,
+  Access, Notifications, profile settings).
+- Task, workflow, organization, webhook, automation and API-key services now
+  check the permission catalogue rather than ad-hoc role comparisons.
+
+### Security
+
+- Every workflow-launching path (`runInstanceAction`, `POST
+  /api/v1/workflows/:id/run`) verifies `workflow.start` on the server before any
+  instance, task, notification or outbox side effect is created.
+- Direct URLs to management pages are refused server-side via
+  `requireAreaAccess`; hiding a link is never the control.
+- Client-supplied `role`, `organizationId` and `userId` are still ignored: the
+  context is always re-derived from the session cookie and a real membership.
+- Archive and restore are tenant-scoped, guarded by terminal-state and
+  outstanding-task checks, and performed as a conditional single-row update so
+  concurrent requests cannot partially delete a process.
+
+### Added (migrations)
+
+- `prisma/migrations/20261025120000_rbac_grants_instance_archive` adds
+  `membership.grantedPermissions` (additive grants) and
+  `process_instance.archivedAt` / `archivedById` (reversible archive). Non
+  destructive: existing rows default to no grants and no archive.
+
+### Known limitations
+
+See [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md). Highlights at this
+release: long-form marketing/docs prose remains EN/RU only (other locales fall
+back to English); there is no custom-role builder; `workflow.cancel` has no
+dedicated UI; instance removal is archive-only (no purge job).
+
+### Upgrade / migration instructions
+
+```bash
+npm ci
+npx prisma migrate deploy     # adds the permission-grant and archive columns
+npm run build && npm run start
+```
+
+No API contracts changed. Existing members keep their role baseline; nobody is
+granted `workflow.start` implicitly, so a `MEMBER` who used to be able to start
+processes must be granted it explicitly from `/dashboard/access`.
+
 ## [0.2.0] - 2026-10-24
 
 The first public release of Relay. Everything below describes the state of the
@@ -140,5 +231,6 @@ npm run build && npm run start
 Set `CRON_SECRET` and schedule both job endpoints (see
 [`docs/guides/DEPLOYMENT.md`](docs/guides/DEPLOYMENT.md)).
 
-[Unreleased]: https://github.com/kollakek1/Relay/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/kollakek1/Relay/compare/v0.2.5...HEAD
+[0.2.5]: https://github.com/kollakek1/Relay/compare/v0.2.0...v0.2.5
 [0.2.0]: https://github.com/kollakek1/Relay/releases/tag/v0.2.0

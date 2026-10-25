@@ -33,19 +33,28 @@ Legend: 🔴 security-relevant residual · 🟠 functional gap · 🔵 operation
 
 ## Functional gaps
 
-- 🟠 **Deeper localization nuance.** The whole user-facing interface — the
-  marketing site, documentation, API reference, authentication, the dashboard,
-  the workflow builder, task detail, the organization/settings/webhooks/
-  automations/API-key panels, invitations, analytics, search, notifications,
-  empty states, confirmations and toasts — is available in English and Russian
-  (836 message keys, parity enforced by the type system and `npm run i18n:check`).
+- 🟠 **Localization coverage.** The dashboard and authentication interface —
+  navigation, workflows, templates, tasks, approvals, members, permissions,
+  settings, automations, webhooks, API keys, notifications, analytics, search,
+  empty states, confirmations and toasts — is available in **six** languages:
+  English, Russian, Ukrainian, German, Belarusian and Kazakh. Parity across all
+  six is enforced by the type system (`Messages`) and `npm run i18n:check`.
   What is intentionally **not** translated: technical identifiers (API scopes,
   webhook event names, trigger/action ids, condition operators and field-type
   values, timezone ids, HTTP codes, URLs, code fragments). Server-generated error
   messages are not localized at the source; instead `useAction` maps the
   `ActionResult` code to a translated message, so the user never sees a raw
-  server string — but this means a specific server validation message (e.g. a
-  permission detail) is shown as a generic, translated one.
+  server string.
+- 🟠 **Long-form site content is EN/RU only.** The marketing landing page, the
+  documentation pages, the public changelog and the legal drafts
+  (`shared/i18n/content.ts`) are authored in English and Russian. Ukrainian,
+  German, Belarusian and Kazakh fall back to the English long-form content via
+  `getContent()` — a safe fallback, not a machine translation. Translating this
+  prose is a future task.
+- 🟠 **Some date/number helpers are not locale-aware.** `shared/lib/format.ts`
+  formats dates with the runtime default locale and has a few English-only
+  relative-time strings ("2h ago"). `shared/i18n/format.ts` is the locale-aware
+  successor, but not every panel has been migrated to it yet.
 - 🟠 **Workflow execution is linear.** Steps run in order with conditional skips
   and task dependencies. There is no parallel branch, no join/gateway and no
   BPMN execution semantics.
@@ -55,6 +64,21 @@ Legend: 🔴 security-relevant residual · 🟠 functional gap · 🔵 operation
   `set_priority`, `create_task`). Arbitrary webhook-calling actions are not
   offered, precisely to avoid turning the automation engine into a generic SSRF
   primitive.
+- 🟠 **Authorization is fixed-role plus additive grants.** There are exactly
+  three roles (`OWNER`, `ADMIN`, `MEMBER`) and a fixed permission catalogue
+  (`shared/server/permissions.ts`). An administrator can grant *individual*
+  extra permissions to a member (for example `workflow.start`), but there is no
+  arbitrary custom-role builder — this is deliberate, to keep the model
+  auditable. A member can never be granted a permission the acting administrator
+  does not hold herself.
+- 🟠 **`workflow.cancel` has no dedicated UI.** The permission exists in the
+  catalogue and is enforced, but a running instance is currently cancelled only
+  as a consequence of an approval rejection; there is no standalone "cancel this
+  run" button.
+- 🟠 **Archiving is the only removal path for instances.** A finished instance
+  can be archived (a reversible soft delete) but not hard-deleted: its tasks,
+  comments, activity, notifications, outbox events and audit trail are preserved
+  so analytics and investigations stay intact. There is no purge/retention job.
 - 🟠 **No billing, no AI provider, no Telegram/other chat integrations.**
 - 🟠 **Analytics is bounded-sample.** At most 2000 instances/tasks per query are
   aggregated in application code. Beyond that the numbers are representative,

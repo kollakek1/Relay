@@ -40,7 +40,10 @@ Browser (untrusted)  ──▶  Next.js Server Actions / Route Handlers (trusted
 | # | Threat | Mitigation | Evidence |
 | --- | --- | --- | --- |
 | T1 | Cross-tenant read/write via guessed ids | every query scoped by `organizationId`; foreign id → `NOT_FOUND` | services + `tests/organizations.test.ts`, `workflow-tasks.test.ts` |
-| T2 | Privilege escalation (member acting as admin) | role hierarchy enforced server-side in every mutation | `permissions.ts`, service guards, tests |
+| T2 | Privilege escalation (member acting as admin) | typed permission catalogue enforced server-side in every mutation; `workflow.start` denied to `MEMBER` by default | `shared/server/permissions.ts`, `shared/server/access.ts`, service guards, `tests/rbac-access.test.ts` |
+| T2b | Escalation *via* permission grants | an actor may only grant permissions they hold; only an owner can change another owner’s grants; all changes audited | `updateMemberPermissions`, `tests/rbac-access.test.ts` |
+| T2c | Reaching a hidden area via a direct URL | protected pages call `requireAreaAccess`; navigation and pages share one rule table | `app/dashboard/(protected)/*`, `access.ts` |
+| T18 | Destroying process history on cleanup | instance removal is an archive (reversible soft delete) that preserves tasks, comments, activity, notifications, outbox and audit; guarded by terminal-state and outstanding-task checks and a conditional single-row update | `archiveInstance`, `tests/rbac-access.test.ts` |
 | T3 | Last-owner lockout / owner removal by admin | last-owner guard; only owners manage owners | `service.ts`, tests |
 | T4 | Invitation token theft / replay | only SHA-256 hash stored; single-use; email must match; expiry; revoke/rotate | `invitations.ts`, tests |
 | T5 | Brute force / abuse of mutations | DB-backed fixed-window rate limiting (429) | `rate-limit.ts`, `tests/rate-limit.test.ts` |
@@ -68,7 +71,7 @@ Browser (untrusted)  ──▶  Next.js Server Actions / Route Handlers (trusted
 | R5 | Distributed rate limiting fairness | fixed window (not sliding); acceptable for abuse control, upgradeable |
 | R6 | Dependency CVEs in dev tooling | tracked in `DEPENDENCY_AUDIT.md` |
 | R7 | TLS semantics of `sslmode=require` | `pg` currently treats it as `verify-full`; pin `sslmode=verify-full` explicitly in production |
-| R8 | Translated dashboard surfaces | **Resolved.** The whole user-facing UI, the public site, docs and API reference are EN+RU (836 keys, parity enforced in CI). Technical identifiers stay untranslated by design; server errors are mapped to translated messages by code. See `docs/KNOWN_LIMITATIONS.md`. |
+| R8 | Translated dashboard surfaces | **Largely resolved.** The dashboard and auth UI is available in six languages (EN, RU, UK, DE, BE, KK); parity across all six is enforced by the type system and `npm run i18n:check`. Long-form marketing/docs prose is still EN/RU only (other locales fall back to English). Technical identifiers stay untranslated by design; server errors are mapped to translated messages by code. See `docs/KNOWN_LIMITATIONS.md`. |
 
 ## 5. Assumptions
 
