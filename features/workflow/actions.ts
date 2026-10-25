@@ -9,14 +9,17 @@ import {
   createFromTemplateSchema,
   createWorkflowSchema,
   draftFromVersionSchema,
+  instanceIdSchema,
   saveAsTemplateSchema,
   saveWorkflowSchema,
   workflowIdSchema,
 } from './schemas/workflowSchema'
 import {
+  archiveInstance,
   createWorkflow,
   deleteWorkflow,
   publishWorkflow,
+  restoreInstance,
   runInstance,
   saveWorkflowDraft,
 } from './server/service'
@@ -89,6 +92,34 @@ export async function runInstanceAction(input: unknown): Promise<ActionResult<{ 
     revalidatePath('/dashboard/instances')
     revalidatePath('/dashboard/tasks')
     return ok({ id: instance.id })
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function archiveInstanceAction(input: unknown): Promise<ActionResult> {
+  try {
+    const ctx = await requireContext()
+    const { instanceId } = parseInput(instanceIdSchema, input)
+    await rateLimit('instance:archive', ctx.userId, RATE_LIMITS.workflowMutate)
+    await archiveInstance(ctx, instanceId)
+    revalidatePath('/dashboard/instances')
+    revalidatePath('/dashboard/archive')
+    return ok(undefined)
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function restoreInstanceAction(input: unknown): Promise<ActionResult> {
+  try {
+    const ctx = await requireContext()
+    const { instanceId } = parseInput(instanceIdSchema, input)
+    await rateLimit('instance:restore', ctx.userId, RATE_LIMITS.workflowMutate)
+    await restoreInstance(ctx, instanceId)
+    revalidatePath('/dashboard/instances')
+    revalidatePath('/dashboard/archive')
+    return ok(undefined)
   } catch (error) {
     return fail(error)
   }

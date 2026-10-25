@@ -19,6 +19,7 @@ import {
   removeMemberSchema,
   switchOrganizationSchema,
   transferOwnershipSchema,
+  updateMemberPermissionsSchema,
   updateMemberRoleSchema,
   updateOrganizationSchema,
 } from './schemas/organizationSchema'
@@ -29,6 +30,7 @@ import {
 import {
   removeMember,
   transferOwnership,
+  updateMemberPermissions,
   updateMemberRole,
   updateOrganization,
 } from './server/service'
@@ -112,6 +114,20 @@ export async function updateMemberRoleAction(input: unknown): Promise<ActionResu
     const data = parseInput(updateMemberRoleSchema, input)
     await rateLimit('org:role', ctx.userId, RATE_LIMITS.orgMutate)
     await updateMemberRole(ctx, data)
+    revalidatePath('/dashboard/team')
+    return ok(undefined)
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function updateMemberPermissionsAction(input: unknown): Promise<ActionResult> {
+  try {
+    const ctx = await requireContext()
+    const data = parseInput(updateMemberPermissionsSchema, input)
+    await rateLimit('org:permissions', ctx.userId, RATE_LIMITS.orgMutate)
+    await updateMemberPermissions(ctx, data)
+    revalidatePath('/dashboard/access')
     revalidatePath('/dashboard/team')
     return ok(undefined)
   } catch (error) {

@@ -19,6 +19,8 @@ export const WEBHOOK_EVENTS = [
   'task.decided',
   'instance.started',
   'instance.completed',
+  'instance.archived',
+  'instance.restored',
   'workflow.published',
 ] as const
 

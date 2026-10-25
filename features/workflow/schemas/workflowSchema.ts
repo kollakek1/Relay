@@ -62,6 +62,8 @@ export const saveWorkflowSchema = z.object({
 
 export const workflowIdSchema = z.object({ workflowId: z.string().min(1) })
 
+export const instanceIdSchema = z.object({ instanceId: z.string().min(1) })
+
 export const createFromTemplateSchema = z.object({
   templateId: z.string().min(1),
   name: z.string().trim().min(2).max(120).optional(),

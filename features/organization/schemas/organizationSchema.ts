@@ -22,6 +22,11 @@ export const removeMemberSchema = z.object({
   membershipId: z.string().min(1),
 })
 
+export const updateMemberPermissionsSchema = z.object({
+  membershipId: z.string().min(1),
+  permissions: z.array(z.string().min(1)).max(64),
+})
+
 export const transferOwnershipSchema = z.object({
   membershipId: z.string().min(1),
 })
