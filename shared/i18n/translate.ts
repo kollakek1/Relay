@@ -1,5 +1,9 @@
 import { en, type Messages } from './messages/en'
 import { ru } from './messages/ru'
+import { uk } from './messages/uk'
+import { de } from './messages/de'
+import { be } from './messages/be'
+import { kk } from './messages/kk'
 import type { Locale } from './config'
 import type { PluralNode } from './plural'
 
@@ -14,7 +18,7 @@ export type { PluralNode }
  * `Intl.PluralRules` when the call passes a numeric `count`.
  */
 
-export const MESSAGES: Record<Locale, Messages> = { en, ru }
+export const MESSAGES: Record<Locale, Messages> = { en, ru, uk, de, be, kk }
 
 export type DeepKeys<T> = T extends object
   ? {
@@ -97,8 +101,11 @@ export function flattenKeys(messages: Messages): string[] {
   return keys.sort()
 }
 
-/** Lists keys whose value is identical in both locales (candidate untranslated). */
-export function findUntranslatedKeys(): string[] {
+/**
+ * Lists keys whose value is identical to the English source in `locale`
+ * (candidate untranslated, excluding proper nouns like `Relay`).
+ */
+export function findUntranslatedKeys(locale: Locale = 'ru'): string[] {
   const english = new Map<string, string>()
   const collect = (node: unknown, prefix: string) => {
     if (typeof node === 'string') {
@@ -135,6 +142,6 @@ export function findUntranslatedKeys(): string[] {
       }
     }
   }
-  walk(ru, '')
+  walk(MESSAGES[locale] ?? en, '')
   return identical
 }

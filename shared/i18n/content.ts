@@ -1197,10 +1197,17 @@ export function verify(secret, rawBody, header, toleranceSeconds = 300) {
   },
 }
 
-export const CONTENT: Record<Locale, SiteContent> = { en, ru }
+/**
+ * Long-form site content. The dashboard UI is fully translated for every
+ * locale (see `messages/*`), but the marketing landing page, docs, changelog
+ * and legal drafts are only authored in English and Russian at this release.
+ * The other locales fall back to the built-in English content — the same
+ * "safe fallback" the app uses when a localised page is missing.
+ */
+export const CONTENT: Partial<Record<Locale, SiteContent>> = { en, ru }
 
 export function getContent(locale: Locale): SiteContent {
-  return CONTENT[locale] ?? CONTENT[DEFAULT_LOCALE]
+  return CONTENT[locale] ?? CONTENT.en ?? CONTENT[DEFAULT_LOCALE]!
 }
 
 export const DOC_SLUGS: DocSlug[] = [

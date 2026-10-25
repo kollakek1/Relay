@@ -4,6 +4,7 @@ import { Toaster } from '@/shared/components/ui/sonner'
 import { ThemeProvider } from '@/shared/components/theme-provider'
 import { I18nProvider } from '@/shared/i18n/provider'
 import { getTranslator } from '@/shared/i18n/server'
+import { LOCALE_BCP47 } from '@/shared/i18n/config'
 import './globals.css'
 
 const geistSans = Geist({
@@ -31,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       siteName: t('meta.siteName'),
-      locale: locale === 'ru' ? 'ru_RU' : 'en_US',
+      locale: LOCALE_BCP47[locale].replace('-', '_'),
     },
     twitter: { card: 'summary_large_image', title, description },
     alternates: { canonical: '/' },

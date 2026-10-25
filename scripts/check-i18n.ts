@@ -87,12 +87,18 @@ function checkPlurals(locale: Locale, node: unknown, prefix: string): void {
 }
 for (const locale of LOCALES) checkPlurals(locale, MESSAGES[locale], '')
 
-const untranslated = findUntranslatedKeys()
-if (untranslated.length > 0) {
-  console.warn(
-    `warn ${untranslated.length} value(s) are identical in en and ru (verify these are intentional):`
-  )
-  for (const key of untranslated) console.warn(`    ${key}`)
+// Values identical to English are usually a missed translation. Terms that are
+// legitimately the same (proper nouns, tech identifiers) are expected, so this
+// is a warning, not a failure.
+for (const locale of LOCALES) {
+  if (locale === DEFAULT_LOCALE) continue
+  const untranslated = findUntranslatedKeys(locale)
+  if (untranslated.length > 0) {
+    console.warn(
+      `warn [${locale}] ${untranslated.length} value(s) are identical to ${DEFAULT_LOCALE} (verify these are intentional):`
+    )
+    for (const key of untranslated) console.warn(`    ${key}`)
+  }
 }
 
 if (failed) {

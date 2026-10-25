@@ -2,15 +2,31 @@
 
 import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { LOCALES, LOCALE_LABELS, type Locale } from '@/shared/i18n/config'
+import { CheckIcon, GlobeIcon, Loader2Icon } from 'lucide-react'
+import {
+  LOCALE_CODES,
+  LOCALE_LABELS,
+  LOCALES,
+  type Locale,
+} from '@/shared/i18n/config'
 import { setLocaleAction } from '@/shared/i18n/actions'
 import { useI18n } from '@/shared/i18n/provider'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/components/ui/dropdown-menu'
 import { cn } from '@/shared/lib/utils'
 
 /**
- * Accessible language switcher. Persists the choice in a cookie through a
- * server action, then refreshes so server components render in the new locale.
- * Works on public pages, in the docs and inside the dashboard.
+ * Language switcher — a compact dropdown listing every supported language by
+ * its endonym plus a short code. Persists the choice in a cookie through a
+ * server action, then refreshes so server components re-render in the new
+ * locale without a full reload. The active language is announced to assistive
+ * technology and marked with a check.
  */
 export function LanguageSwitcher({ className }: { className?: string }) {
   const { locale, t } = useI18n()
@@ -27,35 +43,44 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   }
 
   return (
-    <div
-      role="group"
-      aria-label={t('language.switchTo')}
-      className={cn(
-        'border-border bg-muted/40 inline-flex items-center gap-0.5 rounded-lg border p-0.5',
-        className
-      )}
-    >
-      {LOCALES.map((code) => {
-        const active = code === locale
-        return (
-          <button
-            key={code}
-            type="button"
-            onClick={() => select(code)}
-            aria-pressed={active}
-            aria-label={LOCALE_LABELS[code]}
-            className={cn(
-              'rounded-md px-2 py-1 text-xs font-medium transition-colors',
-              'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-              active
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            {code.toUpperCase()}
-          </button>
-        )
-      })}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label={t('language.switchTo')}
+        className={cn(
+          'border-border bg-muted/40 text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none',
+          className
+        )}
+      >
+        {pending ? (
+          <Loader2Icon className="size-4 animate-spin" aria-hidden />
+        ) : (
+          <GlobeIcon className="size-4" aria-hidden />
+        )}
+        <span aria-hidden>{LOCALE_CODES[locale]}</span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-56">
+        <DropdownMenuLabel>{t('language.label')}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {LOCALES.map((code) => {
+          const active = code === locale
+          return (
+            <DropdownMenuItem
+              key={code}
+              onSelect={() => select(code)}
+              aria-current={active ? 'true' : undefined}
+              className="gap-2"
+            >
+              <CheckIcon
+                className={cn('size-4 shrink-0', active ? 'opacity-100' : 'opacity-0')}
+                aria-hidden
+              />
+              <span className="flex-1">{LOCALE_LABELS[code]}</span>
+              <span className="text-muted-foreground text-xs">{LOCALE_CODES[code]}</span>
+              {active && <span className="sr-only">{t('language.current')}</span>}
+            </DropdownMenuItem>
+          )
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

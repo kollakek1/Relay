@@ -1,7 +1,7 @@
 /**
  * i18n configuration.
  *
- * Relay ships two locales and resolves the active one on the server from a
+ * Relay ships six locales and resolves the active one on the server from a
  * cookie, falling back to the browser's `Accept-Language`, then the default.
  * There is intentionally **no locale in the URL**: the app already has stable
  * routes used by auth redirects, invitation links and API keys, and adding a
@@ -9,10 +9,20 @@
  * a cookie and honoured on both public pages and the dashboard.
  */
 
-export const LOCALES = ['en', 'ru'] as const
+export const LOCALES = ['en', 'ru', 'uk', 'de', 'be', 'kk'] as const
 export type Locale = (typeof LOCALES)[number]
 
 export const DEFAULT_LOCALE: Locale = 'en'
+
+/** Short, unambiguous labels for the language switcher. */
+export const LOCALE_CODES: Record<Locale, string> = {
+  en: 'EN',
+  ru: 'RU',
+  uk: 'UK',
+  de: 'DE',
+  be: 'BE',
+  kk: 'KK',
+}
 
 /** Cookie that persists the user's language choice. */
 export const LOCALE_COOKIE = 'relay_locale'
@@ -20,9 +30,24 @@ export const LOCALE_COOKIE = 'relay_locale'
 /** Cookie lifetime (one year). */
 export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 
+/** Endonyms: every language is named in its own script. */
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: 'English',
   ru: 'Русский',
+  uk: 'Українська',
+  de: 'Deutsch',
+  be: 'Беларуская',
+  kk: 'Қазақша',
+}
+
+/** `Intl` locale used for dates and numbers (differs from the app `Locale` tag). */
+export const LOCALE_BCP47: Record<Locale, string> = {
+  en: 'en-US',
+  ru: 'ru-RU',
+  uk: 'uk-UA',
+  de: 'de-DE',
+  be: 'be-BY',
+  kk: 'kk-KZ',
 }
 
 export function isLocale(value: unknown): value is Locale {
