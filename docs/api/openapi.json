@@ -84,11 +84,11 @@
         "operationId": "runWorkflow",
         "x-relay-scope": "instances:write",
         "summary": "Start a process instance",
-        "description": "Starts a new instance of a published workflow. Requires the instance write scope. The workflow must be published; running a draft fails with a validation error.",
+        "description": "Starts a new instance of a published workflow. Requires the instance write scope AND the `workflow.start` permission on the account that created the key — a plain member cannot start processes unless granted it. The key acts with its owner's current role and grants, so demoting that account shrinks the key. The workflow must be published; running a draft fails with a validation error.",
         "x-i18n": {
           "ru": {
             "summary": "Запустить экземпляр процесса",
-            "description": "Создаёт новый экземпляр опубликованного процесса. Требуется scope на запись экземпляров. Процесс должен быть опубликован; запуск черновика завершается ошибкой валидации."
+            "description": "Создаёт новый экземпляр опубликованного процесса. Требуется scope на запись экземпляров И разрешение `workflow.start` у аккаунта, создавшего ключ — обычный участник не может запускать процессы, пока ему это явно не разрешено. Ключ действует с текущей ролью и правами владельца, поэтому понижение аккаунта сужает и ключ. Процесс должен быть опубликован; запуск черновика завершается ошибкой валидации."
           }
         },
         "parameters": [{ "$ref": "#/components/parameters/WorkflowId" }],
