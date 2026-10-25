@@ -1,4 +1,5 @@
-import { requireContext } from '@/shared/server/auth-context'
+import { requireAreaAccess } from '@/shared/server/auth-context'
+import { can } from '@/shared/server/permissions'
 import { listInstances } from '@/features/workflow/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { EmptyState } from '@/shared/components/empty-state'
@@ -6,6 +7,7 @@ import { Badge } from '@/shared/components/ui/badge'
 import { Button } from '@/shared/components/ui/button'
 import { Progress } from '@/shared/components/ui/progress'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table'
+import { ArchiveInstanceButton } from '@/features/workflow/components/instance-actions'
 import { formatDateTime } from '@/shared/lib/format'
 import { getTranslator } from '@/shared/i18n/server'
 import { BoxesIcon, DownloadIcon } from 'lucide-react'
@@ -16,10 +18,13 @@ const STATUS_VARIANT = {
   CANCELLED: 'outline',
 } as const
 
+const FINISHED = new Set(['COMPLETED', 'CANCELLED'])
+
 export default async function InstancesPage() {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('instances')
   const { t } = await getTranslator()
   const instances = await listInstances(ctx)
+  const canArchive = can(ctx, 'workflow.delete')
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
@@ -53,6 +58,7 @@ export default async function InstancesPage() {
                 <TableHead>{t('table.progress')}</TableHead>
                 <TableHead>{t('table.startedBy')}</TableHead>
                 <TableHead>{t('table.started')}</TableHead>
+                {canArchive && <TableHead className="text-right">{t('archive.columns')}</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -78,6 +84,16 @@ export default async function InstancesPage() {
                     <TableCell className="text-muted-foreground">
                       {formatDateTime(instance.startedAt)}
                     </TableCell>
+                    {canArchive && (
+                      <TableCell className="text-right">
+                        {FINISHED.has(instance.status) && (
+                          <ArchiveInstanceButton
+                            instanceId={instance.id}
+                            name={instance.workflow.name}
+                          />
+                        )}
+                      </TableCell>
+                    )}
                   </TableRow>
                 )
               })}

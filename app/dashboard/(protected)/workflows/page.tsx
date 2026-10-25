@@ -1,5 +1,5 @@
-import { requireContext } from '@/shared/server/auth-context'
-import { canManageWorkflows } from '@/shared/server/permissions'
+import { requireAreaAccess } from '@/shared/server/auth-context'
+import { can } from '@/shared/server/permissions'
 import { listWorkflows } from '@/features/workflow/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { WorkflowsView } from '@/features/workflow/components/workflows-view'
@@ -10,7 +10,7 @@ export default async function WorkflowsPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('workflows')
   const { t } = await getTranslator()
   const { q } = await searchParams
   const workflows = await listWorkflows(ctx, q)
@@ -23,7 +23,7 @@ export default async function WorkflowsPage({
       />
       <WorkflowsView
         workflows={workflows}
-        canManage={canManageWorkflows(ctx.role)}
+        canManage={can(ctx, 'workflow.create')}
         initialQuery={q ?? ''}
       />
     </main>

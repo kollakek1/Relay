@@ -1,6 +1,6 @@
 import { getContext, getCurrentUser } from '@/shared/server/auth-context'
 import { getOrganization } from '@/features/organization/server/service'
-import { canManageMembers } from '@/shared/server/permissions'
+import { can } from '@/shared/server/permissions'
 import { PageHeader } from '@/shared/components/page-header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { Badge } from '@/shared/components/ui/badge'
@@ -25,7 +25,8 @@ export default async function SettingsPage() {
   const [user, ctx] = await Promise.all([getCurrentUser(), getContext()])
   const { t } = await getTranslator()
   const organization = ctx ? await getOrganization(ctx) : null
-  const canManage = ctx ? canManageMembers(ctx.role) : false
+  const canManage = ctx ? can(ctx, 'member.manage') : false
+  const canManageOrg = ctx ? can(ctx, 'organization.manage') : false
 
   const [apiKeys, endpoints, deliveries, rules, automationRuns, automationHealth, outboxHealth] =
     ctx && canManage
@@ -77,7 +78,7 @@ export default async function SettingsPage() {
                 description: organization.description,
                 timezone: organization.timezone,
               }}
-              canManage={ctx ? canManageMembers(ctx.role) : false}
+              canManage={canManageOrg}
             />
           )}
           <div className="grid gap-2 border-t pt-4 text-sm sm:grid-cols-3">

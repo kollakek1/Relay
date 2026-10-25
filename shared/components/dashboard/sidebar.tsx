@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog'
 import {
+  ArchiveIcon,
   BellIcon,
   BoxesIcon,
   CheckSquareIcon,
@@ -39,6 +40,7 @@ import {
   LayoutTemplateIcon,
   LogOutIcon,
   SearchIcon,
+  ShieldCheckIcon,
   BarChart3Icon,
   SettingsIcon,
   UsersIcon,
@@ -48,6 +50,9 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useState } from 'react'
 import { cn } from '@/shared/lib/utils'
+import type { OrgRole } from '@/prisma/generated/prisma/enums'
+import { canAccess, type AreaKey } from '@/shared/server/access'
+import type { Permission } from '@/shared/server/permissions'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { ThemeToggle } from '@/shared/components/theme-toggle'
 import { LanguageSwitcher } from '@/shared/i18n/language-switcher'
@@ -59,28 +64,39 @@ import {
 } from '@/features/organization/components/workspace-switcher'
 import { Loader2Icon } from 'lucide-react'
 
-const navItems: Array<{ title: MessageKey; href: string; icon: typeof HomeIcon }> = [
-  { title: 'app.dashboard', href: '/dashboard', icon: HomeIcon },
-  { title: 'app.search', href: '/dashboard/search', icon: SearchIcon },
-  { title: 'app.workflows', href: '/dashboard/workflows', icon: WorkflowIcon },
-  { title: 'app.templates', href: '/dashboard/templates', icon: LayoutTemplateIcon },
-  { title: 'app.tasks', href: '/dashboard/tasks', icon: CheckSquareIcon },
-  { title: 'app.taskPool', href: '/dashboard/pool', icon: InboxIcon },
-  { title: 'app.instances', href: '/dashboard/instances', icon: BoxesIcon },
-  { title: 'app.analytics', href: '/dashboard/analytics', icon: BarChart3Icon },
-  { title: 'app.team', href: '/dashboard/team', icon: UsersIcon },
-  { title: 'app.notifications', href: '/dashboard/notifications', icon: BellIcon },
-  { title: 'app.settings', href: '/dashboard/settings', icon: SettingsIcon },
+/**
+ * Every entry declares the *area* it belongs to; visibility is derived from the
+ * caller's permissions through the same rules the pages enforce, so navigation
+ * and access control can never drift apart.
+ */
+const navItems: Array<{ title: MessageKey; href: string; icon: typeof HomeIcon; area: AreaKey }> = [
+  { title: 'app.dashboard', href: '/dashboard', icon: HomeIcon, area: 'dashboard' },
+  { title: 'app.search', href: '/dashboard/search', icon: SearchIcon, area: 'dashboard' },
+  { title: 'app.workflows', href: '/dashboard/workflows', icon: WorkflowIcon, area: 'workflows' },
+  { title: 'app.templates', href: '/dashboard/templates', icon: LayoutTemplateIcon, area: 'templates' },
+  { title: 'app.instances', href: '/dashboard/instances', icon: BoxesIcon, area: 'instances' },
+  { title: 'app.archive', href: '/dashboard/archive', icon: ArchiveIcon, area: 'archive' },
+  { title: 'app.tasks', href: '/dashboard/tasks', icon: CheckSquareIcon, area: 'tasks' },
+  { title: 'app.taskPool', href: '/dashboard/pool', icon: InboxIcon, area: 'pool' },
+  { title: 'app.analytics', href: '/dashboard/analytics', icon: BarChart3Icon, area: 'analytics' },
+  { title: 'app.access', href: '/dashboard/access', icon: ShieldCheckIcon, area: 'access' },
+  { title: 'app.team', href: '/dashboard/team', icon: UsersIcon, area: 'team' },
+  { title: 'app.notifications', href: '/dashboard/notifications', icon: BellIcon, area: 'notifications' },
+  { title: 'app.settings', href: '/dashboard/settings', icon: SettingsIcon, area: 'settings' },
 ]
 
 export function DashboardSidebar({
   unreadCount = 0,
   workspaces = [],
   activeOrganizationId = null,
+  role,
+  permissions = [],
 }: {
   unreadCount?: number
   workspaces?: WorkspaceSummary[]
   activeOrganizationId?: string | null
+  role?: OrgRole
+  permissions?: readonly Permission[]
 }) {
   const pathname = usePathname()
   const t = useT()
@@ -89,6 +105,10 @@ export function DashboardSidebar({
 
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(`${href}/`))
+
+  const visibleNav = navItems.filter((item) =>
+    canAccess({ role: role ?? 'MEMBER', permissions }, item.area)
+  )
 
   return (
     <>
@@ -110,7 +130,7 @@ export function DashboardSidebar({
             <SidebarGroupLabel>{t('app.menu')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {navItems.map((item) => (
+                {visibleNav.map((item) => (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton asChild isActive={isActive(item.href)}>
                       <Link href={item.href}>

@@ -1,4 +1,4 @@
-import { requireContext } from '@/shared/server/auth-context'
+import { requireAreaAccess } from '@/shared/server/auth-context'
 import { listTasks } from '@/features/task/server/service'
 import { parseTaskQuery } from '@/features/task/server/query'
 import { PageHeader } from '@/shared/components/page-header'
@@ -12,7 +12,7 @@ import { DownloadIcon, ListChecksIcon } from 'lucide-react'
 type SearchParams = Promise<Record<string, string | undefined>>
 
 export default async function TasksPage({ searchParams }: { searchParams: SearchParams }) {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('tasks')
   const { t } = await getTranslator()
   const query = await parseTaskQuery(searchParams)
   const { items, total, page, pageSize } = await listTasks(ctx, query)

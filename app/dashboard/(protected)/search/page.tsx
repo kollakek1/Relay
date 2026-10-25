@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { requireContext } from '@/shared/server/auth-context'
+import { requireAreaAccess } from '@/shared/server/auth-context'
 import { searchAll } from '@/features/search/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { EmptyState } from '@/shared/components/empty-state'
@@ -14,7 +14,7 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('dashboard')
   const { t } = await getTranslator()
   const { q } = await searchParams
   const results = await searchAll(ctx, q ?? '')

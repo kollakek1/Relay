@@ -1,4 +1,4 @@
-import { requireContext } from '@/shared/server/auth-context'
+import { requireAreaAccess } from '@/shared/server/auth-context'
 import { listTaskPool } from '@/features/task/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { EmptyState } from '@/shared/components/empty-state'
@@ -13,7 +13,7 @@ export default async function TaskPoolPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>
 }) {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('pool')
   const { t } = await getTranslator()
   const query = await parseTaskQuery(searchParams)
   const { items, total, page, pageSize } = await listTaskPool(ctx, query)

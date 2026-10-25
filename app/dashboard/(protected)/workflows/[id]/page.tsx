@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import { requireContext } from '@/shared/server/auth-context'
-import { canManageWorkflows, canWorkOnTasks } from '@/shared/server/permissions'
+import { requireAreaAccess } from '@/shared/server/auth-context'
+import { can } from '@/shared/server/permissions'
 import { getWorkflow } from '@/features/workflow/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { WorkflowBuilder } from '@/features/workflow/components/workflow-builder'
@@ -15,7 +15,7 @@ export default async function WorkflowDetailPage({
 }: {
   params: Promise<{ id: string }>
 }) {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('workflows')
   const { t } = await getTranslator()
   const { id } = await params
 
@@ -84,13 +84,13 @@ export default async function WorkflowDetailPage({
           })),
           instanceCount: workflow._count.instances,
         }}
-        canManage={canManageWorkflows(ctx.role)}
-        canRun={canWorkOnTasks(ctx.role)}
+        canManage={can(ctx, 'workflow.create')}
+        canRun={can(ctx, 'workflow.start')}
       />
 
       <VersionHistory
         workflowId={workflow.id}
-        canManage={canManageWorkflows(ctx.role)}
+        canManage={can(ctx, 'workflow.create')}
         versions={versions.map((version) => ({
           id: version.id,
           version: version.version,

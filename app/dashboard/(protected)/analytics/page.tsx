@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { requireContext } from '@/shared/server/auth-context'
+import { requireAreaAccess } from '@/shared/server/auth-context'
 import { getAnalytics } from '@/features/analytics/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { EmptyState } from '@/shared/components/empty-state'
@@ -17,7 +17,7 @@ import { getTranslator } from '@/shared/i18n/server'
 import { BarChart3Icon } from 'lucide-react'
 
 export default async function AnalyticsPage() {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('analytics')
   const { t } = await getTranslator()
   const analytics = await getAnalytics(ctx)
   const { overview, workflows, bottlenecks } = analytics

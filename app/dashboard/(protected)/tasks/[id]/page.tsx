@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import { requireContext } from '@/shared/server/auth-context'
-import { canManageWorkflows, hasOrgRole } from '@/shared/server/permissions'
+import { requireAreaAccess } from '@/shared/server/auth-context'
+import { can, hasOrgRole } from '@/shared/server/permissions'
 import { getTask, listSiblingTasks } from '@/features/task/server/service'
 import { listMembers } from '@/features/organization/server/service'
 import { AppError } from '@/shared/server/errors'
@@ -10,7 +10,7 @@ import { normalizeFields, normalizeSnapshot } from '@/features/workflow/server/e
 import { getTranslator } from '@/shared/i18n/server'
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('tasks')
   const { t } = await getTranslator()
   const { id } = await params
 
@@ -90,8 +90,8 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           user: { id: member.user.id, name: member.user.name },
         }))}
         currentUserId={ctx.userId}
-        canManage={canManageWorkflows(ctx.role)}
-        canDecide={hasOrgRole(ctx.role, task.requiredRole ?? 'MEMBER')}
+        canManage={can(ctx, 'task.assign')}
+        canDecide={can(ctx, 'approval.decide') && hasOrgRole(ctx.role, task.requiredRole ?? 'MEMBER')}
       />
     </main>
   )

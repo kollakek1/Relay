@@ -1,5 +1,5 @@
-import { requireContext } from '@/shared/server/auth-context'
-import { canManageWorkflows } from '@/shared/server/permissions'
+import { requireAreaAccess } from '@/shared/server/auth-context'
+import { can } from '@/shared/server/permissions'
 import { listTemplates } from '@/features/workflow/server/templates'
 import { normalizeSnapshot } from '@/features/workflow/server/engine'
 import { PageHeader } from '@/shared/components/page-header'
@@ -7,7 +7,7 @@ import { TemplatesView, type TemplateCard } from '@/features/workflow/components
 import { getTranslator } from '@/shared/i18n/server'
 
 export default async function TemplatesPage() {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('templates')
   const { t } = await getTranslator()
   const { builtIn, saved } = await listTemplates(ctx)
 
@@ -36,7 +36,7 @@ export default async function TemplatesPage() {
         title={t('pages.templatesTitle')}
         description={t('pages.templatesDescription')}
       />
-      <TemplatesView templates={templates} canManage={canManageWorkflows(ctx.role)} />
+      <TemplatesView templates={templates} canManage={can(ctx, 'workflow.create')} />
     </main>
   )
 }

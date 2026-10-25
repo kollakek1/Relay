@@ -40,6 +40,8 @@ export default async function ProtectedLayout({ children }: { children: React.Re
         unreadCount={unreadCount}
         workspaces={workspaces}
         activeOrganizationId={ctx?.organizationId ?? null}
+        role={ctx?.role}
+        permissions={ctx?.permissions ?? []}
       />
       <SidebarTrigger className="fixed mt-2 ml-2 lg:hidden" />
       {children}

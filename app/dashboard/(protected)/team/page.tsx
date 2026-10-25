@@ -1,5 +1,5 @@
-import { requireContext } from '@/shared/server/auth-context'
-import { canManageMembers, isOwner } from '@/shared/server/permissions'
+import { requireAreaAccess } from '@/shared/server/auth-context'
+import { can, isOwner } from '@/shared/server/permissions'
 import { getOrganization, listMembers } from '@/features/organization/server/service'
 import { listInvitations } from '@/features/organization/server/invitations'
 import { PageHeader } from '@/shared/components/page-header'
@@ -8,9 +8,9 @@ import { InvitationsPanel } from '@/features/organization/components/invitations
 import { getTranslator } from '@/shared/i18n/server'
 
 export default async function TeamPage() {
-  const ctx = await requireContext()
+  const ctx = await requireAreaAccess('team')
   const { t } = await getTranslator()
-  const canManage = canManageMembers(ctx.role)
+  const canManage = can(ctx, 'member.manage')
 
   const [organization, members, invitations] = await Promise.all([
     getOrganization(ctx),
