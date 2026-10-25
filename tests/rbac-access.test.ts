@@ -124,13 +124,18 @@ describe('RBAC — permission grants', () => {
 
   it('cannot grant a permission the actor does not hold', async () => {
     const owner = await createContext('OWNER')
-    const admin = await membershipFor(owner.organizationId, 'ADMIN')
-    const member = await membershipFor(owner.organizationId, 'MEMBER')
+    // A MEMBER who was allowed to manage members but still cannot launch or
+    // publish must not be able to hand those powers to someone else.
+    const delegator = await membershipFor(owner.organizationId, 'MEMBER', ['member.manage'])
+    const target = await membershipFor(owner.organizationId, 'MEMBER')
+
+    expect(can(delegator, 'member.manage')).toBe(true)
+    expect(can(delegator, 'workflow.publish')).toBe(false)
 
     await expect(
-      updateMemberPermissions(admin, {
-        membershipId: member.membershipId,
-        permissions: ['workflow.start', 'organization.manage'],
+      updateMemberPermissions(delegator, {
+        membershipId: target.membershipId,
+        permissions: ['workflow.start', 'workflow.publish'],
       })
     ).rejects.toMatchObject({ code: 'FORBIDDEN' })
   })
