@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Relay API",
-    "version": "0.2.0",
+    "version": "0.2.5",
     "summary": "The public REST API of Relay, the open-source workflow engine.",
     "description": "Relay exposes a versioned JSON API under /api/v1 for workflows, process instances and tasks. Every request is authenticated with a scoped API key created in the workspace settings. Responses are uniform: successful calls return { \"data\": ... } (list endpoints add a \"meta\" object), and failures return { \"error\": { \"code\", \"message\" } }.",
     "license": {
