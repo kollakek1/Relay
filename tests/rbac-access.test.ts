@@ -5,11 +5,15 @@ import { can, permissionsFor, grantablePermissions } from '@/shared/server/permi
 import { canAccess } from '@/shared/server/access'
 import {
   archiveInstance,
+  archiveWorkflow,
   createWorkflow,
+  deleteWorkflow,
   listArchivedInstances,
   listInstances,
+  listWorkflows,
   publishWorkflow,
   restoreInstance,
+  restoreWorkflow,
   runInstance,
   saveWorkflowDraft,
 } from '@/features/workflow/server/service'
@@ -235,6 +239,83 @@ describe('process instance archive', () => {
     const instance = await completedInstance(owner)
     await archiveInstance(owner, instance.id)
     await expect(archiveInstance(owner, instance.id)).rejects.toMatchObject({ code: 'CONFLICT' })
+  })
+})
+
+describe('workflow archive & delete', () => {
+  afterAll(async () => {
+    await cleanupDatabase()
+    await disconnect()
+  })
+
+  it('archives a workflow (hiding it, keeping runs) and restores it', async () => {
+    const owner = await createContext('OWNER')
+    const instance = await completedInstance(owner)
+    const workflowId = instance.workflowId
+
+    await archiveWorkflow(owner, workflowId)
+    expect((await listWorkflows(owner)).some((w) => w.id === workflowId)).toBe(false)
+    expect(
+      (await listWorkflows(owner, undefined, { includeArchived: true })).some(
+        (w) => w.id === workflowId
+      )
+    ).toBe(true)
+
+    // The run survives archiving.
+    expect((await listInstances(owner)).some((i) => i.id === instance.id)).toBe(true)
+
+    await restoreWorkflow(owner, workflowId)
+    expect((await listWorkflows(owner)).some((w) => w.id === workflowId)).toBe(true)
+  })
+
+  it('refuses deleting a workflow with runs unless explicitly confirmed', async () => {
+    const owner = await createContext('OWNER')
+    const instance = await completedInstance(owner)
+    const workflowId = instance.workflowId
+
+    await expect(deleteWorkflow(owner, workflowId)).rejects.toMatchObject({ code: 'CONFLICT' })
+    // Still there after the refusal.
+    expect((await listWorkflows(owner, undefined, { includeArchived: true })).some((w) => w.id === workflowId)).toBe(true)
+  })
+
+  it('deletes a workflow together with its finished runs when confirmed', async () => {
+    const owner = await createContext('OWNER')
+    const instance = await completedInstance(owner)
+    const workflowId = instance.workflowId
+
+    await deleteWorkflow(owner, workflowId, { withRuns: true })
+
+    expect((await listWorkflows(owner, undefined, { includeArchived: true })).some((w) => w.id === workflowId)).toBe(false)
+    expect((await listInstances(owner)).some((i) => i.id === instance.id)).toBe(false)
+    const orphans = await prisma.task.count({ where: { instanceId: instance.id } })
+    expect(orphans).toBe(0)
+  })
+
+  it('never deletes a workflow with a running instance, even when confirmed', async () => {
+    const owner = await createContext('OWNER')
+    const workflow = await createWorkflow(owner, { name: 'Live' })
+    await saveWorkflowDraft(owner, {
+      workflowId: workflow.id,
+      name: 'Live',
+      steps: [{ name: 'A' }],
+    })
+    await publishWorkflow(owner, workflow.id)
+    await runInstance(owner, workflow.id)
+
+    await expect(deleteWorkflow(owner, workflow.id, { withRuns: true })).rejects.toMatchObject({
+      code: 'CONFLICT',
+    })
+  })
+
+  it('denies archive and delete to a MEMBER without the permissions', async () => {
+    const owner = await createContext('OWNER')
+    const workflow = await createWorkflow(owner, { name: 'Guarded' })
+    const member = await membershipFor(owner.organizationId, 'MEMBER')
+
+    await expect(archiveWorkflow(member, workflow.id)).rejects.toMatchObject({ code: 'FORBIDDEN' })
+    await expect(deleteWorkflow(member, workflow.id, { withRuns: true })).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    })
   })
 })
 

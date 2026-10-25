@@ -31,11 +31,16 @@ const workflowListSelect = {
 
 export type WorkflowListItem = Prisma.WorkflowGetPayload<{ select: typeof workflowListSelect }>
 
-export async function listWorkflows(ctx: Context, search?: string): Promise<WorkflowListItem[]> {
+export async function listWorkflows(
+  ctx: Context,
+  search?: string,
+  options: { includeArchived?: boolean } = {}
+): Promise<WorkflowListItem[]> {
   const term = search?.trim()
   return prisma.workflow.findMany({
     where: {
       organizationId: ctx.organizationId,
+      ...(options.includeArchived ? {} : { status: { not: 'ARCHIVED' } }),
       ...(term
         ? {
             OR: [
@@ -48,6 +53,17 @@ export async function listWorkflows(ctx: Context, search?: string): Promise<Work
     orderBy: { updatedAt: 'desc' },
     select: workflowListSelect,
   })
+}
+
+/** Run counts used by the workflow detail danger zone. */
+export async function getWorkflowRunStats(ctx: Context, workflowId: string) {
+  const [total, running] = await Promise.all([
+    prisma.processInstance.count({ where: { workflowId, organizationId: ctx.organizationId } }),
+    prisma.processInstance.count({
+      where: { workflowId, organizationId: ctx.organizationId, status: 'RUNNING' },
+    }),
+  ])
+  return { total, running }
 }
 
 export async function getWorkflow(ctx: Context, workflowId: string) {
@@ -184,22 +200,153 @@ export async function publishWorkflow(ctx: Context, workflowId: string) {
 }
 
 /**
- * Deletes a workflow. Refuses while process instances are still running so an
- * active process is never destroyed accidentally.
+ * Archives a workflow: hides it from the active list without touching its runs
+ * or history. Reversible via {@link restoreWorkflow}.
  */
-export async function deleteWorkflow(ctx: Context, workflowId: string) {
+export async function archiveWorkflow(ctx: Context, workflowId: string) {
+  assertCan(ctx, 'workflow.edit', 'Managing workflows requires the Admin role or higher')
+
+  const workflow = await prisma.workflow.findFirst({
+    where: { id: workflowId, organizationId: ctx.organizationId },
+    select: { id: true, status: true },
+  })
+  if (!workflow) throw notFound('Workflow not found')
+  if (workflow.status === 'ARCHIVED') throw conflict('This workflow is already archived')
+
+  return prisma.$transaction(async (tx) => {
+    const updated = await tx.workflow.update({ where: { id: workflow.id }, data: { status: 'ARCHIVED' } })
+    await recordAudit(tx, {
+      organizationId: ctx.organizationId,
+      actorId: ctx.userId,
+      action: 'workflow.archived',
+      targetType: 'workflow',
+      targetId: workflow.id,
+      metadata: { from: workflow.status },
+    })
+    return updated
+  })
+}
+
+/**
+ * Restores an archived workflow to the active list. It returns as `PUBLISHED`
+ * when it already had a published version, otherwise as `DRAFT`.
+ */
+export async function restoreWorkflow(ctx: Context, workflowId: string) {
+  assertCan(ctx, 'workflow.edit', 'Managing workflows requires the Admin role or higher')
+
+  const workflow = await prisma.workflow.findFirst({
+    where: { id: workflowId, organizationId: ctx.organizationId },
+    select: { id: true, status: true, _count: { select: { versions: true } } },
+  })
+  if (!workflow) throw notFound('Workflow not found')
+  if (workflow.status !== 'ARCHIVED') throw conflict('This workflow is not archived')
+
+  const target = workflow._count.versions > 0 ? 'PUBLISHED' : 'DRAFT'
+  return prisma.$transaction(async (tx) => {
+    const updated = await tx.workflow.update({ where: { id: workflow.id }, data: { status: target } })
+    await recordAudit(tx, {
+      organizationId: ctx.organizationId,
+      actorId: ctx.userId,
+      action: 'workflow.restored',
+      targetType: 'workflow',
+      targetId: workflow.id,
+      metadata: { to: target },
+    })
+    return updated
+  })
+}
+
+export interface DeleteWorkflowOptions {
+  /**
+   * Confirm deletion of a workflow that already has runs. Without it, a
+   * workflow with instances is refused (CONFLICT) so the caller can warn first.
+   * A workflow with a *running* instance is always refused.
+   */
+  withRuns?: boolean
+}
+
+/**
+ * Deletes a workflow. Running instances are never destroyed — the workflow is
+ * refused while any instance is `RUNNING`. Finished runs are only cascaded when
+ * `withRuns` is set, after an explicit confirmation. Pending outbox events and
+ * webhook deliveries for the deleted runs are removed in the same transaction
+ * so nothing is delivered for a process that no longer exists; already-delivered
+ * history and the audit log are preserved.
+ */
+export async function deleteWorkflow(
+  ctx: Context,
+  workflowId: string,
+  options: DeleteWorkflowOptions = {}
+) {
   assertCan(ctx, 'workflow.delete', 'Deleting workflows requires the Admin role or higher')
 
   const workflow = await prisma.workflow.findFirst({
     where: { id: workflowId, organizationId: ctx.organizationId },
-    select: { id: true, _count: { select: { instances: { where: { status: 'RUNNING' } } } } },
+    select: { id: true, name: true },
   })
   if (!workflow) throw notFound('Workflow not found')
-  if (workflow._count.instances > 0) {
+
+  const [running, total] = await Promise.all([
+    prisma.processInstance.count({
+      where: { workflowId, organizationId: ctx.organizationId, status: 'RUNNING' },
+    }),
+    prisma.processInstance.count({ where: { workflowId, organizationId: ctx.organizationId } }),
+  ])
+
+  if (running > 0) {
     throw conflict('Cannot delete a workflow with running instances')
   }
+  if (total > 0 && !options.withRuns) {
+    throw conflict('This workflow has runs; confirm deleting them as well')
+  }
 
-  await prisma.workflow.delete({ where: { id: workflowId } })
+  await prisma.$transaction(async (tx) => {
+    if (total > 0) {
+      const instances = await tx.processInstance.findMany({
+        where: { workflowId, organizationId: ctx.organizationId },
+        select: { id: true },
+      })
+      const instanceIds = instances.map((row) => row.id)
+      const tasks = await tx.task.findMany({
+        where: { instanceId: { in: instanceIds } },
+        select: { id: true },
+      })
+      // Pending events reference either an instance id or a task id in their
+      // JSON payload; drop both so nothing is delivered for a deleted entity.
+      const references = [
+        ...instanceIds.map((id) => ({ payload: { path: ['instanceId'], equals: id } })),
+        ...tasks.map((task) => ({ payload: { path: ['taskId'], equals: task.id } })),
+      ]
+      if (references.length > 0) {
+        const pendingEvents = await tx.outboxEvent.findMany({
+          where: {
+            organizationId: ctx.organizationId,
+            status: { in: ['PENDING', 'PROCESSING'] },
+            OR: references,
+          },
+          select: { id: true },
+        })
+        if (pendingEvents.length > 0) {
+          const eventIds = pendingEvents.map((event) => event.id)
+          await tx.webhookDelivery.deleteMany({
+            where: { eventId: { in: eventIds }, status: { in: ['PENDING', 'PROCESSING'] } },
+          })
+          await tx.outboxEvent.deleteMany({ where: { id: { in: eventIds } } })
+        }
+      }
+    }
+
+    // Cascades to versions, steps, instances and their tasks/history.
+    await tx.workflow.delete({ where: { id: workflow.id } })
+    await recordAudit(tx, {
+      organizationId: ctx.organizationId,
+      actorId: ctx.userId,
+      action: 'workflow.deleted',
+      targetType: 'workflow',
+      targetId: workflow.id,
+      metadata: { name: workflow.name, deletedRuns: total },
+    })
+  })
 }
 
 /**

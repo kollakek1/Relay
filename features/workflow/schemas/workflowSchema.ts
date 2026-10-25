@@ -62,6 +62,11 @@ export const saveWorkflowSchema = z.object({
 
 export const workflowIdSchema = z.object({ workflowId: z.string().min(1) })
 
+export const deleteWorkflowSchema = z.object({
+  workflowId: z.string().min(1),
+  withRuns: z.boolean().optional(),
+})
+
 export const instanceIdSchema = z.object({ instanceId: z.string().min(1) })
 
 export const createFromTemplateSchema = z.object({

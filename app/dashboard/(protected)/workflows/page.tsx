@@ -8,12 +8,13 @@ import { getTranslator } from '@/shared/i18n/server'
 export default async function WorkflowsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; archived?: string }>
 }) {
   const ctx = await requireAreaAccess('workflows')
   const { t } = await getTranslator()
-  const { q } = await searchParams
-  const workflows = await listWorkflows(ctx, q)
+  const { q, archived } = await searchParams
+  const includeArchived = archived === '1'
+  const workflows = await listWorkflows(ctx, q, { includeArchived })
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 lg:p-10">
@@ -25,6 +26,7 @@ export default async function WorkflowsPage({
         workflows={workflows}
         canManage={can(ctx, 'workflow.create')}
         initialQuery={q ?? ''}
+        includeArchived={includeArchived}
       />
     </main>
   )

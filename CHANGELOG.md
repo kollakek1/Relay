@@ -41,6 +41,13 @@ interface is now available in six languages.
   `/dashboard/archive` with search and status filters, and can be restored in
   their terminal state. Tasks, comments, activity, notifications, outbox events
   and the audit trail are preserved.
+- **Workflow archiving and confirmed deletion.** A process template can be
+  archived (`ARCHIVED`; hidden from the active list, runs and history kept,
+  reversible via Restore — `workflow.edit`) or deleted (`workflow.delete`).
+  Deleting a workflow that has runs is refused until the caller confirms deleting
+  the runs too; then the runs and their tasks/history are removed in one
+  transaction and pending outbox events/deliveries for those runs are dropped.
+  A workflow with a running instance is never deleted.
 - **Access & permissions center** (`/dashboard/access`). Every member sees, in
   plain language, what they are allowed to do. Owners and administrators can
   grant extra permissions from the same screen.

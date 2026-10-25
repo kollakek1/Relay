@@ -75,10 +75,14 @@ Legend: 🔴 security-relevant residual · 🟠 functional gap · 🔵 operation
   catalogue and is enforced, but a running instance is currently cancelled only
   as a consequence of an approval rejection; there is no standalone "cancel this
   run" button.
-- 🟠 **Archiving is the only removal path for instances.** A finished instance
-  can be archived (a reversible soft delete) but not hard-deleted: its tasks,
-  comments, activity, notifications, outbox events and audit trail are preserved
-  so analytics and investigations stay intact. There is no purge/retention job.
+- 🟠 **Instances are archived, not purged.** A finished *run* can be archived (a
+  reversible soft delete) but not individually hard-deleted: its tasks, comments,
+  activity, notifications, outbox events and audit trail are preserved so
+  analytics and investigations stay intact. A **workflow** however can be
+  archived (hides it, keeps its runs) or, with an explicit confirmation, deleted
+  together with all its runs — which does destroy that run history. A workflow
+  with a still-running instance can never be deleted. There is no time-based
+  retention/purge job.
 - 🟠 **No billing, no AI provider, no Telegram/other chat integrations.**
 - 🟠 **Analytics is bounded-sample.** At most 2000 instances/tasks per query are
   aggregated in application code. Beyond that the numbers are representative,

@@ -597,6 +597,8 @@ export const de: Messages = {
     taskCancelled: 'Aufgabe abgebrochen',
     draftSaved: 'Entwurf gespeichert',
     workflowPublished: 'Workflow veröffentlicht',
+    workflowArchived: 'Workflow archiviert',
+    workflowRestored: 'Workflow wiederhergestellt',
     workflowDeleted: 'Workflow gelöscht',
     instanceStarted: 'Prozessinstanz gestartet',
     commentPosted: 'Kommentar veröffentlicht',
@@ -755,6 +757,9 @@ export const de: Messages = {
     emptyTitle: 'Noch keine Workflows',
     emptyBodyManage: 'Erstellen Sie Ihren ersten Workflow, um mit der Automatisierung von Arbeit zu beginnen.',
     emptyBodyReadonly: 'Ein Administrator hat noch keinen Workflow veröffentlicht.',
+    showArchived: 'Archivierte anzeigen',
+    hideArchived: 'Archivierte ausblenden',
+    archivedHint: 'Archiviert',
   },
 
   templates: {
@@ -841,11 +846,23 @@ export const de: Messages = {
     startInstance: 'Instanz starten',
     publishFirst: 'Veröffentlichen Sie den Workflow, bevor Sie Instanzen starten.',
     dangerZone: 'Gefahrenbereich',
+    archiveWorkflow: 'Workflow archivieren',
+    restoreWorkflow: 'Workflow wiederherstellen',
+    archiveConfirmTitle: 'Diesen Workflow archivieren?',
+    archiveConfirmBody:
+      'Der Workflow wird aus der aktiven Liste ausgeblendet. Seine Läufe und sein Verlauf bleiben erhalten, und Sie können ihn später wiederherstellen.',
+    restoreConfirmTitle: 'Diesen Workflow wiederherstellen?',
+    restoreConfirmBody:
+      'Der Workflow kehrt in die aktive Liste zurück — als Entwurf oder veröffentlicht, je nach letzter Version.',
     deleteWorkflow: 'Workflow löschen',
-    deleteWithRuns: 'Workflows mit Läufen können nicht gelöscht werden.',
+    deleteWithRuns: 'Dieser Workflow hat Läufe. Beim Löschen werden sie und ihr Verlauf ebenfalls gelöscht.',
     deleteConfirmTitle: 'Diesen Workflow löschen?',
     deleteConfirmBody:
       'Dies entfernt den Workflow, seine Versionen und Schritte dauerhaft. Dies kann nicht rückgängig gemacht werden.',
+    deleteConfirmBodyWithRuns:
+      'Dies entfernt den Workflow, seine Versionen und Schritte sowie {count} Lauf/Läufe mit ihren Aufgaben und ihrem Verlauf dauerhaft. Dies kann nicht rückgängig gemacht werden.',
+    deleteRunningBlocked:
+      'Dieser Workflow hat einen laufenden Prozess. Schließen Sie ihn ab oder brechen Sie ihn ab, bevor Sie ihn löschen.',
   },
 
   taskDetail: {

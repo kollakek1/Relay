@@ -160,6 +160,28 @@ An archived instance can be **restored** by anyone with `workflow.delete`. It
 returns to the active list **in the terminal state it was archived in**;
 restoring is not a re-run.
 
+## Archiving and deleting a process (workflow)
+
+A workflow (process **template**) can be handled in two ways:
+
+- **Archive** (`workflow.edit`) — sets the workflow to `ARCHIVED`. It disappears
+  from the active workflow list (use *Show archived* to see it) but keeps every
+  run and all history. It is reversible: **Restore** returns it as `PUBLISHED`
+  when it had a published version, otherwise as `DRAFT`. Archived workflows
+  cannot be edited or published until restored.
+- **Delete** (`workflow.delete`) — permanently removes the workflow, its versions
+  and steps. If the workflow has runs, the server refuses (`CONFLICT`) unless the
+  caller confirms deleting the runs too; with that confirmation the runs and
+  their tasks, comments and activity are removed in the same transaction, and any
+  still-pending outbox events / webhook deliveries for those runs are dropped so
+  nothing is delivered for a process that no longer exists. Delivered history and
+  the organization audit log are preserved, and the deletion is audited
+  (`workflow.deleted`).
+
+A workflow with a **running** instance is never deleted, even with confirmation:
+finish or cancel the run first. Deleting a process is destructive and cannot be
+undone.
+
 > See also: [`docs/SECURITY.md`](../SECURITY.md) and
 > [`docs/THREAT_MODEL.md`](../THREAT_MODEL.md) for the authorization and
 > tenancy guarantees.

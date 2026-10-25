@@ -46,10 +46,12 @@ export function WorkflowsView({
   workflows,
   canManage,
   initialQuery,
+  includeArchived,
 }: {
   workflows: WorkflowListItemView[]
   canManage: boolean
   initialQuery: string
+  includeArchived: boolean
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -61,6 +63,14 @@ export function WorkflowsView({
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [query, setQuery] = useState(initialQuery)
+
+  const toggleHref = (() => {
+    const next = new URLSearchParams(searchParams.toString())
+    if (includeArchived) next.delete('archived')
+    else next.set('archived', '1')
+    const qs = next.toString()
+    return qs ? `${pathname}?${qs}` : pathname
+  })()
 
   // Debounce the search box into the URL so filtering happens live.
   useEffect(() => {
@@ -108,7 +118,15 @@ export function WorkflowsView({
           )}
         </div>
 
-        {canManage && (
+        <div className="flex items-center gap-3">
+          <Link
+            href={toggleHref}
+            prefetch={false}
+            className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
+          >
+            {includeArchived ? t('workflowList.hideArchived') : t('workflowList.showArchived')}
+          </Link>
+          {canManage && (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -152,7 +170,8 @@ export function WorkflowsView({
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        )}
+          )}
+        </div>
       </div>
 
       {workflows.length === 0 ? (

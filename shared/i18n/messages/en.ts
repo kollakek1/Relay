@@ -614,6 +614,8 @@ export const en = {
     taskCancelled: 'Task cancelled',
     draftSaved: 'Draft saved',
     workflowPublished: 'Workflow published',
+    workflowArchived: 'Workflow archived',
+    workflowRestored: 'Workflow restored',
     workflowDeleted: 'Workflow deleted',
     instanceStarted: 'Process instance started',
     commentPosted: 'Comment posted',
@@ -772,6 +774,9 @@ export const en = {
     emptyTitle: 'No workflows yet',
     emptyBodyManage: 'Create your first workflow to start automating work.',
     emptyBodyReadonly: 'An administrator has not published a workflow yet.',
+    showArchived: 'Show archived',
+    hideArchived: 'Hide archived',
+    archivedHint: 'Archived',
   },
 
   templates: {
@@ -858,11 +863,22 @@ export const en = {
     startInstance: 'Start instance',
     publishFirst: 'Publish the workflow before starting instances.',
     dangerZone: 'Danger zone',
+    archiveWorkflow: 'Archive workflow',
+    restoreWorkflow: 'Restore workflow',
+    archiveConfirmTitle: 'Archive this workflow?',
+    archiveConfirmBody:
+      'The workflow will be hidden from the active list. Its runs and history are kept, and you can restore it later.',
+    restoreConfirmTitle: 'Restore this workflow?',
+    restoreConfirmBody:
+      'The workflow will return to the active list as a draft or published, depending on its last version.',
     deleteWorkflow: 'Delete workflow',
-    deleteWithRuns: 'Workflows with runs cannot be deleted.',
+    deleteWithRuns: 'This workflow has runs. Deleting it also deletes them and their history.',
     deleteConfirmTitle: 'Delete this workflow?',
     deleteConfirmBody:
       'This permanently removes the workflow, its versions and steps. This cannot be undone.',
+    deleteConfirmBodyWithRuns:
+      'This permanently removes the workflow, its versions and steps, and its {count} run(s) with their tasks and history. This cannot be undone.',
+    deleteRunningBlocked: 'This workflow has a running process. Finish or cancel it before deleting.',
   },
 
   taskDetail: {

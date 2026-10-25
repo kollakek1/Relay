@@ -70,7 +70,7 @@ defined steps without a spreadsheet for a database.
 | **Approvals** | `ANY` (first decision wins) and `ALL` (every eligible approver decides) modes, with approve / request-changes / reject and a decision log. |
 | **Organizations and roles** | `OWNER > ADMIN > MEMBER` plus additive per-member permission grants, enforced server-side on every mutation. A plain member cannot start processes unless granted `workflow.start`. Multiple workspaces, ownership transfer, admin audit log. |
 | **Permission-aware UI** | Navigation, actions and pages all derive from one permission table, so a hidden tab and a blocked URL can never disagree. An in-app **Access & permissions** centre shows each member what they may do. |
-| **Archive finished runs** | A completed process can be archived (reversible soft delete) and restored, with tasks, history and audit trail preserved. |
+| **Archive & delete** | Archive a finished run (reversible soft delete, history kept) and restore it; archive a whole process template, or delete it together with its runs behind an explicit confirmation. Running processes are never destroyed. |
 | **Invitations** | Invite by email with hashed, single-use, expiring links. Atomic acceptance. |
 | **Collaboration** | Comments, watchers, tags, task dependencies, reopening, and an append-only activity trail. |
 | **Notifications** | Assignment, comments, approvals, invitations and SLA reminders, with an unread count. |

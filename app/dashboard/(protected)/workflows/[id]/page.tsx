@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { requireAreaAccess } from '@/shared/server/auth-context'
 import { can } from '@/shared/server/permissions'
-import { getWorkflow } from '@/features/workflow/server/service'
+import { getWorkflow, getWorkflowRunStats } from '@/features/workflow/server/service'
 import { PageHeader } from '@/shared/components/page-header'
 import { WorkflowBuilder } from '@/features/workflow/components/workflow-builder'
 import { VersionHistory } from '@/features/workflow/components/version-history'
@@ -28,6 +28,7 @@ export default async function WorkflowDetailPage({
   }
 
   const versions = await listVersions(ctx, id)
+  const runStats = await getWorkflowRunStats(ctx, id)
   const diff =
     versions.length >= 2
       ? await compareVersions(ctx, id, versions[1].version, versions[0].version)
@@ -83,9 +84,11 @@ export default async function WorkflowDetailPage({
             publishedAt: version.publishedAt,
           })),
           instanceCount: workflow._count.instances,
+          runningCount: runStats.running,
         }}
         canManage={can(ctx, 'workflow.create')}
         canRun={can(ctx, 'workflow.start')}
+        canDelete={can(ctx, 'workflow.delete')}
       />
 
       <VersionHistory

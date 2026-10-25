@@ -33,18 +33,22 @@ import { useT } from '@/shared/i18n/provider'
 import type { MessageKey } from '@/shared/i18n/translate'
 import type { ConditionOp, FormFieldType } from '@/features/workflow/server/engine'
 import {
+  archiveWorkflowAction,
   deleteWorkflowAction,
   publishWorkflowAction,
+  restoreWorkflowAction,
   runInstanceAction,
   saveWorkflowAction,
 } from '@/features/workflow/actions'
 import {
+  ArchiveIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   Loader2Icon,
   PlayIcon,
   PlusIcon,
   RocketIcon,
+  RotateCcwIcon,
   SaveIcon,
   Trash2Icon,
 } from 'lucide-react'
@@ -96,6 +100,7 @@ export interface BuilderWorkflow {
   }>
   versions: { id: string; version: number; publishedAt: Date | string }[]
   instanceCount: number
+  runningCount: number
 }
 
 const FIELD_TYPES: FormFieldType[] = ['text', 'textarea', 'number', 'date', 'select', 'checkbox']
@@ -149,15 +154,18 @@ export function WorkflowBuilder({
   workflow,
   canManage,
   canRun,
+  canDelete,
 }: {
   workflow: BuilderWorkflow
   canManage: boolean
   canRun: boolean
+  canDelete: boolean
 }) {
   const router = useRouter()
   const t = useT()
   const { isPending, run } = useAction()
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmArchive, setConfirmArchive] = useState(false)
 
   const {
     register,
@@ -239,11 +247,32 @@ export function WorkflowBuilder({
 
   const removeWorkflow = () => {
     setConfirmDelete(false)
-    run(() => deleteWorkflowAction({ workflowId: workflow.id }), {
-      success: t('toast.workflowDeleted'),
-      onSuccess: () => router.push('/dashboard/workflows'),
+    run(
+      () =>
+        deleteWorkflowAction({
+          workflowId: workflow.id,
+          withRuns: workflow.instanceCount > 0,
+        }),
+      {
+        success: t('toast.workflowDeleted'),
+        onSuccess: () => router.push('/dashboard/workflows'),
+      }
+    )
+  }
+
+  const archiveWorkflow = () => {
+    setConfirmArchive(false)
+    run(() => archiveWorkflowAction({ workflowId: workflow.id }), {
+      success: t('toast.workflowArchived'),
+      onSuccess: () => router.refresh(),
     })
   }
+
+  const restoreWorkflow = () =>
+    run(() => restoreWorkflowAction({ workflowId: workflow.id }), {
+      success: t('toast.workflowRestored'),
+      onSuccess: () => router.refresh(),
+    })
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -477,14 +506,35 @@ export function WorkflowBuilder({
             <CardHeader>
               <CardTitle>{t('builder.dangerZone')}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Button type="button" variant="destructive" className="w-full" onClick={() => setConfirmDelete(true)} disabled={workflow.instanceCount > 0}>
-                <Trash2Icon />
-                {t('builder.deleteWorkflow')}
-              </Button>
-              {workflow.instanceCount > 0 && (
-                <p className="text-muted-foreground mt-2 text-xs">{t('builder.deleteWithRuns')}</p>
+            <CardContent className="space-y-3">
+              {workflow.status === 'ARCHIVED' ? (
+                <Button type="button" variant="outline" className="w-full" onClick={restoreWorkflow} disabled={isPending}>
+                  <RotateCcwIcon />
+                  {t('builder.restoreWorkflow')}
+                </Button>
+              ) : (
+                <Button type="button" variant="outline" className="w-full" onClick={() => setConfirmArchive(true)} disabled={isPending}>
+                  <ArchiveIcon />
+                  {t('builder.archiveWorkflow')}
+                </Button>
               )}
+              {canDelete && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="w-full"
+                  onClick={() => setConfirmDelete(true)}
+                  disabled={workflow.runningCount > 0 || isPending}
+                >
+                  <Trash2Icon />
+                  {t('builder.deleteWorkflow')}
+                </Button>
+              )}
+              {workflow.runningCount > 0 ? (
+                <p className="text-muted-foreground text-xs">{t('builder.deleteRunningBlocked')}</p>
+              ) : workflow.instanceCount > 0 ? (
+                <p className="text-muted-foreground text-xs">{t('builder.deleteWithRuns')}</p>
+              ) : null}
             </CardContent>
           </Card>
         )}
@@ -494,12 +544,31 @@ export function WorkflowBuilder({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('builder.deleteConfirmTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('builder.deleteConfirmBody')}</AlertDialogDescription>
+            <AlertDialogDescription>
+              {workflow.instanceCount > 0
+                ? t('builder.deleteConfirmBodyWithRuns', { count: workflow.instanceCount })
+                : t('builder.deleteConfirmBody')}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction className="bg-destructive text-white hover:bg-destructive/90" onClick={removeWorkflow}>
               {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={confirmArchive} onOpenChange={setConfirmArchive}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('builder.archiveConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('builder.archiveConfirmBody')}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={archiveWorkflow}>
+              {t('builder.archiveWorkflow')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

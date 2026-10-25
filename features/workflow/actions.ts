@@ -8,6 +8,7 @@ import { rateLimit, RATE_LIMITS } from '@/shared/server/rate-limit'
 import {
   createFromTemplateSchema,
   createWorkflowSchema,
+  deleteWorkflowSchema,
   draftFromVersionSchema,
   instanceIdSchema,
   saveAsTemplateSchema,
@@ -16,10 +17,12 @@ import {
 } from './schemas/workflowSchema'
 import {
   archiveInstance,
+  archiveWorkflow,
   createWorkflow,
   deleteWorkflow,
   publishWorkflow,
   restoreInstance,
+  restoreWorkflow,
   runInstance,
   saveWorkflowDraft,
 } from './server/service'
@@ -70,12 +73,40 @@ export async function publishWorkflowAction(input: unknown): Promise<ActionResul
   }
 }
 
-export async function deleteWorkflowAction(input: unknown): Promise<ActionResult> {
+export async function archiveWorkflowAction(input: unknown): Promise<ActionResult> {
   try {
     const ctx = await requireContext()
     const { workflowId } = parseInput(workflowIdSchema, input)
+    await rateLimit('workflow:archive', ctx.userId, RATE_LIMITS.workflowMutate)
+    await archiveWorkflow(ctx, workflowId)
+    revalidatePath('/dashboard/workflows')
+    revalidatePath(`/dashboard/workflows/${workflowId}`)
+    return ok(undefined)
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function restoreWorkflowAction(input: unknown): Promise<ActionResult> {
+  try {
+    const ctx = await requireContext()
+    const { workflowId } = parseInput(workflowIdSchema, input)
+    await rateLimit('workflow:restore', ctx.userId, RATE_LIMITS.workflowMutate)
+    await restoreWorkflow(ctx, workflowId)
+    revalidatePath('/dashboard/workflows')
+    revalidatePath(`/dashboard/workflows/${workflowId}`)
+    return ok(undefined)
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function deleteWorkflowAction(input: unknown): Promise<ActionResult> {
+  try {
+    const ctx = await requireContext()
+    const { workflowId, withRuns } = parseInput(deleteWorkflowSchema, input)
     await rateLimit('workflow:delete', ctx.userId, RATE_LIMITS.workflowMutate)
-    await deleteWorkflow(ctx, workflowId)
+    await deleteWorkflow(ctx, workflowId, { withRuns })
     revalidatePath('/dashboard/workflows')
     return ok(undefined)
   } catch (error) {

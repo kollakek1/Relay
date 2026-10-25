@@ -618,6 +618,8 @@ export const ru: Messages = {
     taskCancelled: 'Задача отменена',
     draftSaved: 'Черновик сохранён',
     workflowPublished: 'Процесс опубликован',
+    workflowArchived: 'Процесс архивирован',
+    workflowRestored: 'Процесс восстановлен',
     workflowDeleted: 'Процесс удалён',
     instanceStarted: 'Экземпляр процесса запущен',
     commentPosted: 'Комментарий добавлен',
@@ -777,6 +779,9 @@ export const ru: Messages = {
     emptyTitle: 'Процессов пока нет',
     emptyBodyManage: 'Создайте первый процесс, чтобы начать автоматизировать работу.',
     emptyBodyReadonly: 'Администратор ещё не опубликовал ни одного процесса.',
+    showArchived: 'Показать архивные',
+    hideArchived: 'Скрыть архивные',
+    archivedHint: 'В архиве',
   },
 
   templates: {
@@ -868,11 +873,23 @@ export const ru: Messages = {
     startInstance: 'Запустить экземпляр',
     publishFirst: 'Опубликуйте процесс, прежде чем запускать экземпляры.',
     dangerZone: 'Опасная зона',
+    archiveWorkflow: 'Архивировать процесс',
+    restoreWorkflow: 'Восстановить процесс',
+    archiveConfirmTitle: 'Архивировать этот процесс?',
+    archiveConfirmBody:
+      'Процесс будет скрыт из активного списка. Его запуски и история сохранятся, и вы сможете восстановить его позже.',
+    restoreConfirmTitle: 'Восстановить этот процесс?',
+    restoreConfirmBody:
+      'Процесс вернётся в активный список как черновик или опубликованный — в зависимости от последней версии.',
     deleteWorkflow: 'Удалить процесс',
-    deleteWithRuns: 'Процессы с запусками удалить нельзя.',
+    deleteWithRuns: 'У процесса есть запуски. При удалении они также будут удалены вместе с историей.',
     deleteConfirmTitle: 'Удалить этот процесс?',
     deleteConfirmBody:
       'Процесс, его версии и шаги будут удалены безвозвратно. Отменить это действие нельзя.',
+    deleteConfirmBodyWithRuns:
+      'Процесс, его версии и шаги, а также {count} запуск(ов) с их задачами и историей будут удалены безвозвратно. Отменить это действие нельзя.',
+    deleteRunningBlocked:
+      'У процесса есть выполняющийся запуск. Завершите или отмените его перед удалением.',
   },
 
   taskDetail: {
