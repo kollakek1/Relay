@@ -16,13 +16,16 @@ test.describe('public site', () => {
     const hero = page.getByRole('heading', { level: 1 })
     await expect(hero).toContainText(/Run every process/i)
 
-    // Switch to Russian via a language switcher (aria-label is the language name).
-    await page.getByRole('button', { name: 'Русский' }).first().click()
+    // Switch to Russian through the language dropdown (the trigger label is
+    // localised, so match either locale's wording).
+    await page.getByRole('button', { name: /language|язык/i }).first().click()
+    await page.getByRole('menuitem', { name: /Русский/ }).click()
     await expect(page.locator('html')).toHaveAttribute('lang', 'ru', { timeout: 15_000 })
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Ведите каждый процесс/i)
 
     // Switch back — the preference is persisted in a cookie, not in memory.
-    await page.getByRole('button', { name: 'English' }).first().click()
+    await page.getByRole('button', { name: /language|язык/i }).first().click()
+    await page.getByRole('menuitem', { name: /English/ }).click()
     await expect(page.locator('html')).toHaveAttribute('lang', 'en', { timeout: 15_000 })
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Run every process/i)
   })
