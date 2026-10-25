@@ -2,7 +2,14 @@ import type { OrgRole } from '@/prisma/generated/prisma/client'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
 import { forbidden, invalid, notFound } from '@/shared/server/errors'
-import { canManageMembers, isOwner } from '@/shared/server/permissions'
+import {
+  assertCan,
+  grantablePermissions,
+  isOwner,
+  isPermission,
+  roleCan,
+  type Permission,
+} from '@/shared/server/permissions'
 import type { UpdateMemberRoleInput } from '../schemas/organizationSchema'
 import { recordAudit } from './audit'
 
@@ -54,9 +61,7 @@ async function countOwners(organizationId: string, exclude?: string) {
  *  - the last owner cannot be demoted.
  */
 export async function updateMemberRole(ctx: Context, input: UpdateMemberRoleInput) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Managing members requires the Admin role or higher')
-  }
+  assertCan(ctx, 'member.manage', 'Managing members requires the Admin role or higher')
 
   const target = await prisma.membership.findFirst({
     where: { id: input.membershipId, organizationId: ctx.organizationId },
@@ -92,9 +97,7 @@ export async function updateMemberRole(ctx: Context, input: UpdateMemberRoleInpu
 
 /** Removes a member. The last owner cannot be removed; admins cannot remove owners. */
 export async function removeMember(ctx: Context, membershipId: string) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Managing members requires the Admin role or higher')
-  }
+  assertCan(ctx, 'member.manage', 'Managing members requires the Admin role or higher')
 
   const target = await prisma.membership.findFirst({
     where: { id: membershipId, organizationId: ctx.organizationId },
@@ -155,6 +158,64 @@ export async function transferOwnership(ctx: Context, membershipId: string) {
   })
 }
 
+/** Permissions the acting member is allowed to grant to others. */
+export function listGrantablePermissions(ctx: Context): Permission[] {
+  return grantablePermissions(ctx)
+}
+
+export interface UpdateMemberPermissionsInput {
+  membershipId: string
+  permissions: string[]
+}
+
+/**
+ * Sets the *additional* permissions granted to a member on top of their role
+ * baseline. Guards:
+ *  - only members with `member.manage` may change grants;
+ *  - an actor may never grant a permission they do not themselves hold;
+ *  - only an OWNER may change another OWNER's grants;
+ *  - grants already implied by the role baseline are dropped (kept minimal).
+ * Every change is audited.
+ */
+export async function updateMemberPermissions(ctx: Context, input: UpdateMemberPermissionsInput) {
+  assertCan(ctx, 'member.manage', 'Managing permissions requires the Admin role or higher')
+
+  const target = await prisma.membership.findFirst({
+    where: { id: input.membershipId, organizationId: ctx.organizationId },
+    select: { id: true, role: true, grantedPermissions: true },
+  })
+  if (!target) throw notFound('Member not found')
+
+  if (target.role === 'OWNER' && !isOwner(ctx.role)) {
+    throw forbidden('Only an owner can manage another owner’s permissions')
+  }
+
+  const allowed = new Set(grantablePermissions(ctx))
+  const requested = input.permissions.filter(isPermission)
+  const escalation = requested.filter((permission) => !allowed.has(permission))
+  if (escalation.length > 0) {
+    throw forbidden('You cannot grant a permission you do not hold')
+  }
+
+  const grants = [...new Set(requested.filter((permission) => !roleCan(target.role, permission)))]
+
+  return prisma.$transaction(async (tx) => {
+    const updated = await tx.membership.update({
+      where: { id: target.id },
+      data: { grantedPermissions: grants },
+    })
+    await recordAudit(tx, {
+      organizationId: ctx.organizationId,
+      actorId: ctx.userId,
+      action: 'member.permissions_changed',
+      targetType: 'membership',
+      targetId: target.id,
+      metadata: { from: target.grantedPermissions, to: grants, role: target.role },
+    })
+    return updated
+  })
+}
+
 export interface UpdateOrganizationInput {
   name: string
   description?: string
@@ -162,9 +223,7 @@ export interface UpdateOrganizationInput {
 }
 
 export async function updateOrganization(ctx: Context, input: UpdateOrganizationInput) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Updating the workspace requires the Admin role or higher')
-  }
+  assertCan(ctx, 'organization.manage', 'Updating the workspace requires the Admin role or higher')
 
   return prisma.$transaction(async (tx) => {
     const org = await tx.organization.update({

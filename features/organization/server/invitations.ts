@@ -4,7 +4,7 @@ import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
 import { conflict, forbidden, invalid, notFound } from '@/shared/server/errors'
 import { sendEmail } from '@/shared/server/email'
-import { canManageMembers, isOwner } from '@/shared/server/permissions'
+import { assertCan, isOwner } from '@/shared/server/permissions'
 import { notify } from '@/features/notification/server/service'
 import { recordAudit } from './audit'
 
@@ -37,9 +37,7 @@ export interface CreateInvitationInput {
  * also implements "resend" semantics.
  */
 export async function createInvitation(ctx: Context, input: CreateInvitationInput) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Inviting members requires the Admin role or higher')
-  }
+  assertCan(ctx, 'member.manage', 'Inviting members requires the Admin role or higher')
   if (input.role === 'OWNER' && !isOwner(ctx.role)) {
     throw forbidden('Only an owner can invite another owner')
   }
@@ -128,9 +126,7 @@ export async function createInvitation(ctx: Context, input: CreateInvitationInpu
 }
 
 export async function listInvitations(ctx: Context) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Viewing invitations requires the Admin role or higher')
-  }
+  assertCan(ctx, 'member.manage', 'Viewing invitations requires the Admin role or higher')
   return prisma.invitation.findMany({
     where: { organizationId: ctx.organizationId },
     orderBy: { createdAt: 'desc' },
@@ -140,9 +136,7 @@ export async function listInvitations(ctx: Context) {
 }
 
 export async function revokeInvitation(ctx: Context, invitationId: string) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Revoking invitations requires the Admin role or higher')
-  }
+  assertCan(ctx, 'member.manage', 'Revoking invitations requires the Admin role or higher')
   const invitation = await prisma.invitation.findFirst({
     where: { id: invitationId, organizationId: ctx.organizationId },
     select: { id: true, status: true, email: true },
@@ -167,9 +161,7 @@ export async function revokeInvitation(ctx: Context, invitationId: string) {
 }
 
 export async function resendInvitation(ctx: Context, invitationId: string) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Resending invitations requires the Admin role or higher')
-  }
+  assertCan(ctx, 'member.manage', 'Resending invitations requires the Admin role or higher')
   const invitation = await prisma.invitation.findFirst({
     where: { id: invitationId, organizationId: ctx.organizationId },
   })

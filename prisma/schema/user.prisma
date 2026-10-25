@@ -15,6 +15,7 @@ model User {
   workflowsCreated   Workflow[]        @relation("WorkflowCreatedBy")
   versionsPublished  WorkflowVersion[] @relation("VersionPublishedBy")
   instancesStarted   ProcessInstance[] @relation("InstanceStartedBy")
+  instancesArchived  ProcessInstance[] @relation("InstanceArchivedBy")
   tasksAssigned      Task[]            @relation("TaskAssignee")
   tasksCreated       Task[]            @relation("TaskCreatedBy")
   activities         TaskActivity[]    @relation("ActivityActor")

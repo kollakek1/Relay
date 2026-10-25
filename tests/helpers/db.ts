@@ -1,5 +1,6 @@
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
+import { permissionsFor } from '@/shared/server/permissions'
 import type { OrgRole } from '@/prisma/generated/prisma/enums'
 
 const createdUserIds: string[] = []
@@ -43,7 +44,7 @@ export async function createContext(role: OrgRole = 'OWNER'): Promise<Context> {
       data: { role },
     })
   }
-  return { userId: user.id, organizationId: organization.id, role }
+  return { userId: user.id, organizationId: organization.id, role, permissions: permissionsFor(role) }
 }
 
 export function trackUser(id: string) {

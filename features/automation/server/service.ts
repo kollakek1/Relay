@@ -1,9 +1,9 @@
 import type { Prisma } from '@/prisma/generated/prisma/client'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
-import { forbidden, invalid, notFound } from '@/shared/server/errors'
+import { invalid, notFound } from '@/shared/server/errors'
 import { logger, newRequestId } from '@/shared/server/logger'
-import { canManageMembers } from '@/shared/server/permissions'
+import { assertCan } from '@/shared/server/permissions'
 import { DEFAULT_LEASE_MS, DEFAULT_MAX_ATTEMPTS, nextAttemptAt } from '@/shared/server/retry'
 import { notify } from '@/features/notification/server/service'
 import { rolesAtLeast } from '@/features/task/server/approvals'
@@ -85,9 +85,7 @@ export function validateAutomationConfig(action: AutomationAction, config: unkno
 }
 
 function assertManage(ctx: Context) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Managing automations requires the Admin role or higher')
-  }
+  assertCan(ctx, 'automation.manage', 'Managing automations requires the Admin role or higher')
 }
 
 export interface CreateAutomationInput {

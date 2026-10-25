@@ -49,6 +49,7 @@ export async function withApiKey(
       userId: principal.userId,
       organizationId: principal.organizationId,
       role: principal.role,
+      permissions: principal.permissions,
     }
 
     return await handler({ principal, context, request })

@@ -1,8 +1,8 @@
 import type { Prisma } from '@/prisma/generated/prisma/client'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
-import { forbidden, invalid, notFound } from '@/shared/server/errors'
-import { canManageWorkflows } from '@/shared/server/permissions'
+import { invalid, notFound } from '@/shared/server/errors'
+import { assertCan } from '@/shared/server/permissions'
 import { normalizeSnapshot, type ProcessSnapshot } from './engine'
 
 export type StepChangeStatus = 'added' | 'removed' | 'changed' | 'same'
@@ -107,9 +107,7 @@ export async function compareVersions(
  * iterate on an earlier definition without losing history.
  */
 export async function createDraftFromVersion(ctx: Context, workflowId: string, version: number) {
-  if (!canManageWorkflows(ctx.role)) {
-    throw forbidden('Managing workflows requires the Admin role or higher')
-  }
+  assertCan(ctx, 'workflow.edit', 'Editing workflows requires the Admin role or higher')
 
   const workflow = await prisma.workflow.findFirst({
     where: { id: workflowId, organizationId: ctx.organizationId },

@@ -1,16 +1,14 @@
 import { randomBytes } from 'node:crypto'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
-import { forbidden, invalid, notFound } from '@/shared/server/errors'
-import { canManageMembers } from '@/shared/server/permissions'
+import { invalid, notFound } from '@/shared/server/errors'
+import { assertCan } from '@/shared/server/permissions'
 import { checkOutboundUrl } from '@/shared/server/ssrf'
 import { recordAudit } from '@/features/organization/server/audit'
 import { WEBHOOK_EVENTS, retryDelivery, type WebhookEvent } from './delivery'
 
 function assertManage(ctx: Context) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Managing webhooks requires the Admin role or higher')
-  }
+  assertCan(ctx, 'webhook.manage', 'Managing webhooks requires the Admin role or higher')
 }
 
 export { WEBHOOK_EVENTS }

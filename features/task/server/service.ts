@@ -2,7 +2,7 @@ import type { Prisma, TaskPriority } from '@/prisma/generated/prisma/client'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
 import { conflict, forbidden, invalid, notFound } from '@/shared/server/errors'
-import { canManageWorkflows, canWorkOnTasks, hasOrgRole } from '@/shared/server/permissions'
+import { assertCan, can, hasOrgRole } from '@/shared/server/permissions'
 import { DEFAULT_PAGE_SIZE } from '@/shared/server/context'
 import type {
   AssignTaskInput,
@@ -135,7 +135,7 @@ async function loadTask(ctx: Context, taskId: string) {
 
 function assertCanAct(ctx: Context, assigneeId: string | null) {
   const isAssignee = assigneeId === ctx.userId
-  if (!isAssignee && !canManageWorkflows(ctx.role)) {
+  if (!isAssignee && !can(ctx, 'task.assign')) {
     throw forbidden('Only the assignee or an administrator can do this')
   }
 }
@@ -149,6 +149,7 @@ function assertCanAct(ctx: Context, assigneeId: string | null) {
  * CONFLICT — no distributed lock required.
  */
 export async function claimTask(ctx: Context, taskId: string) {
+  assertCan(ctx, 'task.claim', 'You do not have permission to claim tasks')
   return prisma.$transaction(async (tx) => {
     const task = await tx.task.findFirst({
       where: { id: taskId, organizationId: ctx.organizationId },
@@ -204,9 +205,7 @@ export async function claimTask(ctx: Context, taskId: string) {
 
 /** Assigns (or unassigns) a task. Requires the Admin role. */
 export async function assignTask(ctx: Context, input: AssignTaskInput) {
-  if (!canManageWorkflows(ctx.role)) {
-    throw forbidden('Assigning tasks requires the Admin role or higher')
-  }
+  assertCan(ctx, 'task.assign', 'Assigning tasks requires the Admin role or higher')
 
   const task = await loadTask(ctx, input.taskId)
 
@@ -318,9 +317,7 @@ export async function transitionTask(ctx: Context, input: TransitionTaskInput) {
   // Cancelling is an administrative action; every other transition belongs to
   // the assignee (or an admin).
   if (input.to === 'CANCELLED') {
-    if (!canManageWorkflows(ctx.role)) {
-      throw forbidden('Only an administrator can cancel a task')
-    }
+    assertCan(ctx, 'task.assign', 'Only an administrator can cancel a task')
   } else {
     assertCanAct(ctx, task.assigneeId)
   }
@@ -514,7 +511,7 @@ export interface ReopenTaskInput {
 export async function reopenTask(ctx: Context, input: ReopenTaskInput) {
   const task = await loadTask(ctx, input.taskId)
   if (task.status !== 'DONE') throw invalid('Only completed tasks can be reopened')
-  if (!canManageWorkflows(ctx.role) && task.assigneeId !== ctx.userId) {
+  if (!can(ctx, 'task.assign') && task.assigneeId !== ctx.userId) {
     throw forbidden('Only the assignee or an administrator can reopen this task')
   }
 
@@ -577,7 +574,7 @@ export interface DecideTaskInput {
  *   `CHANGES_REQUESTED` keeps the step open for a revised decision.
  */
 export async function decideTask(ctx: Context, input: DecideTaskInput) {
-  if (!canWorkOnTasks(ctx.role)) throw forbidden('You cannot decide in this workspace')
+  assertCan(ctx, 'approval.decide', 'You cannot decide in this workspace')
 
   return prisma.$transaction(async (tx) => {
     const task = await tx.task.findFirst({

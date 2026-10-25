@@ -1,8 +1,8 @@
 import type { Prisma } from '@/prisma/generated/prisma/client'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
-import { conflict, forbidden, invalid, notFound } from '@/shared/server/errors'
-import { canManageWorkflows } from '@/shared/server/permissions'
+import { conflict, invalid, notFound } from '@/shared/server/errors'
+import { assertCan } from '@/shared/server/permissions'
 import type {
   CreateWorkflowInput,
   SaveWorkflowInput,
@@ -17,6 +17,7 @@ import {
 } from './engine'
 import { notifyApprovers } from '@/features/task/server/approvals'
 import { enqueueEvent } from '@/features/webhooks/server/delivery'
+import { recordAudit } from '@/features/organization/server/audit'
 
 const workflowListSelect = {
   id: true,
@@ -29,12 +30,6 @@ const workflowListSelect = {
 } satisfies Prisma.WorkflowSelect
 
 export type WorkflowListItem = Prisma.WorkflowGetPayload<{ select: typeof workflowListSelect }>
-
-function assertManage(ctx: Context) {
-  if (!canManageWorkflows(ctx.role)) {
-    throw forbidden('Managing workflows requires the Admin role or higher')
-  }
-}
 
 export async function listWorkflows(ctx: Context, search?: string): Promise<WorkflowListItem[]> {
   const term = search?.trim()
@@ -70,7 +65,7 @@ export async function getWorkflow(ctx: Context, workflowId: string) {
 }
 
 export async function createWorkflow(ctx: Context, input: CreateWorkflowInput) {
-  assertManage(ctx)
+  assertCan(ctx, 'workflow.create', 'Creating workflows requires the Admin role or higher')
   return prisma.workflow.create({
     data: {
       organizationId: ctx.organizationId,
@@ -96,7 +91,7 @@ export async function createWorkflow(ctx: Context, input: CreateWorkflowInput) {
  * process. Archived workflows are read-only.
  */
 export async function saveWorkflowDraft(ctx: Context, input: SaveWorkflowInput) {
-  assertManage(ctx)
+  assertCan(ctx, 'workflow.edit', 'Editing workflows requires the Admin role or higher')
 
   const workflow = await prisma.workflow.findFirst({
     where: { id: input.workflowId, organizationId: ctx.organizationId },
@@ -141,7 +136,7 @@ export async function saveWorkflowDraft(ctx: Context, input: SaveWorkflowInput) 
  * marked PUBLISHED (it stays published while new versions are added).
  */
 export async function publishWorkflow(ctx: Context, workflowId: string) {
-  assertManage(ctx)
+  assertCan(ctx, 'workflow.publish', 'Publishing workflows requires the Admin role or higher')
 
   const workflow = await prisma.workflow.findFirst({
     where: { id: workflowId, organizationId: ctx.organizationId },
@@ -193,7 +188,7 @@ export async function publishWorkflow(ctx: Context, workflowId: string) {
  * active process is never destroyed accidentally.
  */
 export async function deleteWorkflow(ctx: Context, workflowId: string) {
-  assertManage(ctx)
+  assertCan(ctx, 'workflow.delete', 'Deleting workflows requires the Admin role or higher')
 
   const workflow = await prisma.workflow.findFirst({
     where: { id: workflowId, organizationId: ctx.organizationId },
@@ -214,6 +209,7 @@ export async function deleteWorkflow(ctx: Context, workflowId: string) {
  * is false). Later steps unblock as the pipeline advances.
  */
 export async function runInstance(ctx: Context, workflowId: string) {
+  assertCan(ctx, 'workflow.start', 'You do not have permission to start processes')
   const workflow = await prisma.workflow.findFirst({
     where: { id: workflowId, organizationId: ctx.organizationId },
     include: { versions: { orderBy: { version: 'desc' }, take: 1 } },
@@ -325,17 +321,147 @@ export async function runInstance(ctx: Context, workflowId: string) {
   })
 }
 
+const instanceListInclude = {
+  workflow: { select: { id: true, name: true } },
+  version: { select: { version: true } },
+  startedBy: { select: { id: true, name: true } },
+  _count: { select: { tasks: true } },
+  tasks: { where: { status: 'DONE' }, select: { id: true } },
+} satisfies Prisma.ProcessInstanceInclude
+
 export async function listInstances(ctx: Context) {
   return prisma.processInstance.findMany({
-    where: { organizationId: ctx.organizationId },
+    where: { organizationId: ctx.organizationId, archivedAt: null },
     orderBy: { startedAt: 'desc' },
     take: 50,
-    include: {
-      workflow: { select: { id: true, name: true } },
-      version: { select: { version: true } },
-      startedBy: { select: { id: true, name: true } },
-      _count: { select: { tasks: true } },
-      tasks: { where: { status: 'DONE' }, select: { id: true } },
+    include: instanceListInclude,
+  })
+}
+
+/**
+ * Lists archived (soft-deleted) instances for the workspace. Hidden from the
+ * active list; visible here within the caller's permissions.
+ */
+export async function listArchivedInstances(
+  ctx: Context,
+  options: { search?: string; status?: 'COMPLETED' | 'CANCELLED' } = {}
+) {
+  const term = options.search?.trim()
+  return prisma.processInstance.findMany({
+    where: {
+      organizationId: ctx.organizationId,
+      archivedAt: { not: null },
+      ...(options.status ? { status: options.status } : {}),
+      ...(term ? { workflow: { name: { contains: term, mode: 'insensitive' } } } : {}),
     },
+    orderBy: { archivedAt: 'desc' },
+    take: 100,
+    include: {
+      ...instanceListInclude,
+      archivedBy: { select: { id: true, name: true } },
+    },
+  })
+}
+
+/** Task statuses that mean "work is still outstanding" on an instance. */
+const ACTIVE_TASK_STATUSES = ['BLOCKED', 'PENDING', 'CLAIMED', 'IN_PROGRESS'] as const
+
+/** Instance states that may be archived: both are terminal. */
+const ARCHIVABLE_INSTANCE_STATUSES = ['COMPLETED', 'CANCELLED'] as const
+
+/**
+ * Archives a *finished* process instance (a reversible soft delete). Refuses
+ * while any task is still outstanding and never touches the running engine.
+ *
+ * Concurrency: the archive is a single conditional `updateMany` guarded by
+ * `archivedAt: null`, so two simultaneous requests cannot both succeed and no
+ * partially archived row can exist.
+ */
+export async function archiveInstance(ctx: Context, instanceId: string) {
+  assertCan(ctx, 'workflow.delete', 'You do not have permission to archive processes')
+
+  const instance = await prisma.processInstance.findFirst({
+    where: { id: instanceId, organizationId: ctx.organizationId },
+    select: {
+      id: true,
+      status: true,
+      archivedAt: true,
+      _count: { select: { tasks: { where: { status: { in: [...ACTIVE_TASK_STATUSES] } } } } },
+    },
+  })
+  if (!instance) throw notFound('Process instance not found')
+  if (instance.archivedAt) throw conflict('This process is already archived')
+  if (!ARCHIVABLE_INSTANCE_STATUSES.includes(instance.status as 'COMPLETED' | 'CANCELLED')) {
+    throw conflict('Only finished processes can be archived')
+  }
+  if (instance._count.tasks > 0) {
+    throw conflict('Finish or cancel every task before archiving this process')
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const updated = await tx.processInstance.updateMany({
+      where: {
+        id: instance.id,
+        organizationId: ctx.organizationId,
+        archivedAt: null,
+        status: { in: [...ARCHIVABLE_INSTANCE_STATUSES] },
+      },
+      data: { archivedAt: new Date(), archivedById: ctx.userId },
+    })
+    if (updated.count === 0) {
+      throw conflict('The process was modified by someone else; reload and try again')
+    }
+    await recordAudit(tx, {
+      organizationId: ctx.organizationId,
+      actorId: ctx.userId,
+      action: 'instance.archived',
+      targetType: 'process_instance',
+      targetId: instance.id,
+      metadata: { status: instance.status },
+    })
+    await enqueueEvent(tx, {
+      organizationId: ctx.organizationId,
+      topic: 'instance.archived',
+      payload: { instanceId: instance.id },
+    })
+    return tx.processInstance.findUniqueOrThrow({ where: { id: instance.id } })
+  })
+}
+
+/**
+ * Restores an archived instance to the active list. The instance stays in the
+ * terminal state it was archived in — restoring is not a re-run.
+ */
+export async function restoreInstance(ctx: Context, instanceId: string) {
+  assertCan(ctx, 'workflow.delete', 'You do not have permission to restore processes')
+
+  const instance = await prisma.processInstance.findFirst({
+    where: { id: instanceId, organizationId: ctx.organizationId },
+    select: { id: true, archivedAt: true },
+  })
+  if (!instance) throw notFound('Process instance not found')
+  if (!instance.archivedAt) throw conflict('This process is not archived')
+
+  return prisma.$transaction(async (tx) => {
+    const updated = await tx.processInstance.updateMany({
+      where: { id: instance.id, organizationId: ctx.organizationId, archivedAt: { not: null } },
+      data: { archivedAt: null, archivedById: null },
+    })
+    if (updated.count === 0) {
+      throw conflict('The process was modified by someone else; reload and try again')
+    }
+    await recordAudit(tx, {
+      organizationId: ctx.organizationId,
+      actorId: ctx.userId,
+      action: 'instance.restored',
+      targetType: 'process_instance',
+      targetId: instance.id,
+    })
+    await enqueueEvent(tx, {
+      organizationId: ctx.organizationId,
+      topic: 'instance.restored',
+      payload: { instanceId: instance.id },
+    })
+    return tx.processInstance.findUniqueOrThrow({ where: { id: instance.id } })
   })
 }

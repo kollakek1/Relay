@@ -1,7 +1,7 @@
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
-import { forbidden, notFound } from '@/shared/server/errors'
-import { canWorkOnTasks } from '@/shared/server/permissions'
+import { notFound } from '@/shared/server/errors'
+import { assertCan } from '@/shared/server/permissions'
 import { notify } from '@/features/notification/server/service'
 import type { CreateCommentInput } from '../schemas/activitySchema'
 
@@ -24,7 +24,7 @@ export async function listComments(ctx: Context, taskId: string) {
  * task has an assignee other than the author) a notification in one transaction.
  */
 export async function addComment(ctx: Context, input: CreateCommentInput) {
-  if (!canWorkOnTasks(ctx.role)) throw forbidden('You cannot comment in this workspace')
+  assertCan(ctx, 'task.view', 'You cannot comment in this workspace')
 
   const task = await prisma.task.findFirst({
     where: { id: input.taskId, organizationId: ctx.organizationId },

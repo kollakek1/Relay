@@ -149,10 +149,17 @@ model ProcessInstance {
   startedBy      User           @relation("InstanceStartedBy", fields: [startedById], references: [id], onDelete: Restrict)
   startedAt      DateTime       @default(now())
   completedAt    DateTime?
+  /// Set when a finished instance is archived (a reversible soft delete). An
+  /// archived instance is hidden from active lists but its tasks, comments,
+  /// activity, notifications, outbox events and audit trail are preserved.
+  archivedAt     DateTime?
+  archivedById   String?
+  archivedBy     User?          @relation("InstanceArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull)
 
   tasks Task[]
 
   @@index([organizationId, status])
+  @@index([organizationId, archivedAt])
   @@index([workflowId])
   @@map("process_instance")
 }

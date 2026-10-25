@@ -43,6 +43,10 @@ model Membership {
   userId         String
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           OrgRole      @default(MEMBER)
+  /// Additive permissions granted on top of the role baseline (see
+  /// `shared/server/permissions.ts`). Lets an admin give a MEMBER, for example,
+  /// `workflow.start` without promoting them to ADMIN.
+  grantedPermissions String[] @default([])
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 

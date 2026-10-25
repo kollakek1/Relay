@@ -1,8 +1,8 @@
 import type { Prisma } from '@/prisma/generated/prisma/client'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
-import { forbidden, invalid, notFound } from '@/shared/server/errors'
-import { canManageWorkflows } from '@/shared/server/permissions'
+import { invalid, notFound } from '@/shared/server/errors'
+import { assertCan } from '@/shared/server/permissions'
 import { buildStepSnapshot } from './validation'
 import { normalizeSnapshot } from './engine'
 import type { WorkflowStepInput } from '../schemas/workflowSchema'
@@ -108,12 +108,6 @@ export const BUILT_IN_TEMPLATES: WorkflowTemplateDefinition[] = [
   },
 ]
 
-function assertManage(ctx: Context) {
-  if (!canManageWorkflows(ctx.role)) {
-    throw forbidden('Managing workflows requires the Admin role or higher')
-  }
-}
-
 export async function listTemplates(ctx: Context) {
   const saved = await prisma.workflowTemplate.findMany({
     where: { organizationId: ctx.organizationId },
@@ -131,7 +125,7 @@ export async function createWorkflowFromTemplate(
   ctx: Context,
   input: { templateId: string; name?: string }
 ) {
-  assertManage(ctx)
+  assertCan(ctx, 'workflow.create', 'Creating workflows requires the Admin role or higher')
 
   let steps: WorkflowStepInput[]
   let name: string
@@ -199,7 +193,7 @@ export async function saveWorkflowAsTemplate(
   ctx: Context,
   input: { workflowId: string; name: string; description?: string; category?: string }
 ) {
-  assertManage(ctx)
+  assertCan(ctx, 'template.manage', 'Managing templates requires the Admin role or higher')
 
   const workflow = await prisma.workflow.findFirst({
     where: { id: input.workflowId, organizationId: ctx.organizationId },

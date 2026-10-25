@@ -1,8 +1,8 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { prisma } from '@/shared/lib/prisma'
 import type { Context } from '@/shared/server/context'
-import { forbidden, notFound } from '@/shared/server/errors'
-import { canManageMembers } from '@/shared/server/permissions'
+import { notFound } from '@/shared/server/errors'
+import { assertCan, permissionsFor, type Permission } from '@/shared/server/permissions'
 import { recordAudit } from '@/features/organization/server/audit'
 
 export const API_SCOPES = [
@@ -28,9 +28,7 @@ function hashToken(token: string): string {
  * persisted, so a database leak cannot be replayed.
  */
 export async function createApiKey(ctx: Context, input: { name: string; scopes: string[] }) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Managing API keys requires the Admin role or higher')
-  }
+  assertCan(ctx, 'apikey.manage', 'Managing API keys requires the Admin role or higher')
 
   const scopes = input.scopes.filter(isApiScope)
   const token = `rk_${randomBytes(24).toString('base64url')}`
@@ -62,9 +60,7 @@ export async function createApiKey(ctx: Context, input: { name: string; scopes: 
 }
 
 export async function listApiKeys(ctx: Context) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Managing API keys requires the Admin role or higher')
-  }
+  assertCan(ctx, 'apikey.manage', 'Managing API keys requires the Admin role or higher')
   return prisma.apiKey.findMany({
     where: { organizationId: ctx.organizationId },
     orderBy: { createdAt: 'desc' },
@@ -81,9 +77,7 @@ export async function listApiKeys(ctx: Context) {
 }
 
 export async function revokeApiKey(ctx: Context, id: string) {
-  if (!canManageMembers(ctx.role)) {
-    throw forbidden('Managing API keys requires the Admin role or higher')
-  }
+  assertCan(ctx, 'apikey.manage', 'Managing API keys requires the Admin role or higher')
   const existing = await prisma.apiKey.findFirst({
     where: { id, organizationId: ctx.organizationId },
     select: { id: true },
@@ -107,6 +101,7 @@ export interface ApiKeyPrincipal {
   organizationId: string
   userId: string
   role: 'OWNER' | 'ADMIN' | 'MEMBER'
+  permissions: Permission[]
   scopes: string[]
 }
 
@@ -137,7 +132,7 @@ export async function authenticateApiKey(token: string): Promise<ApiKeyPrincipal
         userId: apiKey.createdById,
       },
     },
-    select: { role: true },
+    select: { role: true, grantedPermissions: true },
   })
   if (!membership) return null
 
@@ -151,6 +146,7 @@ export async function authenticateApiKey(token: string): Promise<ApiKeyPrincipal
     organizationId: apiKey.organizationId,
     userId: apiKey.createdById,
     role: membership.role,
+    permissions: permissionsFor(membership.role, membership.grantedPermissions),
     scopes: apiKey.scopes,
   }
 }

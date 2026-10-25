@@ -3,7 +3,8 @@ import type { OrgRole } from '@/prisma/generated/prisma/enums'
 import { auth } from '@/shared/lib/auth'
 import { prisma } from '@/shared/lib/prisma'
 import { forbidden, unauthorized } from './errors'
-import { hasOrgRole } from './permissions'
+import { can, hasOrgRole, permissionsFor, type Permission } from './permissions'
+import { canAccess, type AreaKey } from './access'
 import type { Context } from './context'
 
 export const ACTIVE_ORG_COOKIE = 'relay_org'
@@ -58,17 +59,22 @@ export async function resolveContext(
   if (activeOrganizationId) {
     const active = await prisma.membership.findUnique({
       where: { organizationId_userId: { organizationId: activeOrganizationId, userId } },
-      select: { organizationId: true, role: true },
+      select: { organizationId: true, role: true, grantedPermissions: true },
     })
     if (active) {
-      return { userId, organizationId: active.organizationId, role: active.role }
+      return {
+        userId,
+        organizationId: active.organizationId,
+        role: active.role,
+        permissions: permissionsFor(active.role, active.grantedPermissions),
+      }
     }
   }
 
   const membership = await prisma.membership.findFirst({
     where: { userId },
     orderBy: { createdAt: 'asc' },
-    select: { organizationId: true, role: true },
+    select: { organizationId: true, role: true, grantedPermissions: true },
   })
 
   if (!membership) return null
@@ -77,6 +83,7 @@ export async function resolveContext(
     userId,
     organizationId: membership.organizationId,
     role: membership.role,
+    permissions: permissionsFor(membership.role, membership.grantedPermissions),
   }
 }
 
@@ -107,6 +114,37 @@ export async function requireRole(minimum: OrgRole): Promise<Context> {
   const ctx = await requireContext()
   if (!hasOrgRole(ctx.role, minimum)) {
     throw forbidden(`This action requires the ${minimum} role or higher`)
+  }
+  return ctx
+}
+
+/**
+ * Requires the caller's *effective* permissions (role baseline plus grants) to
+ * include `permission`. This is the preferred guard for server actions and
+ * route handlers: hiding a button is never the control.
+ */
+export async function requirePermission(
+  permission: Permission,
+  message = 'You do not have permission to perform this action'
+): Promise<Context> {
+  const ctx = await requireContext()
+  if (!can(ctx, permission)) {
+    throw forbidden(message)
+  }
+  return ctx
+}
+
+/**
+ * Requires access to a whole product area (see {@link AREA_ACCESS}). Used by the
+ * protected pages so a direct URL to a hidden area is refused on the server.
+ */
+export async function requireAreaAccess(
+  area: AreaKey,
+  message = 'You do not have access to this area'
+): Promise<Context> {
+  const ctx = await requireContext()
+  if (!canAccess(ctx, area)) {
+    throw forbidden(message)
   }
   return ctx
 }
